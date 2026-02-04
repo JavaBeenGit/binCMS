@@ -11,8 +11,8 @@ import lombok.NoArgsConstructor;
  * 회원 엔티티
  */
 @Entity
-@Table(name = "members", indexes = {
-    @Index(name = "idx_member_email", columnList = "email")
+@Table(name = "TB_MEMBERS", indexes = {
+    @Index(name = "IDX_MEMBERS_EMAIL", columnList = "EMAIL")
 })
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -25,38 +25,38 @@ public class Member extends BaseEntity {
     /**
      * 이메일 (로그인 ID)
      */
-    @Column(nullable = false, unique = true, length = 100)
+    @Column(name = "EMAIL", nullable = false, unique = true, length = 100)
     private String email;
     
     /**
      * 비밀번호 (암호화 저장)
      */
-    @Column(nullable = false)
+    @Column(name = "PASSWORD", nullable = false)
     private String password;
     
     /**
      * 이름
      */
-    @Column(nullable = false, length = 50)
+    @Column(name = "NAME", nullable = false, length = 50)
     private String name;
     
     /**
      * 전화번호
      */
-    @Column(length = 20)
+    @Column(name = "PHONE_NUMBER", length = 20)
     private String phoneNumber;
     
     /**
      * 회원 권한
      */
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false, length = 20)
+    @Column(name = "ROLE", nullable = false, length = 20)
     private MemberRole role;
     
     /**
      * 활성화 여부
      */
-    @Column(nullable = false)
+    @Column(name = "ACTIVE", nullable = false)
     private Boolean active;
     
     @Builder

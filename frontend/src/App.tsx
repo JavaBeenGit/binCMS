@@ -5,6 +5,7 @@ import Login from './pages/auth/Login';
 import Signup from './pages/auth/Signup';
 import AdminLayout from './layouts/AdminLayout';
 import Dashboard from './pages/admin/Dashboard';
+import BoardManagement from './pages/admin/BoardManagement';
 import { useAuthStore } from './stores/authStore';
 
 function App() {
@@ -30,7 +31,7 @@ function App() {
           >
             <Route index element={<Dashboard />} />
             <Route path="members" element={<div>회원 관리 (개발 예정)</div>} />
-            <Route path="boards" element={<div>게시판 관리 (개발 예정)</div>} />
+            <Route path="boards" element={<BoardManagement />} />
             <Route path="settings" element={<div>설정 (개발 예정)</div>} />
             <Route path="profile" element={<div>내 정보 (개발 예정)</div>} />
           </Route>
