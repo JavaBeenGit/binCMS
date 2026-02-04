@@ -19,6 +19,7 @@ public enum ErrorCode {
     MEMBER_NOT_FOUND(HttpStatus.NOT_FOUND, "M001", "회원을 찾을 수 없습니다."),
     MEMBER_ALREADY_EXISTS(HttpStatus.CONFLICT, "M002", "이미 존재하는 회원입니다."),
     INVALID_PASSWORD(HttpStatus.BAD_REQUEST, "M003", "비밀번호가 올바르지 않습니다."),
+    DUPLICATE_RESOURCE(HttpStatus.CONFLICT, "M004", "이미 사용중인 이메일입니다."),
     
     // Board
     BOARD_NOT_FOUND(HttpStatus.NOT_FOUND, "B001", "게시판을 찾을 수 없습니다."),

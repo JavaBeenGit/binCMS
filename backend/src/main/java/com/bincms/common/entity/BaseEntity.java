@@ -18,18 +18,18 @@ import java.time.LocalDateTime;
 public abstract class BaseEntity {
     
     @CreatedDate
-    @Column(nullable = false, updatable = false)
-    private LocalDateTime createdAt;
+    @Column(name = "REG_DT", nullable = false, updatable = false)
+    private LocalDateTime regDt;
     
     @LastModifiedDate
-    @Column(nullable = false)
-    private LocalDateTime updatedAt;
+    @Column(name = "MOD_DT", nullable = false)
+    private LocalDateTime modDt;
     
     @CreatedBy
-    @Column(updatable = false, length = 100)
-    private String createdBy;
+    @Column(name = "REG_NO", updatable = false, length = 100)
+    private String regNo;
     
     @LastModifiedBy
-    @Column(length = 100)
-    private String updatedBy;
+    @Column(name = "MOD_NO", length = 100)
+    private String modNo;
 }

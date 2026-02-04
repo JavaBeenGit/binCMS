@@ -1,66 +1,54 @@
-import { useEffect, useState } from 'react';
-import { healthApi, HealthResponse } from './api/endpoints/health';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { ConfigProvider } from 'antd';
+import koKR from 'antd/locale/ko_KR';
+import Login from './pages/auth/Login';
+import Signup from './pages/auth/Signup';
+import AdminLayout from './layouts/AdminLayout';
+import Dashboard from './pages/admin/Dashboard';
+import { useAuthStore } from './stores/authStore';
 
 function App() {
-  const [health, setHealth] = useState<HealthResponse | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    const checkHealth = async () => {
-      try {
-        const response = await healthApi.check();
-        setHealth(response);
-      } catch (err) {
-        setError('Failed to connect to API');
-        console.error(err);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    checkHealth();
-  }, []);
-
-  if (loading) {
-    return (
-      <div style={{ padding: '40px', textAlign: 'center' }}>
-        <h1>Loading...</h1>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div style={{ padding: '40px', textAlign: 'center', color: 'red' }}>
-        <h1>Error</h1>
-        <p>{error}</p>
-      </div>
-    );
-  }
+  const isAuthenticated = useAuthStore((state) => state.isAuthenticated());
 
   return (
-    <div style={{ padding: '40px', fontFamily: 'sans-serif' }}>
-      <h1>🎉 binCMS - React + Spring Boot</h1>
-      <div style={{ marginTop: '20px', padding: '20px', background: '#f0f0f0', borderRadius: '8px' }}>
-        <h2>Health Check</h2>
-        {health && (
-          <div>
-            <p><strong>Status:</strong> {health.data.status}</p>
-            <p><strong>Message:</strong> {health.data.message}</p>
-            <p><strong>Timestamp:</strong> {health.data.timestamp}</p>
-          </div>
-        )}
-      </div>
-      <div style={{ marginTop: '20px' }}>
-        <h3>✅ 프로젝트 설정 완료</h3>
-        <ul>
-          <li>Backend: Spring Boot 3.3.0 + Java 21</li>
-          <li>Frontend: React 18 + TypeScript + Vite</li>
-          <li>API 통신: 정상 작동 중</li>
-        </ul>
-      </div>
-    </div>
+    <ConfigProvider locale={koKR}>
+      <BrowserRouter>
+        <Routes>
+          <Route path="/login" element={<Login />} />
+          <Route path="/signup" element={<Signup />} />
+          
+          {/* Admin Routes */}
+          <Route 
+            path="/admin" 
+            element={
+              isAuthenticated ? (
+                <AdminLayout />
+              ) : (
+                <Navigate to="/login" replace />
+              )
+            }
+          >
+            <Route index element={<Dashboard />} />
+            <Route path="members" element={<div>회원 관리 (개발 예정)</div>} />
+            <Route path="boards" element={<div>게시판 관리 (개발 예정)</div>} />
+            <Route path="settings" element={<div>설정 (개발 예정)</div>} />
+            <Route path="profile" element={<div>내 정보 (개발 예정)</div>} />
+          </Route>
+          
+          {/* Root redirect */}
+          <Route 
+            path="/" 
+            element={
+              isAuthenticated ? (
+                <Navigate to="/admin" replace />
+              ) : (
+                <Navigate to="/login" replace />
+              )
+            } 
+          />
+        </Routes>
+      </BrowserRouter>
+    </ConfigProvider>
   );
 }
 
