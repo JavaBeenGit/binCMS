@@ -7,6 +7,7 @@ import AdminLayout from './layouts/AdminLayout';
 import Dashboard from './pages/admin/Dashboard';
 import BoardManagement from './pages/admin/BoardManagement';
 import PostManagement from './pages/admin/PostManagement';
+import MenuManagement from './pages/admin/MenuManagement';
 import { useAuthStore } from './stores/authStore';
 
 function App() {
@@ -36,7 +37,7 @@ function App() {
             <Route path="users" element={<div>사용자 관리 (개발 예정)</div>} />
             
             {/* 시스템 관리 */}
-            <Route path="system/menus" element={<div>메뉴 관리 (개발 예정)</div>} />
+            <Route path="system/menus" element={<MenuManagement />} />
             <Route path="system/admins" element={<div>관리자 회원 관리 (개발 예정)</div>} />
             <Route path="system/ips" element={<div>IP 관리 (개발 예정)</div>} />
             <Route path="system/codes" element={<div>공통코드 관리 (개발 예정)</div>} />

@@ -25,6 +25,10 @@ public enum ErrorCode {
     BOARD_NOT_FOUND(HttpStatus.NOT_FOUND, "B001", "게시판을 찾을 수 없습니다."),
     POST_NOT_FOUND(HttpStatus.NOT_FOUND, "B002", "게시글을 찾을 수 없습니다."),
     
+    // Menu
+    MENU_NOT_FOUND(HttpStatus.NOT_FOUND, "MN001", "메뉴를 찾을 수 없습니다."),
+    MENU_HAS_CHILDREN(HttpStatus.BAD_REQUEST, "MN002", "하위 메뉴가 있어 삭제할 수 없습니다."),
+    
     // Site
     SITE_NOT_FOUND(HttpStatus.NOT_FOUND, "S001", "사이트를 찾을 수 없습니다."),
     
