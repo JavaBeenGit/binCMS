@@ -1,36 +1,112 @@
+# ===================================
+# binCMS Project .gitignore
+# ===================================
+
+# ===================================
+# Backend (Java/Gradle)
+# ===================================
+
+# Gradle
+backend/.gradle/
+backend/build/
+backend/!gradle/wrapper/gradle-wrapper.jar
+backend/!**/src/main/**/build/
+backend/!**/src/test/**/build/
+
+# Java
+backend/**/*.class
+backend/**/*.jar
+backend/**/*.war
+backend/**/*.ear
+
+# Spring Boot
+backend/spring-boot-*.log
+
+# IDE - Backend
+backend/.idea/
+backend/.vscode/
+backend/*.iml
+backend/*.iws
+backend/*.ipr
+backend/out/
+backend/.settings/
+backend/.classpath
+backend/.project
+backend/bin/
+
+# ===================================
+# Frontend (React/Node)
+# ===================================
+
+# Dependencies
+frontend/node_modules/
+frontend/package-lock.json
+frontend/yarn.lock
+frontend/pnpm-lock.yaml
+
+# Build
+frontend/dist/
+frontend/build/
+frontend/.vite/
+
+# Environment
+frontend/.env.local
+frontend/.env.development.local
+frontend/.env.test.local
+frontend/.env.production.local
+
+# IDE - Frontend
+frontend/.idea/
+frontend/.vscode/
+frontend/*.iml
+
+# Testing
+frontend/coverage/
+frontend/.nyc_output/
+
+# ===================================
+# Database
+# ===================================
+
+# H2 Database
+backend/data/
+backend/*.db
+backend/*.mv.db
+backend/*.trace.db
+*.sqlite
+
+# ===================================
+# Global
+# ===================================
+
 # OS
 .DS_Store
 Thumbs.db
 
-# IDE
+# IDE (Root level)
 .vscode/
 .idea/
 *.iml
 *.ipr
 *.iws
 
-# Build outputs
-target/
-build/
-dist/
-out/
+# Logs
 *.log
+logs/
 
-# Dependencies
-node_modules/
-*.war
-*.ear
-
-# Temporary files
+# Temp files
 *.tmp
+*.temp
 *.bak
 *.swp
 *~
 
-# Environment variables
+# Secrets
 .env
 .env.local
+.env.*.local
+secrets.yml
+application-secret.yml
 
-# Database
-*.db
-*.sqlite
+# Docs drafts
+docs/drafts/
