@@ -102,3 +102,13 @@ export const activateBoard = async (id: number) => {
   }>(`/boards/${id}/activate`);
   return response.data;
 };
+
+export const boardApi = {
+  createBoard,
+  getAllBoards,
+  getActiveBoards,
+  getBoardById,
+  updateBoard,
+  deleteBoard,
+  activateBoard
+};

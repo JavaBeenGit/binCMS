@@ -39,15 +39,33 @@ const Signup: React.FC = () => {
           layout="vertical"
         >
           <Form.Item
+            name="loginId"
+            rules={[
+              { required: true, message: '로그인 ID를 입력해주세요' },
+              { min: 4, message: '로그인 ID는 최소 4자 이상이어야 합니다' },
+              { max: 20, message: '로그인 ID는 최대 20자까지 가능합니다' },
+              {
+                pattern: /^[a-zA-Z0-9_]+$/,
+                message: '로그인 ID는 영문, 숫자, 언더스코어만 사용 가능합니다',
+              },
+            ]}
+          >
+            <Input
+              prefix={<UserOutlined />}
+              placeholder="로그인 ID (영문, 숫자, 언더스코어)"
+              size="large"
+            />
+          </Form.Item>
+
+          <Form.Item
             name="email"
             rules={[
-              { required: true, message: '이메일을 입력해주세요' },
               { type: 'email', message: '올바른 이메일 형식이 아닙니다' },
             ]}
           >
             <Input
               prefix={<MailOutlined />}
-              placeholder="이메일"
+              placeholder="이메일 (선택사항)"
               size="large"
             />
           </Form.Item>

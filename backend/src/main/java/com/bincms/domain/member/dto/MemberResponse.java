@@ -15,6 +15,7 @@ import java.time.LocalDateTime;
 public class MemberResponse {
     
     private Long id;
+    private String loginId;
     private String email;
     private String name;
     private String phoneNumber;
@@ -25,6 +26,7 @@ public class MemberResponse {
     public static MemberResponse from(Member member) {
         return MemberResponse.builder()
                 .id(member.getId())
+                .loginId(member.getLoginId())
                 .email(member.getEmail())
                 .name(member.getName())
                 .phoneNumber(member.getPhoneNumber())

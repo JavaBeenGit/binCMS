@@ -14,7 +14,11 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class SignupRequest {
     
-    @NotBlank(message = "이메일은 필수입니다")
+    @NotBlank(message = "로그인 ID는 필수입니다")
+    @Size(min = 4, max = 20, message = "로그인 ID는 4자 이상 20자 이하여야 합니다")
+    @Pattern(regexp = "^[a-zA-Z0-9_]+$", message = "로그인 ID는 영문, 숫자, 언더스코어만 사용 가능합니다")
+    private String loginId;
+    
     @Email(message = "올바른 이메일 형식이 아닙니다")
     private String email;
     

@@ -52,6 +52,12 @@ const AdminLayout: React.FC = () => {
       onClick: () => navigate('/admin/boards'),
     },
     {
+      key: '/admin/posts',
+      icon: <FileTextOutlined />,
+      label: '게시글 관리',
+      onClick: () => navigate('/admin/posts'),
+    },
+    {
       key: '/admin/settings',
       icon: <SettingOutlined />,
       label: '설정',

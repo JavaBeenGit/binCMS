@@ -40,15 +40,14 @@ const Login: React.FC = () => {
           layout="vertical"
         >
           <Form.Item
-            name="email"
+            name="loginId"
             rules={[
-              { required: true, message: '이메일을 입력해주세요' },
-              { type: 'email', message: '올바른 이메일 형식이 아닙니다' },
+              { required: true, message: '로그인 ID를 입력해주세요' },
             ]}
           >
             <Input
               prefix={<UserOutlined />}
-              placeholder="이메일"
+              placeholder="로그인 ID"
               size="large"
             />
           </Form.Item>

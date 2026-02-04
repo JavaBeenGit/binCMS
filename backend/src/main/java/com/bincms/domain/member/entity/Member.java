@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
  */
 @Entity
 @Table(name = "TB_MEMBERS", indexes = {
-    @Index(name = "IDX_MEMBERS_EMAIL", columnList = "EMAIL")
+    @Index(name = "IDX_MEMBERS_LOGIN_ID", columnList = "LGN_ID")
 })
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -23,9 +23,15 @@ public class Member extends BaseEntity {
     private Long id;
     
     /**
-     * 이메일 (로그인 ID)
+     * 로그인 ID
      */
-    @Column(name = "EMAIL", nullable = false, unique = true, length = 100)
+    @Column(name = "LGN_ID", nullable = false, unique = true, length = 50)
+    private String loginId;
+    
+    /**
+     * 이메일 (선택사항)
+     */
+    @Column(name = "EMAIL", length = 100)
     private String email;
     
     /**
@@ -60,7 +66,8 @@ public class Member extends BaseEntity {
     private Boolean active;
     
     @Builder
-    public Member(String email, String password, String name, String phoneNumber, MemberRole role) {
+    public Member(String loginId, String email, String password, String name, String phoneNumber, MemberRole role) {
+        this.loginId = loginId;
         this.email = email;
         this.password = password;
         this.name = name;

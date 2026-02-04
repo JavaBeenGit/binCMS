@@ -28,13 +28,14 @@ public class MemberService {
      */
     @Transactional
     public MemberResponse signup(SignupRequest request) {
-        // 이메일 중복 체크
-        if (memberRepository.existsByEmail(request.getEmail())) {
-            throw new BusinessException(ErrorCode.DUPLICATE_RESOURCE, "이미 사용중인 이메일입니다");
+        // 로그인 ID 중복 체크
+        if (memberRepository.existsByLoginId(request.getLoginId())) {
+            throw new BusinessException(ErrorCode.DUPLICATE_RESOURCE, "이미 사용중인 로그인 ID입니다");
         }
         
         // 회원 생성
         Member member = Member.builder()
+                .loginId(request.getLoginId())
                 .email(request.getEmail())
                 .password(passwordEncoder.encode(request.getPassword()))
                 .name(request.getName())
@@ -51,27 +52,27 @@ public class MemberService {
     @Transactional
     public LoginResponse login(LoginRequest request) {
         // 회원 조회
-        Member member = memberRepository.findByEmailAndActiveTrue(request.getEmail())
+        Member member = memberRepository.findByLoginIdAndActiveTrue(request.getLoginId())
                 .orElseThrow(() -> new BusinessException(ErrorCode.INVALID_INPUT_VALUE, 
-                        "이메일 또는 비밀번호가 올바르지 않습니다"));
+                        "로그인 ID 또는 비밀번호가 올바르지 않습니다"));
         
         // 비밀번호 검증
         if (!passwordEncoder.matches(request.getPassword(), member.getPassword())) {
             throw new BusinessException(ErrorCode.INVALID_INPUT_VALUE, 
-                    "이메일 또는 비밀번호가 올바르지 않습니다");
+                    "로그인 ID 또는 비밀번호가 올바르지 않습니다");
         }
         
         // JWT 토큰 생성
-        String token = jwtTokenProvider.generateToken(member.getEmail(), member.getRole().getKey());
+        String token = jwtTokenProvider.generateToken(member.getLoginId(), member.getRole().getKey());
         
         return LoginResponse.of(token, MemberResponse.from(member));
     }
     
     /**
-     * 회원 조회 (이메일)
+     * 회원 조회 (로그인 ID)
      */
-    public MemberResponse getMemberByEmail(String email) {
-        Member member = memberRepository.findByEmail(email)
+    public MemberResponse getMemberByLoginId(String loginId) {
+        Member member = memberRepository.findByLoginId(loginId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.ENTITY_NOT_FOUND, 
                         "회원을 찾을 수 없습니다"));
         

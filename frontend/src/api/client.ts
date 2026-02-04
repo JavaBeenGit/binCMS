@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { useAuthStore } from '../stores/authStore';
 
 const apiClient = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL || '/api/v1',
@@ -11,14 +12,10 @@ const apiClient = axios.create({
 // Request interceptor
 apiClient.interceptors.request.use(
   (config) => {
-    // Zustand persist에서 토큰 가져오기
-    const authStorage = localStorage.getItem('auth-storage');
-    if (authStorage) {
-      const { state } = JSON.parse(authStorage);
-      const token = state?.token;
-      if (token) {
-        config.headers.Authorization = `Bearer ${token}`;
-      }
+    // Zustand store에서 직접 토큰 가져오기
+    const token = useAuthStore.getState().token;
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
     }
     return config;
   },
@@ -34,8 +31,8 @@ apiClient.interceptors.response.use(
   },
   (error) => {
     if (error.response?.status === 401) {
-      // 인증 실패 시 스토어 초기화
-      localStorage.removeItem('auth-storage');
+      // 인증 실패 시 스토어 초기화 및 로그인 페이지로 이동
+      useAuthStore.getState().clearAuth();
       window.location.href = '/login';
     }
     return Promise.reject(error);
@@ -43,3 +40,4 @@ apiClient.interceptors.response.use(
 );
 
 export { apiClient };
+export default apiClient;

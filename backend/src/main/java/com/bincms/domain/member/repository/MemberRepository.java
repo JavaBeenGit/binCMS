@@ -13,17 +13,17 @@ import java.util.Optional;
 public interface MemberRepository extends JpaRepository<Member, Long> {
     
     /**
-     * 이메일로 회원 조회
+     * 로그인 ID로 회원 조회
      */
-    Optional<Member> findByEmail(String email);
+    Optional<Member> findByLoginId(String loginId);
     
     /**
-     * 이메일 존재 여부 확인
+     * 로그인 ID 존재 여부 확인
      */
-    boolean existsByEmail(String email);
+    boolean existsByLoginId(String loginId);
     
     /**
      * 활성화된 회원 조회
      */
-    Optional<Member> findByEmailAndActiveTrue(String email);
+    Optional<Member> findByLoginIdAndActiveTrue(String loginId);
 }

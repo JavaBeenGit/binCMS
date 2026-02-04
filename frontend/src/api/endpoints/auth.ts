@@ -1,20 +1,22 @@
 import { apiClient } from '../client';
 
 export interface SignupRequest {
-  email: string;
+  loginId: string;
+  email?: string;
   password: string;
   name: string;
   phoneNumber?: string;
 }
 
 export interface LoginRequest {
-  email: string;
+  loginId: string;
   password: string;
 }
 
 export interface MemberResponse {
   id: number;
-  email: string;
+  loginId: string;
+  email?: string;
   name: string;
   phoneNumber?: string;
   role: 'USER' | 'ADMIN';

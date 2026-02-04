@@ -30,23 +30,24 @@ public class DataInitializer implements ApplicationRunner {
      * Admin 계정 초기화
      */
     private void initAdminAccount() {
-        String adminEmail = "admin";
+        String adminLoginId = "admin";
         
         // 이미 admin 계정이 있으면 스킵
-        if (memberRepository.existsByEmail(adminEmail)) {
+        if (memberRepository.existsByLoginId(adminLoginId)) {
             log.info("Admin account already exists");
             return;
         }
         
         // Admin 계정 생성
         Member admin = Member.builder()
-                .email(adminEmail)
+                .loginId(adminLoginId)
+                .email(null)  // 이메일은 선택사항
                 .password(passwordEncoder.encode("1234"))
                 .name("관리자")
                 .role(MemberRole.ADMIN)
                 .build();
         
         memberRepository.save(admin);
-        log.info("Admin account created - email: admin, password: 1234");
+        log.info("Admin account created - loginId: admin, password: 1234");
     }
 }
