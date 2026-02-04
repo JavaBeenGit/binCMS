@@ -7,6 +7,7 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.Comment;
 
 /**
  * 게시글 엔티티
@@ -16,12 +17,14 @@ import lombok.NoArgsConstructor;
     @Index(name = "IDX_POSTS_BOARD_ID", columnList = "BOARD_ID"),
     @Index(name = "IDX_POSTS_NOTICE_YN", columnList = "NOTICE_YN")
 })
+@Comment("게시글")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Post extends BaseEntity {
     
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Comment("게시글 ID")
     private Long id;
     
     /**
@@ -29,36 +32,42 @@ public class Post extends BaseEntity {
      */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "BOARD_ID", nullable = false)
+    @Comment("게시판 ID")
     private Board board;
     
     /**
      * 제목
      */
     @Column(name = "TITLE", nullable = false, length = 200)
+    @Comment("제목")
     private String title;
     
     /**
      * 내용
      */
     @Column(name = "CONTENT", nullable = false, columnDefinition = "TEXT")
+    @Comment("내용")
     private String content;
     
     /**
      * 조회수
      */
     @Column(name = "VIEW_COUNT", nullable = false)
+    @Comment("조회수")
     private Long viewCount;
     
     /**
      * 공지글 여부
      */
     @Column(name = "NOTICE_YN", nullable = false, length = 1)
+    @Comment("공지글 여부")
     private String noticeYn;
     
     /**
      * 사용 여부
      */
     @Column(name = "USE_YN", nullable = false, length = 1)
+    @Comment("사용 여부")
     private String useYn;
     
     @Builder

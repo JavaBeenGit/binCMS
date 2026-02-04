@@ -6,6 +6,7 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.Comment;
 
 /**
  * 회원 엔티티
@@ -14,42 +15,49 @@ import lombok.NoArgsConstructor;
 @Table(name = "TB_MEMBERS", indexes = {
     @Index(name = "IDX_MEMBERS_LOGIN_ID", columnList = "LGN_ID")
 })
+@Comment("회원")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Member extends BaseEntity {
     
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Comment("회원 ID")
     private Long id;
     
     /**
      * 로그인 ID
      */
     @Column(name = "LGN_ID", nullable = false, unique = true, length = 50)
+    @Comment("로그인 ID")
     private String loginId;
     
     /**
      * 이메일 (선택사항)
      */
     @Column(name = "EMAIL", length = 100)
+    @Comment("이메일")
     private String email;
     
     /**
      * 비밀번호 (암호화 저장)
      */
     @Column(name = "PASSWORD", nullable = false)
+    @Comment("비밀번호")
     private String password;
     
     /**
      * 이름
      */
     @Column(name = "NAME", nullable = false, length = 50)
+    @Comment("이름")
     private String name;
     
     /**
      * 전화번호
      */
     @Column(name = "PHONE_NUMBER", length = 20)
+    @Comment("전화번호")
     private String phoneNumber;
     
     /**
@@ -57,12 +65,14 @@ public class Member extends BaseEntity {
      */
     @Enumerated(EnumType.STRING)
     @Column(name = "ROLE", nullable = false, length = 20)
+    @Comment("회원 권한")
     private MemberRole role;
     
     /**
      * 활성화 여부
      */
     @Column(name = "ACTIVE", nullable = false)
+    @Comment("활성화 여부")
     private Boolean active;
     
     @Builder

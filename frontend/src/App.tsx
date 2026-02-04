@@ -31,10 +31,17 @@ function App() {
             }
           >
             <Route index element={<Dashboard />} />
-            <Route path="members" element={<div>회원 관리 (개발 예정)</div>} />
-            <Route path="boards" element={<BoardManagement />} />
             <Route path="posts" element={<PostManagement />} />
-            <Route path="settings" element={<div>설정 (개발 예정)</div>} />
+            <Route path="statistics" element={<div>통계 관리 (개발 예정)</div>} />
+            <Route path="users" element={<div>사용자 관리 (개발 예정)</div>} />
+            
+            {/* 시스템 관리 */}
+            <Route path="system/menus" element={<div>메뉴 관리 (개발 예정)</div>} />
+            <Route path="system/admins" element={<div>관리자 회원 관리 (개발 예정)</div>} />
+            <Route path="system/ips" element={<div>IP 관리 (개발 예정)</div>} />
+            <Route path="system/codes" element={<div>공통코드 관리 (개발 예정)</div>} />
+            <Route path="system/boards" element={<BoardManagement />} />
+            
             <Route path="profile" element={<div>내 정보 (개발 예정)</div>} />
           </Route>
           

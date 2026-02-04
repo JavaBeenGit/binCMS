@@ -8,6 +8,12 @@ import {
   FileTextOutlined,
   SettingOutlined,
   LogoutOutlined,
+  BarChartOutlined,
+  MenuOutlined,
+  TeamOutlined,
+  GlobalOutlined,
+  CodeOutlined,
+  AppstoreOutlined,
 } from '@ant-design/icons';
 import { Outlet, useNavigate, useLocation } from 'react-router-dom';
 import { useAuthStore } from '../stores/authStore';
@@ -40,22 +46,59 @@ const AdminLayout: React.FC = () => {
       onClick: () => navigate('/admin'),
     },
     {
-      key: '/admin/members',
-      icon: <UserOutlined />,
-      label: '회원 관리',
-      onClick: () => navigate('/admin/members'),
-    },
-    {
-      key: '/admin/boards',
-      icon: <FileTextOutlined />,
-      label: '게시판 관리',
-      onClick: () => navigate('/admin/boards'),
-    },
-    {
       key: '/admin/posts',
       icon: <FileTextOutlined />,
       label: '게시글 관리',
       onClick: () => navigate('/admin/posts'),
+    },
+    {
+      key: '/admin/statistics',
+      icon: <BarChartOutlined />,
+      label: '통계 관리',
+      onClick: () => navigate('/admin/statistics'),
+    },
+    {
+      key: '/admin/users',
+      icon: <UserOutlined />,
+      label: '사용자 관리',
+      onClick: () => navigate('/admin/users'),
+    },
+    {
+      key: 'system',
+      icon: <SettingOutlined />,
+      label: '시스템 관리',
+      children: [
+        {
+          key: '/admin/system/menus',
+          icon: <MenuOutlined />,
+          label: '메뉴 관리',
+          onClick: () => navigate('/admin/system/menus'),
+        },
+        {
+          key: '/admin/system/admins',
+          icon: <TeamOutlined />,
+          label: '관리자 회원 관리',
+          onClick: () => navigate('/admin/system/admins'),
+        },
+        {
+          key: '/admin/system/ips',
+          icon: <GlobalOutlined />,
+          label: 'IP 관리',
+          onClick: () => navigate('/admin/system/ips'),
+        },
+        {
+          key: '/admin/system/codes',
+          icon: <CodeOutlined />,
+          label: '공통코드 관리',
+          onClick: () => navigate('/admin/system/codes'),
+        },
+        {
+          key: '/admin/system/boards',
+          icon: <AppstoreOutlined />,
+          label: '게시판 설정',
+          onClick: () => navigate('/admin/system/boards'),
+        },
+      ]
     },
     {
       key: '/admin/settings',
