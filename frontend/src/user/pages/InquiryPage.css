@@ -1,0 +1,95 @@
+/* ================================================================
+   견적문의 페이지
+================================================================ */
+
+.inquiry-layout {
+  display: grid;
+  grid-template-columns: 1fr 360px;
+  gap: 48px;
+  align-items: start;
+}
+
+.inquiry-form-section h2,
+.inquiry-info-section h2 {
+  font-size: 22px;
+  font-weight: 700;
+  color: #222;
+  margin: 0 0 8px;
+}
+
+.inquiry-form-desc {
+  font-size: 14px;
+  color: #888;
+  margin: 0 0 28px;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+/* ── 연락처 정보 ── */
+.inquiry-info-section {
+  position: sticky;
+  top: 100px;
+}
+
+.info-cards {
+  margin-top: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.info-card {
+  display: flex;
+  gap: 16px;
+  padding: 20px;
+  background: #f8fafc;
+  border-radius: 10px;
+  border: 1px solid #eee;
+}
+
+.info-icon {
+  font-size: 20px;
+  color: #2563eb;
+  margin-top: 2px;
+}
+
+.info-card strong {
+  display: block;
+  font-size: 14px;
+  color: #333;
+  margin-bottom: 4px;
+}
+
+.info-card p {
+  font-size: 13px;
+  color: #666;
+  margin: 0;
+  line-height: 1.5;
+}
+
+.info-sub {
+  color: #999 !important;
+  font-size: 12px !important;
+  margin-top: 2px !important;
+}
+
+/* ── 반응형 ── */
+@media (max-width: 768px) {
+  .inquiry-layout {
+    grid-template-columns: 1fr;
+    gap: 32px;
+  }
+
+  .form-row {
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+
+  .inquiry-info-section {
+    position: static;
+  }
+}

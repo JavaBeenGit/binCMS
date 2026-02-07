@@ -14,6 +14,11 @@ import ContentManagement from './pages/admin/ContentManagement';
 import PopupManagement from './pages/admin/PopupManagement';
 import InteriorManagement from './pages/admin/InteriorManagement';
 import ContentPage from './user/pages/ContentPage';
+import UserLayout from './user/layouts/UserLayout';
+import HomePage from './user/pages/HomePage';
+import PostListPage from './user/pages/PostListPage';
+import InteriorGalleryPage from './user/pages/InteriorGalleryPage';
+import InquiryPage from './user/pages/InquiryPage';
 import { useAuthStore } from './stores/authStore';
 import PermissionGuard from './shared/components/PermissionGuard';
 
@@ -72,17 +77,19 @@ function App() {
             </Route>
           </Route>
           
-          {/* Root redirect */}
+          {/* Root redirect → 사용자 홈 */}
           <Route 
             path="/" 
-            element={
-              isAuthenticated ? (
-                <Navigate to="/admin" replace />
-              ) : (
-                <Navigate to="/login" replace />
-              )
-            } 
-          />
+            element={<UserLayout />}
+          >
+            <Route index element={<HomePage />} />
+            <Route path="notice" element={<PostListPage boardCode="notice" title="공지사항" subtitle="BIN INTERIOR의 소식을 전해드립니다" />} />
+            <Route path="faq" element={<PostListPage boardCode="faq" title="자주묻는질문" subtitle="궁금한 점을 확인해 보세요" />} />
+            <Route path="inquiry" element={<InquiryPage />} />
+            <Route path="interior/onsite" element={<InteriorGalleryPage category="ONSITE" title="현장시공" subtitle="전문 시공팀의 현장 시공 사례를 확인해 보세요" />} />
+            <Route path="interior/self-tip" element={<InteriorGalleryPage category="SELF_TIP" title="셀프시공" subtitle="누구나 따라할 수 있는 셀프 인테리어 팁" />} />
+            <Route path="interior/story" element={<InteriorGalleryPage category="STORY" title="인테리어스토리" subtitle="감각적인 인테리어 이야기를 들려드립니다" />} />
+          </Route>
 
           {/* 사용자 컨텐츠 페이지 (인증 불필요) */}
           <Route path="/page/:contentKey" element={<ContentPage />} />

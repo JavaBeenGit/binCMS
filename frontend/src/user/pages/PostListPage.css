@@ -1,0 +1,146 @@
+/* ================================================================
+   게시글 목록 / 상세 페이지
+================================================================ */
+
+/* ── 목록 ── */
+.post-list {
+  border-top: 2px solid #333;
+}
+
+.post-list-header {
+  display: grid;
+  grid-template-columns: 80px 1fr 120px 80px;
+  padding: 14px 16px;
+  background: #f8f9fa;
+  font-size: 13px;
+  font-weight: 600;
+  color: #666;
+  border-bottom: 1px solid #ddd;
+}
+
+.post-list-item {
+  display: grid;
+  grid-template-columns: 80px 1fr 120px 80px;
+  padding: 14px 16px;
+  border-bottom: 1px solid #eee;
+  cursor: pointer;
+  transition: background 0.15s;
+  font-size: 14px;
+  color: #333;
+}
+
+.post-list-item:hover {
+  background: #f5f7ff;
+}
+
+.post-list-item.notice {
+  background: #fffbf0;
+}
+
+.col-no {
+  text-align: center;
+  color: #888;
+}
+
+.col-title {
+  font-weight: 500;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.col-date {
+  text-align: center;
+  color: #888;
+  font-size: 13px;
+}
+
+.col-views {
+  text-align: center;
+  color: #888;
+  font-size: 13px;
+}
+
+.post-pagination {
+  display: flex;
+  justify-content: center;
+  margin-top: 32px;
+}
+
+/* ── 상세 ── */
+.back-btn {
+  background: none;
+  border: none;
+  color: #2563eb;
+  font-size: 14px;
+  cursor: pointer;
+  padding: 0;
+  margin-bottom: 24px;
+  font-weight: 500;
+}
+
+.back-btn:hover {
+  text-decoration: underline;
+}
+
+.post-detail-header {
+  margin-bottom: 20px;
+}
+
+.post-detail-title {
+  font-size: 24px;
+  font-weight: 700;
+  color: #222;
+  margin: 0 0 12px;
+  line-height: 1.4;
+}
+
+.post-detail-meta {
+  display: flex;
+  gap: 20px;
+  font-size: 13px;
+  color: #888;
+}
+
+.post-detail-meta span {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.post-detail-divider {
+  height: 1px;
+  background: #e0e0e0;
+  margin: 20px 0 32px;
+}
+
+.post-detail-content {
+  line-height: 1.8;
+  font-size: 15px;
+  color: #333;
+  word-break: keep-all;
+  min-height: 200px;
+}
+
+/* ── 반응형 ── */
+@media (max-width: 768px) {
+  .post-list-header {
+    grid-template-columns: 60px 1fr 80px;
+  }
+
+  .post-list-item {
+    grid-template-columns: 60px 1fr 80px;
+  }
+
+  .col-views {
+    display: none;
+  }
+
+  .post-list-header .col-views {
+    display: none;
+  }
+
+  .post-detail-title {
+    font-size: 20px;
+  }
+}
