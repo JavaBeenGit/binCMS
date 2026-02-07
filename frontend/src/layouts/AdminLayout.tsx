@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { Layout, Menu, Avatar, Dropdown, Button, Space } from 'antd';
 import {
   MenuFoldOutlined,
@@ -14,13 +14,36 @@ import {
   GlobalOutlined,
   CodeOutlined,
   AppstoreOutlined,
+  QuestionCircleOutlined,
 } from '@ant-design/icons';
 import { Outlet, useNavigate, useLocation } from 'react-router-dom';
+import { useQuery } from '@tanstack/react-query';
 import { useAuthStore } from '../stores/authStore';
+import { menuApi, MenuType, MenuResponse } from '../api/endpoints/menu';
 import type { MenuProps } from 'antd';
 import './AdminLayout.css';
 
 const { Header, Sider, Content } = Layout;
+
+// 아이콘 이름 → 컴포넌트 매핑
+const iconMap: Record<string, React.ReactNode> = {
+  DashboardOutlined: <DashboardOutlined />,
+  UserOutlined: <UserOutlined />,
+  FileTextOutlined: <FileTextOutlined />,
+  SettingOutlined: <SettingOutlined />,
+  BarChartOutlined: <BarChartOutlined />,
+  MenuOutlined: <MenuOutlined />,
+  TeamOutlined: <TeamOutlined />,
+  GlobalOutlined: <GlobalOutlined />,
+  CodeOutlined: <CodeOutlined />,
+  AppstoreOutlined: <AppstoreOutlined />,
+  LogoutOutlined: <LogoutOutlined />,
+};
+
+const getIcon = (iconName?: string): React.ReactNode => {
+  if (!iconName) return <QuestionCircleOutlined />;
+  return iconMap[iconName] || <QuestionCircleOutlined />;
+};
 
 /**
  * Admin 레이아웃
@@ -31,82 +54,54 @@ const AdminLayout: React.FC = () => {
   const location = useLocation();
   const { user, clearAuth } = useAuthStore();
 
+  // DB에서 관리자 메뉴 조회
+  const { data: menusData } = useQuery({
+    queryKey: ['menus', MenuType.ADMIN, false],
+    queryFn: async () => {
+      const response = await menuApi.getMenusByType(MenuType.ADMIN, false);
+      return response.data;
+    },
+  });
+
+  // MenuResponse 트리 → Antd Menu items 변환
+  const convertToMenuItems = (menus: MenuResponse[]): MenuProps['items'] => {
+    return menus.map((menu) => {
+      const hasChildren = menu.children && menu.children.length > 0;
+
+      if (hasChildren) {
+        return {
+          key: menu.menuUrl || `menu-${menu.id}`,
+          icon: getIcon(menu.icon),
+          label: menu.menuName,
+          children: convertToMenuItems(menu.children!),
+        };
+      }
+
+      return {
+        key: menu.menuUrl || `menu-${menu.id}`,
+        icon: getIcon(menu.icon),
+        label: menu.menuName,
+        onClick: () => {
+          if (menu.menuUrl) navigate(menu.menuUrl);
+        },
+      };
+    });
+  };
+
+  // DB 메뉴 데이터를 사이드바 아이템으로 변환
+  const menuItems: MenuProps['items'] = useMemo(() => {
+    if (menusData && menusData.length > 0) {
+      return convertToMenuItems(menusData);
+    }
+    // DB 메뉴 로딩 전 기본 폴백
+    return [];
+  }, [menusData]);
+
   // 로그아웃
   const handleLogout = () => {
     clearAuth();
     navigate('/login');
   };
-
-  // 사이드바 메뉴 아이템
-  const menuItems: MenuProps['items'] = [
-    {
-      key: '/admin',
-      icon: <DashboardOutlined />,
-      label: '대시보드',
-      onClick: () => navigate('/admin'),
-    },
-    {
-      key: '/admin/posts',
-      icon: <FileTextOutlined />,
-      label: '게시글 관리',
-      onClick: () => navigate('/admin/posts'),
-    },
-    {
-      key: '/admin/statistics',
-      icon: <BarChartOutlined />,
-      label: '통계 관리',
-      onClick: () => navigate('/admin/statistics'),
-    },
-    {
-      key: '/admin/users',
-      icon: <UserOutlined />,
-      label: '사용자 관리',
-      onClick: () => navigate('/admin/users'),
-    },
-    {
-      key: 'system',
-      icon: <SettingOutlined />,
-      label: '시스템 관리',
-      children: [
-        {
-          key: '/admin/system/menus',
-          icon: <MenuOutlined />,
-          label: '메뉴 관리',
-          onClick: () => navigate('/admin/system/menus'),
-        },
-        {
-          key: '/admin/system/admins',
-          icon: <TeamOutlined />,
-          label: '관리자 회원 관리',
-          onClick: () => navigate('/admin/system/admins'),
-        },
-        {
-          key: '/admin/system/ips',
-          icon: <GlobalOutlined />,
-          label: 'IP 관리',
-          onClick: () => navigate('/admin/system/ips'),
-        },
-        {
-          key: '/admin/system/codes',
-          icon: <CodeOutlined />,
-          label: '공통코드 관리',
-          onClick: () => navigate('/admin/system/codes'),
-        },
-        {
-          key: '/admin/system/boards',
-          icon: <AppstoreOutlined />,
-          label: '게시판 설정',
-          onClick: () => navigate('/admin/system/boards'),
-        },
-      ]
-    },
-    {
-      key: '/admin/settings',
-      icon: <SettingOutlined />,
-      label: '설정',
-      onClick: () => navigate('/admin/settings'),
-    },
-  ];
 
   // 사용자 드롭다운 메뉴
   const userMenuItems: MenuProps['items'] = [
@@ -128,6 +123,27 @@ const AdminLayout: React.FC = () => {
     },
   ];
 
+  // 현재 경로에 해당하는 부모 메뉴의 key를 찾아 자동 열기
+  const openKeys = useMemo(() => {
+    if (!menusData) return [];
+    const keys: string[] = [];
+    const findParent = (menus: MenuResponse[]) => {
+      for (const menu of menus) {
+        if (menu.children && menu.children.length > 0) {
+          const childMatch = menu.children.some(
+            (child) => child.menuUrl === location.pathname
+          );
+          if (childMatch) {
+            keys.push(menu.menuUrl || `menu-${menu.id}`);
+          }
+          findParent(menu.children);
+        }
+      }
+    };
+    findParent(menusData);
+    return keys;
+  }, [menusData, location.pathname]);
+
   return (
     <Layout className="admin-layout">
       <Sider trigger={null} collapsible collapsed={collapsed} theme="dark">
@@ -138,6 +154,7 @@ const AdminLayout: React.FC = () => {
           theme="dark"
           mode="inline"
           selectedKeys={[location.pathname]}
+          defaultOpenKeys={openKeys}
           items={menuItems}
         />
       </Sider>

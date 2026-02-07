@@ -166,6 +166,24 @@ public class MenuService {
             }
         }
         
+        // 3단계: 루트 메뉴 및 자식 메뉴를 sortOrder 기준으로 정렬
+        sortMenuTree(rootMenus);
+        
         return rootMenus;
+    }
+    
+    /**
+     * 메뉴 트리를 sortOrder 기준으로 재귀 정렬
+     */
+    private void sortMenuTree(List<MenuResponse> menus) {
+        menus.sort((a, b) -> {
+            int cmp = Integer.compare(a.getSortOrder(), b.getSortOrder());
+            return cmp != 0 ? cmp : Long.compare(a.getId(), b.getId());
+        });
+        for (MenuResponse menu : menus) {
+            if (menu.getChildren() != null && !menu.getChildren().isEmpty()) {
+                sortMenuTree(menu.getChildren());
+            }
+        }
     }
 }
