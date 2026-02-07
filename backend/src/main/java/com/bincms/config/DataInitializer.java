@@ -42,6 +42,7 @@ public class DataInitializer implements ApplicationRunner {
         initRolesAndPermissions();
         initAdminAccount();
         initAdminMenus();
+        supplementMissingData();
     }
     
     /**
@@ -69,6 +70,7 @@ public class DataInitializer implements ApplicationRunner {
         Permission permSystemCode = createPermission("MENU_SYSTEM_CODE", "공통코드 관리 접근", "SYSTEM", "시스템 > 공통코드 관리 접근 권한", 8);
         Permission permSystemBoard = createPermission("MENU_SYSTEM_BOARD", "게시판 설정 접근", "SYSTEM", "시스템 > 게시판 설정 접근 권한", 9);
         Permission permSystemRole = createPermission("MENU_SYSTEM_ROLE", "역할/권한 관리 접근", "SYSTEM", "시스템 > 역할/권한 관리 접근 권한", 10);
+        Permission permContent = createPermission("MENU_CONTENT", "컨텐츠 관리 접근", "MENU", "컨텐츠 관리 메뉴 접근 권한", 11);
         
         // 데이터 조작 권한
         Permission permDataRead = createPermission("DATA_READ", "데이터 조회", "DATA", "데이터 조회 권한", 1);
@@ -93,7 +95,7 @@ public class DataInitializer implements ApplicationRunner {
         
         // 시스템 관리자: 모든 권한
         List<Permission> allPermissions = List.of(
-            permDashboard, permPost, permStatistics, permUser,
+            permDashboard, permPost, permStatistics, permUser, permContent,
             permSystemMenu, permSystemAdmin, permSystemIp, permSystemCode, permSystemBoard, permSystemRole,
             permDataRead, permDataWrite, permDataDelete
         );
@@ -101,7 +103,7 @@ public class DataInitializer implements ApplicationRunner {
         
         // 운영 관리자: 시스템 관리 메뉴 제외
         List<Permission> operationPermissions = List.of(
-            permDashboard, permPost, permStatistics, permUser,
+            permDashboard, permPost, permStatistics, permUser, permContent,
             permDataRead, permDataWrite, permDataDelete
         );
         assignPermissions(operationAdmin, operationPermissions);
@@ -332,6 +334,81 @@ public class DataInitializer implements ApplicationRunner {
                 .build();
         menuRepository.save(roleManagement);
         
-        log.info("Admin menus initialized successfully - total: 11 menus");
+        // 6. 컨텐츠 관리 (depth 1)
+        Menu contentManagement = Menu.builder()
+                .menuType(MenuType.ADMIN)
+                .menuName("컨텐츠 관리")
+                .menuUrl("/admin/contents")
+                .parentId(null)
+                .depth(1)
+                .sortOrder(3)
+                .icon("FileTextOutlined")
+                .description("컨텐츠 관리")
+                .build();
+        menuRepository.save(contentManagement);
+        
+        log.info("Admin menus initialized successfully - total: 12 menus");
+    }
+    
+    /**
+     * 기존 DB에 누락된 데이터 보충 (이미 초기화된 DB에 새로 추가된 항목 반영)
+     */
+    private void supplementMissingData() {
+        log.info("Checking for missing data to supplement...");
+        
+        // 1. MENU_CONTENT 권한 보충
+        if (!permissionRepository.existsByPermCode("MENU_CONTENT")) {
+            Permission permContent = Permission.builder()
+                    .permCode("MENU_CONTENT")
+                    .permName("컨텐츠 관리 접근")
+                    .permGroup("MENU")
+                    .description("컨텐츠 관리 메뉴 접근 권한")
+                    .sortOrder(11)
+                    .build();
+            permissionRepository.save(permContent);
+            log.info("Supplemented missing permission: MENU_CONTENT");
+            
+            // SYSTEM_ADMIN 역할에 매핑
+            roleRepository.findByRoleCode("SYSTEM_ADMIN").ifPresent(role -> {
+                RolePermission rp = RolePermission.builder()
+                        .role(role)
+                        .permission(permContent)
+                        .build();
+                rolePermissionRepository.save(rp);
+                log.info("Mapped MENU_CONTENT to SYSTEM_ADMIN");
+            });
+            
+            // OPERATION_ADMIN 역할에 매핑
+            roleRepository.findByRoleCode("OPERATION_ADMIN").ifPresent(role -> {
+                RolePermission rp = RolePermission.builder()
+                        .role(role)
+                        .permission(permContent)
+                        .build();
+                rolePermissionRepository.save(rp);
+                log.info("Mapped MENU_CONTENT to OPERATION_ADMIN");
+            });
+        }
+        
+        // 2. 컨텐츠 관리 메뉴 보충
+        List<Menu> allMenus = menuRepository.findByMenuTypeOrderBySortOrderAscIdAsc(MenuType.ADMIN);
+        boolean hasContentMenu = allMenus.stream()
+                .anyMatch(m -> "/admin/contents".equals(m.getMenuUrl()));
+        
+        if (!hasContentMenu) {
+            Menu contentMenu = Menu.builder()
+                    .menuType(MenuType.ADMIN)
+                    .menuName("컨텐츠 관리")
+                    .menuUrl("/admin/contents")
+                    .parentId(null)
+                    .depth(1)
+                    .sortOrder(3)
+                    .icon("FileTextOutlined")
+                    .description("컨텐츠 관리")
+                    .build();
+            menuRepository.save(contentMenu);
+            log.info("Supplemented missing menu: 컨텐츠 관리");
+        }
+        
+        log.info("Missing data supplement check completed");
     }
 }

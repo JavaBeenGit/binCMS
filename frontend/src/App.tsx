@@ -10,6 +10,8 @@ import PostManagement from './pages/admin/PostManagement';
 import MenuManagement from './pages/admin/MenuManagement';
 import AdminMemberManagement from './pages/admin/AdminMemberManagement';
 import RoleManagement from './pages/admin/RoleManagement';
+import ContentManagement from './pages/admin/ContentManagement';
+import ContentPage from './user/pages/ContentPage';
 import { useAuthStore } from './stores/authStore';
 import PermissionGuard from './shared/components/PermissionGuard';
 
@@ -51,6 +53,9 @@ function App() {
               <Route path="system/codes" element={<div>공통코드 관리 (개발 예정)</div>} />
               <Route path="system/boards" element={<BoardManagement />} />
               <Route path="system/roles" element={<RoleManagement />} />
+              
+              {/* 컨텐츠 관리 */}
+              <Route path="contents" element={<ContentManagement />} />
             </Route>
           </Route>
           
@@ -65,6 +70,9 @@ function App() {
               )
             } 
           />
+
+          {/* 사용자 컨텐츠 페이지 (인증 불필요) */}
+          <Route path="/page/:contentKey" element={<ContentPage />} />
         </Routes>
       </BrowserRouter>
     </ConfigProvider>

@@ -13,6 +13,7 @@ export const menuPermissionMap: Record<string, string> = {
   '/admin/system/codes': 'MENU_SYSTEM_CODE',
   '/admin/system/boards': 'MENU_SYSTEM_BOARD',
   '/admin/system/roles': 'MENU_SYSTEM_ROLE',
+  '/admin/contents': 'MENU_CONTENT',
 };
 
 /**
