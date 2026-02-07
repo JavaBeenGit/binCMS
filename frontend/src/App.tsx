@@ -11,6 +11,7 @@ import MenuManagement from './pages/admin/MenuManagement';
 import AdminMemberManagement from './pages/admin/AdminMemberManagement';
 import RoleManagement from './pages/admin/RoleManagement';
 import ContentManagement from './pages/admin/ContentManagement';
+import PopupManagement from './pages/admin/PopupManagement';
 import ContentPage from './user/pages/ContentPage';
 import { useAuthStore } from './stores/authStore';
 import PermissionGuard from './shared/components/PermissionGuard';
@@ -56,6 +57,9 @@ function App() {
               
               {/* 컨텐츠 관리 */}
               <Route path="contents" element={<ContentManagement />} />
+              
+              {/* 팝업 관리 */}
+              <Route path="popups" element={<PopupManagement />} />
             </Route>
           </Route>
           

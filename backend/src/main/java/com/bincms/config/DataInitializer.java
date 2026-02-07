@@ -43,6 +43,7 @@ public class DataInitializer implements ApplicationRunner {
         initAdminAccount();
         initAdminMenus();
         supplementMissingData();
+        supplementPopupData();
     }
     
     /**
@@ -410,5 +411,63 @@ public class DataInitializer implements ApplicationRunner {
         }
         
         log.info("Missing data supplement check completed");
+    }
+    
+    /**
+     * 팝업 관리 메뉴/권한 보충
+     */
+    private void supplementPopupData() {
+        // 1. MENU_POPUP 권한 보충
+        if (!permissionRepository.existsByPermCode("MENU_POPUP")) {
+            Permission permPopup = Permission.builder()
+                    .permCode("MENU_POPUP")
+                    .permName("팝업 관리 접근")
+                    .permGroup("MENU")
+                    .description("팝업 관리 메뉴 접근 권한")
+                    .sortOrder(12)
+                    .build();
+            permissionRepository.save(permPopup);
+            log.info("Supplemented missing permission: MENU_POPUP");
+            
+            // SYSTEM_ADMIN 역할에 매핑
+            roleRepository.findByRoleCode("SYSTEM_ADMIN").ifPresent(role -> {
+                RolePermission rp = RolePermission.builder()
+                        .role(role)
+                        .permission(permPopup)
+                        .build();
+                rolePermissionRepository.save(rp);
+                log.info("Mapped MENU_POPUP to SYSTEM_ADMIN");
+            });
+            
+            // OPERATION_ADMIN 역할에 매핑
+            roleRepository.findByRoleCode("OPERATION_ADMIN").ifPresent(role -> {
+                RolePermission rp = RolePermission.builder()
+                        .role(role)
+                        .permission(permPopup)
+                        .build();
+                rolePermissionRepository.save(rp);
+                log.info("Mapped MENU_POPUP to OPERATION_ADMIN");
+            });
+        }
+        
+        // 2. 팝업 관리 메뉴 보충
+        List<Menu> allMenus = menuRepository.findByMenuTypeOrderBySortOrderAscIdAsc(MenuType.ADMIN);
+        boolean hasPopupMenu = allMenus.stream()
+                .anyMatch(m -> "/admin/popups".equals(m.getMenuUrl()));
+        
+        if (!hasPopupMenu) {
+            Menu popupMenu = Menu.builder()
+                    .menuType(MenuType.ADMIN)
+                    .menuName("팝업 관리")
+                    .menuUrl("/admin/popups")
+                    .parentId(null)
+                    .depth(1)
+                    .sortOrder(4)
+                    .icon("NotificationOutlined")
+                    .description("팝업 관리")
+                    .build();
+            menuRepository.save(popupMenu);
+            log.info("Supplemented missing menu: 팝업 관리");
+        }
     }
 }

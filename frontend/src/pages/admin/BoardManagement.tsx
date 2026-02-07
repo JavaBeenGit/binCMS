@@ -134,23 +134,27 @@ const BoardManagement: React.FC = () => {
       dataIndex: 'id',
       key: 'id',
       width: 80,
+      onHeaderCell: () => ({ style: { textAlign: 'center' } }),
     },
     {
       title: '게시판 코드',
       dataIndex: 'boardCode',
       key: 'boardCode',
       width: 150,
+      onHeaderCell: () => ({ style: { textAlign: 'center' } }),
     },
     {
       title: '게시판 이름',
       dataIndex: 'boardName',
       key: 'boardName',
+      onHeaderCell: () => ({ style: { textAlign: 'center' } }),
     },
     {
       title: '설명',
       dataIndex: 'description',
       key: 'description',
       ellipsis: true,
+      onHeaderCell: () => ({ style: { textAlign: 'center' } }),
     },
     {
       title: '정렬 순서',
@@ -176,6 +180,7 @@ const BoardManagement: React.FC = () => {
       dataIndex: 'regDt',
       key: 'regDt',
       width: 180,
+      onHeaderCell: () => ({ style: { textAlign: 'center' } }),
       render: (date: string) => new Date(date).toLocaleString('ko-KR'),
     },
     {
@@ -235,6 +240,7 @@ const BoardManagement: React.FC = () => {
       </div>
 
       <Table
+        bordered
         columns={columns}
         dataSource={boardsData?.data || []}
         rowKey="id"

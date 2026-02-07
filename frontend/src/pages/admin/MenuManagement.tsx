@@ -298,6 +298,7 @@ const MenuManagement: React.FC = () => {
       <Tabs activeKey={activeTab} onChange={(key) => setActiveTab(key as MenuType)}>
         <TabPane tab="관리자 메뉴" key={MenuType.ADMIN}>
           <Table
+            bordered
             columns={columns}
             dataSource={menusData ? flattenForTable(menusData) : []}
             rowKey="id"
@@ -307,6 +308,7 @@ const MenuManagement: React.FC = () => {
         </TabPane>
         <TabPane tab="사용자 메뉴" key={MenuType.USER}>
           <Table
+            bordered
             columns={columns}
             dataSource={menusData ? flattenForTable(menusData) : []}
             rowKey="id"

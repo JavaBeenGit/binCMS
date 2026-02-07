@@ -144,18 +144,21 @@ const PostManagement: React.FC = () => {
       dataIndex: 'id',
       key: 'id',
       width: 80,
+      onHeaderCell: () => ({ style: { textAlign: 'center' } }),
     },
     {
       title: '게시판',
       dataIndex: 'boardName',
       key: 'boardName',
       width: 120,
+      onHeaderCell: () => ({ style: { textAlign: 'center' } }),
     },
     {
       title: '제목',
       dataIndex: 'title',
       key: 'title',
       ellipsis: true,
+      onHeaderCell: () => ({ style: { textAlign: 'center' } }),
       render: (text, record) => (
         <Space>
           {record.noticeYn === 'Y' && <Tag color="red">공지</Tag>}
@@ -175,6 +178,7 @@ const PostManagement: React.FC = () => {
       dataIndex: 'regDt',
       key: 'regDt',
       width: 180,
+      onHeaderCell: () => ({ style: { textAlign: 'center' } }),
       render: (text) => new Date(text).toLocaleString('ko-KR'),
     },
     {
@@ -256,6 +260,7 @@ const PostManagement: React.FC = () => {
       </Space>
 
       <Table
+        bordered
         columns={columns}
         dataSource={postsData?.content || []}
         rowKey="id"

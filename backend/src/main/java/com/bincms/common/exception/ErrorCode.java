@@ -37,7 +37,10 @@ public enum ErrorCode {
     SITE_NOT_FOUND(HttpStatus.NOT_FOUND, "S001", "사이트를 찾을 수 없습니다."),
     
     // Content
-    CONTENT_NOT_FOUND(HttpStatus.NOT_FOUND, "CO001", "콘텐츠를 찾을 수 없습니다.");
+    CONTENT_NOT_FOUND(HttpStatus.NOT_FOUND, "CO001", "콘텐츠를 찾을 수 없습니다."),
+    
+    // Popup
+    POPUP_NOT_FOUND(HttpStatus.NOT_FOUND, "PO001", "팝업을 찾을 수 없습니다.");
     
     private final HttpStatus status;
     private final String code;

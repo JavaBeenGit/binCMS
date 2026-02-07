@@ -189,12 +189,14 @@ const AdminMemberManagement: React.FC = () => {
       dataIndex: 'loginId',
       key: 'loginId',
       width: 150,
+      onHeaderCell: () => ({ style: { textAlign: 'center' } }),
     },
     {
       title: '이름',
       dataIndex: 'name',
       key: 'name',
       width: 120,
+      onHeaderCell: () => ({ style: { textAlign: 'center' } }),
     },
     {
       title: '이메일',
@@ -202,12 +204,14 @@ const AdminMemberManagement: React.FC = () => {
       key: 'email',
       width: 200,
       ellipsis: true,
+      onHeaderCell: () => ({ style: { textAlign: 'center' } }),
     },
     {
       title: '전화번호',
       dataIndex: 'phoneNumber',
       key: 'phoneNumber',
       width: 140,
+      onHeaderCell: () => ({ style: { textAlign: 'center' } }),
     },
     {
       title: '권한',
@@ -243,6 +247,7 @@ const AdminMemberManagement: React.FC = () => {
       dataIndex: 'regDt',
       key: 'regDt',
       width: 160,
+      onHeaderCell: () => ({ style: { textAlign: 'center' } }),
       render: (regDt: string) => regDt ? new Date(regDt).toLocaleString('ko-KR') : '-',
     },
     {
@@ -319,6 +324,7 @@ const AdminMemberManagement: React.FC = () => {
       </div>
 
       <Table
+        bordered
         columns={columns}
         dataSource={membersData?.content || []}
         rowKey="id"

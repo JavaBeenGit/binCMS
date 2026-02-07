@@ -140,7 +140,7 @@ const ContentManagement: React.FC = () => {
       contentToolbar: ['tableColumn', 'tableRow', 'mergeTableCells'],
     },
     language: 'ko',
-  };
+  } as any;
 
   // ── 핸들러 ──
   const handleCreate = () => {
@@ -202,6 +202,7 @@ const ContentManagement: React.FC = () => {
       dataIndex: 'contentKey',
       key: 'contentKey',
       width: 180,
+      onHeaderCell: () => ({ style: { textAlign: 'center' } }),
       render: (text: string) => (
         <Tooltip title={text}>
           <Tag color="blue">{text}</Tag>
@@ -213,6 +214,7 @@ const ContentManagement: React.FC = () => {
       dataIndex: 'title',
       key: 'title',
       ellipsis: true,
+      onHeaderCell: () => ({ style: { textAlign: 'center' } }),
     },
     {
       title: '조회수',
@@ -304,6 +306,7 @@ const ContentManagement: React.FC = () => {
         }
       >
         <Table
+          bordered
           columns={columns}
           dataSource={data?.content}
           rowKey="id"

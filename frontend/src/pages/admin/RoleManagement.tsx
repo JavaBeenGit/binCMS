@@ -199,6 +199,7 @@ const RoleManagement: React.FC = () => {
       dataIndex: 'roleCode',
       key: 'roleCode',
       width: 180,
+      onHeaderCell: () => ({ style: { textAlign: 'center' } }),
       render: (code: string) => {
         const colorMap: Record<string, string> = {
           SYSTEM_ADMIN: 'red',
@@ -214,12 +215,14 @@ const RoleManagement: React.FC = () => {
       dataIndex: 'roleName',
       key: 'roleName',
       width: 150,
+      onHeaderCell: () => ({ style: { textAlign: 'center' } }),
     },
     {
       title: '설명',
       dataIndex: 'description',
       key: 'description',
       ellipsis: true,
+      onHeaderCell: () => ({ style: { textAlign: 'center' } }),
     },
     {
       title: '정렬',
@@ -325,6 +328,7 @@ const RoleManagement: React.FC = () => {
       </div>
 
       <Table
+        bordered
         columns={columns}
         dataSource={rolesData || []}
         rowKey="id"
