@@ -69,7 +69,12 @@ sourceSets {
 }
 
 tasks.withType(JavaCompile) {
+    options.encoding = 'UTF-8'
     options.generatedSourceOutputDirectory = file(querydslDir)
+}
+
+bootRun {
+    jvmArgs = ['-Dfile.encoding=UTF-8', '-Dconsole.encoding=UTF-8']
 }
 
 clean {

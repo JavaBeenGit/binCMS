@@ -11,10 +11,10 @@ import {
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import {
   adminMemberApi,
+  roleApi,
   AdminMemberCreateRequest,
   AdminMemberUpdateRequest,
   AdminMemberResponse,
-  MemberRole,
 } from '../../api/endpoints/adminMember';
 import type { ColumnsType } from 'antd/es/table';
 
@@ -37,6 +37,15 @@ const AdminMemberManagement: React.FC = () => {
     queryKey: ['adminMembers', currentPage, pageSize, searchKeyword],
     queryFn: async () => {
       const response = await adminMemberApi.getAdminMembers(currentPage, pageSize, searchKeyword || undefined);
+      return response.data;
+    },
+  });
+
+  // 관리자 역할 목록 조회 (셀렉트박스용)
+  const { data: rolesData } = useQuery({
+    queryKey: ['adminRoles'],
+    queryFn: async () => {
+      const response = await roleApi.getAdminRoles();
       return response.data;
     },
   });
@@ -117,7 +126,7 @@ const AdminMemberManagement: React.FC = () => {
 
   const handleCreate = () => {
     createForm.resetFields();
-    createForm.setFieldsValue({ role: MemberRole.ADMIN });
+    createForm.setFieldsValue({ roleCode: 'GENERAL_ADMIN' });
     setIsCreateModalOpen(true);
   };
 
@@ -127,7 +136,7 @@ const AdminMemberManagement: React.FC = () => {
       name: member.name,
       email: member.email,
       phoneNumber: member.phoneNumber,
-      role: member.role,
+      roleCode: member.roleCode,
     });
     setIsEditModalOpen(true);
   };
@@ -202,15 +211,20 @@ const AdminMemberManagement: React.FC = () => {
     },
     {
       title: '권한',
-      dataIndex: 'role',
-      key: 'role',
+      dataIndex: 'roleCode',
+      key: 'roleCode',
       width: 100,
       align: 'center',
-      render: (role: MemberRole) => (
-        <Tag color={role === MemberRole.ADMIN ? 'blue' : 'default'}>
-          {role === MemberRole.ADMIN ? '관리자' : '사용자'}
-        </Tag>
-      ),
+      render: (_: string, record: AdminMemberResponse) => {
+        const colorMap: Record<string, string> = {
+          'SYSTEM_ADMIN': 'red',
+          'OPERATION_ADMIN': 'blue',
+          'GENERAL_ADMIN': 'cyan',
+          'USER': 'default',
+        };
+        const color = colorMap[record.roleCode] || 'default';
+        return <Tag color={color}>{record.roleName || record.roleCode}</Tag>;
+      },
     },
     {
       title: '상태',
@@ -372,13 +386,14 @@ const AdminMemberManagement: React.FC = () => {
             <Input placeholder="010-1234-5678" />
           </Form.Item>
           <Form.Item
-            name="role"
+            name="roleCode"
             label="권한"
             rules={[{ required: true, message: '권한을 선택해주세요.' }]}
           >
             <Select>
-              <Select.Option value={MemberRole.ADMIN}>관리자</Select.Option>
-              <Select.Option value={MemberRole.USER}>사용자</Select.Option>
+              {rolesData?.map(role => (
+                <Select.Option key={role.roleCode} value={role.roleCode}>{role.roleName}</Select.Option>
+              ))}
             </Select>
           </Form.Item>
         </Form>
@@ -420,13 +435,14 @@ const AdminMemberManagement: React.FC = () => {
             <Input placeholder="010-1234-5678" />
           </Form.Item>
           <Form.Item
-            name="role"
+            name="roleCode"
             label="권한"
             rules={[{ required: true, message: '권한을 선택해주세요.' }]}
           >
             <Select>
-              <Select.Option value={MemberRole.ADMIN}>관리자</Select.Option>
-              <Select.Option value={MemberRole.USER}>사용자</Select.Option>
+              {rolesData?.map(role => (
+                <Select.Option key={role.roleCode} value={role.roleCode}>{role.roleName}</Select.Option>
+              ))}
             </Select>
           </Form.Item>
         </Form>

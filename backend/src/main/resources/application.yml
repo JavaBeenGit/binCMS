@@ -13,7 +13,7 @@ spring:
       hibernate:
         format_sql: true
         use_sql_comments: true
-        highlight_sql: true
+        highlight_sql: false
   
   security:
     user:
@@ -22,6 +22,11 @@ spring:
 
 server:
   port: 8080
+  servlet:
+    encoding:
+      charset: UTF-8
+      enabled: true
+      force: true
   error:
     include-message: always
     include-binding-errors: always
@@ -29,6 +34,8 @@ server:
     include-exception: false
 
 logging:
+  file:
+    name: logs/bincms.log
   level:
     root: INFO
     com.bincms: DEBUG
@@ -44,7 +51,7 @@ spring:
       on-profile: local
   
   datasource:
-    url: jdbc:mysql://localhost:3306/bincms?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=Asia/Seoul
+    url: jdbc:mysql://localhost:3306/bincms?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=Asia/Seoul&characterEncoding=UTF-8&useUnicode=true
     driver-class-name: com.mysql.cj.jdbc.Driver
     username: bincms
     password: bincms1234
@@ -56,6 +63,9 @@ spring:
     properties:
       hibernate:
         dialect: org.hibernate.dialect.MySQLDialect
+        '[hibernate.connection.charSet]': UTF-8
+        '[hibernate.connection.characterEncoding]': UTF-8
+        '[hibernate.connection.useUnicode]': true
 
 cors:
   allowed-origins:

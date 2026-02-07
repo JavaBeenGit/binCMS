@@ -15,6 +15,9 @@ import {
   CodeOutlined,
   AppstoreOutlined,
   QuestionCircleOutlined,
+  SafetyCertificateOutlined,
+  UserSwitchOutlined,
+  LayoutOutlined,
 } from '@ant-design/icons';
 import { Outlet, useNavigate, useLocation } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
@@ -38,6 +41,9 @@ const iconMap: Record<string, React.ReactNode> = {
   CodeOutlined: <CodeOutlined />,
   AppstoreOutlined: <AppstoreOutlined />,
   LogoutOutlined: <LogoutOutlined />,
+  SafetyCertificateOutlined: <SafetyCertificateOutlined />,
+  UserSwitchOutlined: <UserSwitchOutlined />,
+  LayoutOutlined: <LayoutOutlined />,
 };
 
 const getIcon = (iconName?: string): React.ReactNode => {
@@ -63,29 +69,67 @@ const AdminLayout: React.FC = () => {
     },
   });
 
-  // MenuResponse 트리 → Antd Menu items 변환
-  const convertToMenuItems = (menus: MenuResponse[]): MenuProps['items'] => {
-    return menus.map((menu) => {
-      const hasChildren = menu.children && menu.children.length > 0;
+  // 메뉴 URL → 필요 권한 매핑
+  const menuPermissionMap: Record<string, string> = {
+    '/admin': 'MENU_DASHBOARD',
+    '/admin/posts': 'MENU_POST',
+    '/admin/statistics': 'MENU_STATISTICS',
+    '/admin/users': 'MENU_USER',
+    '/admin/system/menus': 'MENU_SYSTEM_MENU',
+    '/admin/system/admins': 'MENU_SYSTEM_ADMIN',
+    '/admin/system/ips': 'MENU_SYSTEM_IP',
+    '/admin/system/codes': 'MENU_SYSTEM_CODE',
+    '/admin/system/boards': 'MENU_SYSTEM_BOARD',
+    '/admin/system/roles': 'MENU_SYSTEM_ROLE',
+  };
 
-      if (hasChildren) {
+  const userPermissions = user?.permissions || [];
+
+  // 사용자가 해당 메뉴에 접근 권한이 있는지 체크
+  const hasMenuPermission = (menuUrl?: string): boolean => {
+    if (!menuUrl) return true; // 부모 메뉴(URL 없음)는 자식으로 판단
+    const requiredPerm = menuPermissionMap[menuUrl];
+    if (!requiredPerm) return true; // 매핑 없으면 허용
+    return userPermissions.includes(requiredPerm);
+  };
+
+  // MenuResponse 트리 → Antd Menu items 변환 (권한 기반 필터링)
+  const convertToMenuItems = (menus: MenuResponse[]): MenuProps['items'] => {
+    return menus
+      .filter((menu) => {
+        // 자식이 있는 부모 메뉴: 접근 가능한 자식이 하나라도 있으면 표시
+        if (menu.children && menu.children.length > 0) {
+          return menu.children.some(c => hasMenuPermission(c.menuUrl));
+        }
+        // 단일 메뉴: 권한 체크
+        return hasMenuPermission(menu.menuUrl);
+      })
+      .map((menu) => {
+        const hasChildren = menu.children && menu.children.length > 0;
+
+        if (hasChildren) {
+          const filteredChildren = menu.children!.filter((child) => {
+            return hasMenuPermission(child.menuUrl);
+          });
+          if (filteredChildren.length === 0) return null;
+          return {
+            key: menu.menuUrl || `menu-${menu.id}`,
+            icon: getIcon(menu.icon),
+            label: menu.menuName,
+            children: convertToMenuItems(filteredChildren),
+          };
+        }
+
         return {
           key: menu.menuUrl || `menu-${menu.id}`,
           icon: getIcon(menu.icon),
           label: menu.menuName,
-          children: convertToMenuItems(menu.children!),
+          onClick: () => {
+            if (menu.menuUrl) navigate(menu.menuUrl);
+          },
         };
-      }
-
-      return {
-        key: menu.menuUrl || `menu-${menu.id}`,
-        icon: getIcon(menu.icon),
-        label: menu.menuName,
-        onClick: () => {
-          if (menu.menuUrl) navigate(menu.menuUrl);
-        },
-      };
-    });
+      })
+      .filter(Boolean);
   };
 
   // DB 메뉴 데이터를 사이드바 아이템으로 변환
@@ -95,7 +139,7 @@ const AdminLayout: React.FC = () => {
     }
     // DB 메뉴 로딩 전 기본 폴백
     return [];
-  }, [menusData]);
+  }, [menusData, user]);
 
   // 로그아웃
   const handleLogout = () => {

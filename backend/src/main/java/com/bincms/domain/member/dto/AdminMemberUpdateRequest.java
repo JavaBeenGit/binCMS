@@ -1,6 +1,5 @@
 package com.bincms.domain.member.dto;
 
-import com.bincms.domain.member.entity.MemberRole;
 import jakarta.validation.constraints.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -22,6 +21,6 @@ public class AdminMemberUpdateRequest {
     @Pattern(regexp = "^01[0-9]-?[0-9]{3,4}-?[0-9]{4}$", message = "올바른 전화번호 형식이 아닙니다")
     private String phoneNumber;
     
-    @NotNull(message = "권한은 필수입니다")
-    private MemberRole role;
+    @NotBlank(message = "역할 코드는 필수입니다")
+    private String roleCode;
 }

@@ -29,6 +29,10 @@ public enum ErrorCode {
     MENU_NOT_FOUND(HttpStatus.NOT_FOUND, "MN001", "메뉴를 찾을 수 없습니다."),
     MENU_HAS_CHILDREN(HttpStatus.BAD_REQUEST, "MN002", "하위 메뉴가 있어 삭제할 수 없습니다."),
     
+    // Role
+    ROLE_NOT_FOUND(HttpStatus.NOT_FOUND, "R001", "역할을 찾을 수 없습니다."),
+    PERMISSION_NOT_FOUND(HttpStatus.NOT_FOUND, "R002", "권한을 찾을 수 없습니다."),
+    
     // Site
     SITE_NOT_FOUND(HttpStatus.NOT_FOUND, "S001", "사이트를 찾을 수 없습니다."),
     

@@ -1,6 +1,7 @@
 package com.bincms.domain.member.entity;
 
 import com.bincms.common.entity.BaseEntity;
+import com.bincms.domain.role.entity.Role;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -61,12 +62,13 @@ public class Member extends BaseEntity {
     private String phoneNumber;
     
     /**
-     * 회원 권한
+     * 회원 역할 (TB_ROLES FK)
      */
-    @Enumerated(EnumType.STRING)
-    @Column(name = "ROLE", nullable = false, length = 20)
-    @Comment("회원 권한")
-    private MemberRole role;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "ROLE_ID", nullable = false,
+            foreignKey = @ForeignKey(name = "fk_members_role"))
+    @Comment("역할 ID")
+    private Role role;
     
     /**
      * 활성화 여부
@@ -76,13 +78,13 @@ public class Member extends BaseEntity {
     private Boolean active;
     
     @Builder
-    public Member(String loginId, String email, String password, String name, String phoneNumber, MemberRole role) {
+    public Member(String loginId, String email, String password, String name, String phoneNumber, Role role) {
         this.loginId = loginId;
         this.email = email;
         this.password = password;
         this.name = name;
         this.phoneNumber = phoneNumber;
-        this.role = role != null ? role : MemberRole.USER;
+        this.role = role;
         this.active = true;
     }
     
@@ -125,9 +127,16 @@ public class Member extends BaseEntity {
     }
     
     /**
-     * 권한 변경
+     * 역할 변경
      */
-    public void changeRole(MemberRole role) {
+    public void changeRole(Role role) {
         this.role = role;
+    }
+    
+    /**
+     * 역할 코드 조회 (편의 메서드)
+     */
+    public String getRoleCode() {
+        return this.role != null ? this.role.getRoleCode() : null;
     }
 }

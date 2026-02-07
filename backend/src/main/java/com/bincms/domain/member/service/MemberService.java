@@ -5,14 +5,17 @@ import com.bincms.common.exception.ErrorCode;
 import com.bincms.common.security.JwtTokenProvider;
 import com.bincms.domain.member.dto.*;
 import com.bincms.domain.member.entity.Member;
-import com.bincms.domain.member.entity.MemberRole;
 import com.bincms.domain.member.repository.MemberRepository;
+import com.bincms.domain.role.entity.Role;
+import com.bincms.domain.role.service.RoleService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 /**
  * 회원 서비스
@@ -25,6 +28,7 @@ public class MemberService {
     private final MemberRepository memberRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtTokenProvider jwtTokenProvider;
+    private final RoleService roleService;
     
     /**
      * 회원가입
@@ -36,6 +40,9 @@ public class MemberService {
             throw new BusinessException(ErrorCode.DUPLICATE_RESOURCE, "이미 사용중인 로그인 ID입니다");
         }
         
+        // 기본 역할: USER
+        Role userRole = roleService.getRoleByCode("USER");
+        
         // 회원 생성
         Member member = Member.builder()
                 .loginId(request.getLoginId())
@@ -43,6 +50,7 @@ public class MemberService {
                 .password(passwordEncoder.encode(request.getPassword()))
                 .name(request.getName())
                 .phoneNumber(request.getPhoneNumber())
+                .role(userRole)
                 .build();
         
         Member savedMember = memberRepository.save(member);
@@ -65,10 +73,13 @@ public class MemberService {
                     "로그인 ID 또는 비밀번호가 올바르지 않습니다");
         }
         
-        // JWT 토큰 생성
-        String token = jwtTokenProvider.generateToken(member.getLoginId(), member.getRole().getKey());
+        // JWT 토큰 생성 (역할 코드 사용)
+        String token = jwtTokenProvider.generateToken(member.getLoginId(), member.getRole().getRoleCode());
         
-        return LoginResponse.of(token, MemberResponse.from(member));
+        // 사용자 권한 목록 조회
+        List<String> permissions = roleService.getPermissionsByRoleCode(member.getRole().getRoleCode());
+        
+        return LoginResponse.of(token, MemberResponse.from(member, permissions));
     }
     
     /**
@@ -88,7 +99,8 @@ public class MemberService {
      * 관리자 회원 목록 조회 (페이징, 검색)
      */
     public Page<MemberResponse> getAdminMembers(String keyword, Pageable pageable) {
-        Page<Member> members = memberRepository.findByRoleAndKeyword(MemberRole.ADMIN, keyword, pageable);
+        List<String> adminRoleCodes = List.of("SYSTEM_ADMIN", "OPERATION_ADMIN", "GENERAL_ADMIN");
+        Page<Member> members = memberRepository.findByRoleCodesAndKeyword(adminRoleCodes, keyword, pageable);
         return members.map(MemberResponse::from);
     }
     
@@ -110,13 +122,15 @@ public class MemberService {
             throw new BusinessException(ErrorCode.DUPLICATE_RESOURCE, "이미 사용중인 로그인 ID입니다");
         }
         
+        Role role = roleService.getRoleByCode(request.getRoleCode());
+        
         Member member = Member.builder()
                 .loginId(request.getLoginId())
                 .email(request.getEmail())
                 .password(passwordEncoder.encode(request.getPassword()))
                 .name(request.getName())
                 .phoneNumber(request.getPhoneNumber())
-                .role(request.getRole())
+                .role(role)
                 .build();
         
         Member savedMember = memberRepository.save(member);
@@ -132,7 +146,9 @@ public class MemberService {
                 .orElseThrow(() -> new BusinessException(ErrorCode.MEMBER_NOT_FOUND));
         
         member.updateAdminInfo(request.getName(), request.getEmail(), request.getPhoneNumber());
-        member.changeRole(request.getRole());
+        
+        Role role = roleService.getRoleByCode(request.getRoleCode());
+        member.changeRole(role);
         
         return MemberResponse.from(member);
     }

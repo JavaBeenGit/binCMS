@@ -1,34 +1,150 @@
 package com.bincms.config;
 
 import com.bincms.domain.member.entity.Member;
-import com.bincms.domain.member.entity.MemberRole;
 import com.bincms.domain.member.repository.MemberRepository;
 import com.bincms.domain.menu.entity.Menu;
 import com.bincms.domain.menu.entity.MenuType;
 import com.bincms.domain.menu.repository.MenuRepository;
+import com.bincms.domain.role.entity.Permission;
+import com.bincms.domain.role.entity.Role;
+import com.bincms.domain.role.entity.RolePermission;
+import com.bincms.domain.role.repository.PermissionRepository;
+import com.bincms.domain.role.repository.RolePermissionRepository;
+import com.bincms.domain.role.repository.RoleRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
+import org.springframework.core.annotation.Order;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
+
+import java.util.List;
 
 /**
  * 애플리케이션 초기 데이터 생성
  */
 @Slf4j
 @Component
+@Order(1) // RoleMigrationRunner(Order=0) 이후에 실행
 @RequiredArgsConstructor
 public class DataInitializer implements ApplicationRunner {
     
     private final MemberRepository memberRepository;
     private final MenuRepository menuRepository;
+    private final RoleRepository roleRepository;
+    private final PermissionRepository permissionRepository;
+    private final RolePermissionRepository rolePermissionRepository;
     private final PasswordEncoder passwordEncoder;
     
     @Override
     public void run(ApplicationArguments args) {
+        initRolesAndPermissions();
         initAdminAccount();
         initAdminMenus();
+    }
+    
+    /**
+     * 역할/권한 초기화
+     */
+    private void initRolesAndPermissions() {
+        // 이미 역할이 있으면 스킵
+        if (roleRepository.count() > 0) {
+            log.info("Roles already exist, skipping initialization");
+            return;
+        }
+        
+        log.info("Initializing roles and permissions...");
+        
+        // ==================== 권한(Permission) 생성 ====================
+        
+        // 메뉴 접근 권한
+        Permission permDashboard = createPermission("MENU_DASHBOARD", "대시보드 접근", "MENU", "대시보드 메뉴 접근 권한", 1);
+        Permission permPost = createPermission("MENU_POST", "게시글 관리 접근", "MENU", "게시글 관리 메뉴 접근 권한", 2);
+        Permission permStatistics = createPermission("MENU_STATISTICS", "통계 관리 접근", "MENU", "통계 관리 메뉴 접근 권한", 3);
+        Permission permUser = createPermission("MENU_USER", "사용자 관리 접근", "MENU", "사용자 관리 메뉴 접근 권한", 4);
+        Permission permSystemMenu = createPermission("MENU_SYSTEM_MENU", "메뉴 관리 접근", "SYSTEM", "시스템 > 메뉴 관리 접근 권한", 5);
+        Permission permSystemAdmin = createPermission("MENU_SYSTEM_ADMIN", "관리자 회원 관리 접근", "SYSTEM", "시스템 > 관리자 회원 관리 접근 권한", 6);
+        Permission permSystemIp = createPermission("MENU_SYSTEM_IP", "IP 관리 접근", "SYSTEM", "시스템 > IP 관리 접근 권한", 7);
+        Permission permSystemCode = createPermission("MENU_SYSTEM_CODE", "공통코드 관리 접근", "SYSTEM", "시스템 > 공통코드 관리 접근 권한", 8);
+        Permission permSystemBoard = createPermission("MENU_SYSTEM_BOARD", "게시판 설정 접근", "SYSTEM", "시스템 > 게시판 설정 접근 권한", 9);
+        Permission permSystemRole = createPermission("MENU_SYSTEM_ROLE", "역할/권한 관리 접근", "SYSTEM", "시스템 > 역할/권한 관리 접근 권한", 10);
+        
+        // 데이터 조작 권한
+        Permission permDataRead = createPermission("DATA_READ", "데이터 조회", "DATA", "데이터 조회 권한", 1);
+        Permission permDataWrite = createPermission("DATA_WRITE", "데이터 등록/수정", "DATA", "데이터 등록 및 수정 권한", 2);
+        Permission permDataDelete = createPermission("DATA_DELETE", "데이터 삭제", "DATA", "데이터 삭제 권한", 3);
+        
+        // ==================== 역할(Role) 생성 ====================
+        
+        // 일반 사용자
+        Role userRole = createRole("USER", "일반 사용자", "일반 사용자 역할", 4);
+        
+        // 시스템 관리자 (모든 권한)
+        Role systemAdmin = createRole("SYSTEM_ADMIN", "시스템 관리자", "모든 권한을 가진 시스템 관리자", 1);
+        
+        // 운영 관리자 (시스템 관리 메뉴 접근 불가)
+        Role operationAdmin = createRole("OPERATION_ADMIN", "운영 관리자", "시스템 관리 메뉴를 제외한 운영 관리자", 2);
+        
+        // 일반 관리자
+        Role generalAdmin = createRole("GENERAL_ADMIN", "일반 관리자", "기본 관리 기능만 접근 가능한 일반 관리자", 3);
+        
+        // ==================== 역할-권한 매핑 ====================
+        
+        // 시스템 관리자: 모든 권한
+        List<Permission> allPermissions = List.of(
+            permDashboard, permPost, permStatistics, permUser,
+            permSystemMenu, permSystemAdmin, permSystemIp, permSystemCode, permSystemBoard, permSystemRole,
+            permDataRead, permDataWrite, permDataDelete
+        );
+        assignPermissions(systemAdmin, allPermissions);
+        
+        // 운영 관리자: 시스템 관리 메뉴 제외
+        List<Permission> operationPermissions = List.of(
+            permDashboard, permPost, permStatistics, permUser,
+            permDataRead, permDataWrite, permDataDelete
+        );
+        assignPermissions(operationAdmin, operationPermissions);
+        
+        // 일반 관리자: 기본 메뉴만
+        List<Permission> generalPermissions = List.of(
+            permDashboard, permPost, permStatistics,
+            permDataRead, permDataWrite
+        );
+        assignPermissions(generalAdmin, generalPermissions);
+        
+        log.info("Roles and permissions initialized successfully");
+    }
+    
+    private Permission createPermission(String code, String name, String group, String description, int sortOrder) {
+        Permission permission = Permission.builder()
+                .permCode(code)
+                .permName(name)
+                .permGroup(group)
+                .description(description)
+                .sortOrder(sortOrder)
+                .build();
+        return permissionRepository.save(permission);
+    }
+    
+    private Role createRole(String code, String name, String description, int sortOrder) {
+        Role role = Role.builder()
+                .roleCode(code)
+                .roleName(name)
+                .description(description)
+                .sortOrder(sortOrder)
+                .build();
+        return roleRepository.save(role);
+    }
+    
+    private void assignPermissions(Role role, List<Permission> permissions) {
+        for (Permission permission : permissions) {
+            RolePermission rp = RolePermission.builder()
+                    .role(role)
+                    .permission(permission)
+                    .build();
+            rolePermissionRepository.save(rp);
+        }
     }
     
     /**
@@ -43,13 +159,17 @@ public class DataInitializer implements ApplicationRunner {
             return;
         }
         
+        // 시스템 관리자 역할 조회
+        Role systemAdminRole = roleRepository.findByRoleCode("SYSTEM_ADMIN")
+                .orElseThrow(() -> new RuntimeException("SYSTEM_ADMIN role not found"));
+        
         // Admin 계정 생성
         Member admin = Member.builder()
                 .loginId(adminLoginId)
-                .email(null)  // 이메일은 선택사항
+                .email(null)
                 .password(passwordEncoder.encode("1234"))
                 .name("관리자")
-                .role(MemberRole.ADMIN)
+                .role(systemAdminRole)
                 .build();
         
         memberRepository.save(admin);
@@ -199,6 +319,19 @@ public class DataInitializer implements ApplicationRunner {
                 .build();
         menuRepository.save(boardSettings);
         
-        log.info("Admin menus initialized successfully - total: 10 menus");
+        // 5-6. 권한관리 (depth 2)
+        Menu roleManagement = Menu.builder()
+                .menuType(MenuType.ADMIN)
+                .menuName("권한관리")
+                .menuUrl("/admin/system/roles")
+                .parentId(systemId)
+                .depth(2)
+                .sortOrder(6)
+                .icon("SafetyCertificateOutlined")
+                .description("역할/권한 관리")
+                .build();
+        menuRepository.save(roleManagement);
+        
+        log.info("Admin menus initialized successfully - total: 11 menus");
     }
 }

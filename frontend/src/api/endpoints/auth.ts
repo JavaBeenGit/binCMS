@@ -19,7 +19,9 @@ export interface MemberResponse {
   email?: string;
   name: string;
   phoneNumber?: string;
-  role: 'USER' | 'ADMIN';
+  roleCode: string;
+  roleName: string;
+  permissions?: string[];
   active: boolean;
   regDt: string;
 }
