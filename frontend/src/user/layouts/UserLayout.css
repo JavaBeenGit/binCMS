@@ -274,7 +274,7 @@
 .user-footer {
   background: #1a1a2e;
   color: #aaa;
-  padding: 48px 24px 32px;
+  padding: 52px 24px 32px;
 }
 
 .footer-inner {
@@ -283,28 +283,67 @@
   display: grid;
   grid-template-columns: 2fr 1fr 1fr;
   gap: 48px;
+  align-items: start;
+}
+
+/* ── 브랜드 섹션 (로고+문구 통합) ── */
+.footer-brand-section {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
 }
 
 .footer-brand {
   display: flex;
   align-items: center;
-  gap: 10px;
-  font-size: 20px;
-  font-weight: 700;
-  color: #fff;
-  margin-bottom: 16px;
+  gap: 16px;
+  margin-bottom: 20px;
 }
 
 .footer-logo-img {
-  height: 72px;
+  height: 90px;
   width: auto;
   object-fit: contain;
+  flex-shrink: 0;
+}
+
+.footer-brand-text {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.footer-brand-name {
+  font-size: 22px;
+  font-weight: 700;
+  color: #fff;
+  letter-spacing: -0.3px;
+  line-height: 1.2;
+}
+
+.footer-brand-slogan {
+  font-size: 13px;
+  color: #8899aa;
+  letter-spacing: 0.3px;
 }
 
 .footer-desc {
-  font-size: 13px;
-  line-height: 1.8;
-  color: #888;
+  font-size: 14px;
+  line-height: 1.6;
+  color: #b0b8c4;
+  margin-bottom: 16px;
+  padding-left: 2px;
+}
+
+.footer-info {
+  padding-left: 2px;
+}
+
+.footer-info p {
+  margin: 0;
+  font-size: 12px;
+  line-height: 1.9;
+  color: #6b7280;
 }
 
 .footer-title {
@@ -312,6 +351,7 @@
   font-weight: 600;
   color: #ddd;
   margin-bottom: 16px;
+  padding-top: 4px;
 }
 
 .footer-links {
@@ -383,6 +423,14 @@
 
   .user-footer {
     padding: 32px 16px 24px;
+  }
+
+  .footer-brand {
+    gap: 12px;
+  }
+
+  .footer-logo-img {
+    height: 72px;
   }
 }
 

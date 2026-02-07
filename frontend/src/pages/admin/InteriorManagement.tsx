@@ -385,11 +385,11 @@ const InteriorManagement: React.FC<InteriorManagementProps> = ({ category }) => 
     {
       title: '작업',
       key: 'action',
-      width: 120,
+      width: 160,
       align: 'center',
       onHeaderCell: () => ({ style: { textAlign: 'center' } }),
       render: (_, record) => (
-        <Space size="small">
+        <Space size={4}>
           <Button type="link" icon={<EditOutlined />} size="small" onClick={() => handleEdit(record)}>
             수정
           </Button>
