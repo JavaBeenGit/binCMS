@@ -8,11 +8,12 @@ import {
   Heading, Paragraph, Link, List, BlockQuote, Table as CKTable,
   TableToolbar, Indent, IndentBlock, MediaEmbed, Alignment,
   Font, HorizontalLine, SourceEditing, HtmlEmbed, Image,
-  ImageToolbar, ImageCaption, ImageStyle, ImageResize, PasteFromOffice,
+  ImageToolbar, ImageCaption, ImageStyle, ImageResize, ImageUpload, PasteFromOffice,
   CodeBlock, RemoveFormat, FindAndReplace, Highlight, PageBreak,
   SpecialCharacters, SpecialCharactersEssentials,
   GeneralHtmlSupport,
 } from 'ckeditor5';
+import { CKEditorUploadAdapterPlugin } from '../../shared/utils/ckEditorUploadAdapter';
 import { postApi, PostCreateRequest, PostUpdateRequest, PostResponse } from '../../api/endpoints/post';
 import { boardApi, BoardResponse } from '../../api/endpoints/board';
 import type { ColumnsType } from 'antd/es/table';
@@ -44,11 +45,12 @@ const PostManagement: React.FC<PostManagementProps> = ({ boardCode }) => {
       Heading, Paragraph, Link, List, BlockQuote, CKTable,
       TableToolbar, Indent, IndentBlock, MediaEmbed, Alignment,
       Font, HorizontalLine, SourceEditing, HtmlEmbed, Image,
-      ImageToolbar, ImageCaption, ImageStyle, ImageResize, PasteFromOffice,
+      ImageToolbar, ImageCaption, ImageStyle, ImageResize, ImageUpload, PasteFromOffice,
       CodeBlock, RemoveFormat, FindAndReplace, Highlight, PageBreak,
       SpecialCharacters, SpecialCharactersEssentials,
       GeneralHtmlSupport,
     ],
+    extraPlugins: [CKEditorUploadAdapterPlugin],
     htmlSupport: {
       allow: [{ name: /.*/, attributes: true, classes: true, styles: true }],
     },
@@ -59,13 +61,22 @@ const PostManagement: React.FC<PostManagementProps> = ({ boardCode }) => {
         'fontSize', 'fontFamily', 'fontColor', 'fontBackgroundColor', '|',
         'alignment', '|',
         'bulletedList', 'numberedList', 'outdent', 'indent', '|',
-        'link', 'blockQuote', 'insertTable', 'mediaEmbed', 'horizontalLine', '|',
+        'link', 'insertImage', 'blockQuote', 'insertTable', 'mediaEmbed', 'horizontalLine', '|',
         'codeBlock', 'htmlEmbed', 'specialCharacters', 'pageBreak', '|',
         'highlight', 'removeFormat', 'findAndReplace', '|',
         'sourceEditing', '|',
         'undo', 'redo',
       ],
       shouldNotGroupWhenFull: true,
+    },
+    image: {
+      toolbar: ['imageStyle:inline', 'imageStyle:block', 'imageStyle:side', '|', 'toggleImageCaption', 'imageTextAlternative', '|', 'resizeImage'],
+      resizeOptions: [
+        { name: 'resizeImage:original', value: null, label: '원본' },
+        { name: 'resizeImage:25', value: '25', label: '25%' },
+        { name: 'resizeImage:50', value: '50', label: '50%' },
+        { name: 'resizeImage:75', value: '75', label: '75%' },
+      ],
     },
     table: { contentToolbar: ['tableColumn', 'tableRow', 'mergeTableCells'] },
     language: 'ko',
