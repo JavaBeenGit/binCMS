@@ -23,6 +23,7 @@ import { Outlet, useNavigate, useLocation } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { useAuthStore } from '../stores/authStore';
 import { menuApi, MenuType, MenuResponse } from '../api/endpoints/menu';
+import { hasPermission } from '../shared/constants/permissions';
 import type { MenuProps } from 'antd';
 import './AdminLayout.css';
 
@@ -69,28 +70,12 @@ const AdminLayout: React.FC = () => {
     },
   });
 
-  // 메뉴 URL → 필요 권한 매핑
-  const menuPermissionMap: Record<string, string> = {
-    '/admin': 'MENU_DASHBOARD',
-    '/admin/posts': 'MENU_POST',
-    '/admin/statistics': 'MENU_STATISTICS',
-    '/admin/users': 'MENU_USER',
-    '/admin/system/menus': 'MENU_SYSTEM_MENU',
-    '/admin/system/admins': 'MENU_SYSTEM_ADMIN',
-    '/admin/system/ips': 'MENU_SYSTEM_IP',
-    '/admin/system/codes': 'MENU_SYSTEM_CODE',
-    '/admin/system/boards': 'MENU_SYSTEM_BOARD',
-    '/admin/system/roles': 'MENU_SYSTEM_ROLE',
-  };
-
   const userPermissions = user?.permissions || [];
 
-  // 사용자가 해당 메뉴에 접근 권한이 있는지 체크
+  // 사용자가 해당 메뉴에 접근 권한이 있는지 체크 (공용 모듈 활용)
   const hasMenuPermission = (menuUrl?: string): boolean => {
     if (!menuUrl) return true; // 부모 메뉴(URL 없음)는 자식으로 판단
-    const requiredPerm = menuPermissionMap[menuUrl];
-    if (!requiredPerm) return true; // 매핑 없으면 허용
-    return userPermissions.includes(requiredPerm);
+    return hasPermission(menuUrl, userPermissions);
   };
 
   // MenuResponse 트리 → Antd Menu items 변환 (권한 기반 필터링)
