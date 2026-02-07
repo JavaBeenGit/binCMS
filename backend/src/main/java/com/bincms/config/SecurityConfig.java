@@ -25,6 +25,7 @@ public class SecurityConfig {
                 .requestMatchers("/api/v1/boards/**").permitAll()
                 .requestMatchers("/api/v1/posts/**").permitAll()
                 .requestMatchers("/api/v1/menus/**").permitAll()
+                .requestMatchers("/api/v1/admin/**").permitAll()
                 .requestMatchers("/api/v1/public/**").permitAll()
                 .requestMatchers("/api/v1/health").permitAll()
                 .requestMatchers("/h2-console/**").permitAll()

@@ -5,8 +5,11 @@ import com.bincms.common.exception.ErrorCode;
 import com.bincms.common.security.JwtTokenProvider;
 import com.bincms.domain.member.dto.*;
 import com.bincms.domain.member.entity.Member;
+import com.bincms.domain.member.entity.MemberRole;
 import com.bincms.domain.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -77,5 +80,91 @@ public class MemberService {
                         "회원을 찾을 수 없습니다"));
         
         return MemberResponse.from(member);
+    }
+    
+    // ==================== 관리자 회원 관리 ====================
+    
+    /**
+     * 관리자 회원 목록 조회 (페이징, 검색)
+     */
+    public Page<MemberResponse> getAdminMembers(String keyword, Pageable pageable) {
+        Page<Member> members = memberRepository.findByRoleAndKeyword(MemberRole.ADMIN, keyword, pageable);
+        return members.map(MemberResponse::from);
+    }
+    
+    /**
+     * 관리자 회원 상세 조회
+     */
+    public MemberResponse getAdminMemberById(Long id) {
+        Member member = memberRepository.findById(id)
+                .orElseThrow(() -> new BusinessException(ErrorCode.MEMBER_NOT_FOUND));
+        return MemberResponse.from(member);
+    }
+    
+    /**
+     * 관리자 회원 생성
+     */
+    @Transactional
+    public MemberResponse createAdminMember(AdminMemberCreateRequest request) {
+        if (memberRepository.existsByLoginId(request.getLoginId())) {
+            throw new BusinessException(ErrorCode.DUPLICATE_RESOURCE, "이미 사용중인 로그인 ID입니다");
+        }
+        
+        Member member = Member.builder()
+                .loginId(request.getLoginId())
+                .email(request.getEmail())
+                .password(passwordEncoder.encode(request.getPassword()))
+                .name(request.getName())
+                .phoneNumber(request.getPhoneNumber())
+                .role(request.getRole())
+                .build();
+        
+        Member savedMember = memberRepository.save(member);
+        return MemberResponse.from(savedMember);
+    }
+    
+    /**
+     * 관리자 회원 정보 수정
+     */
+    @Transactional
+    public MemberResponse updateAdminMember(Long id, AdminMemberUpdateRequest request) {
+        Member member = memberRepository.findById(id)
+                .orElseThrow(() -> new BusinessException(ErrorCode.MEMBER_NOT_FOUND));
+        
+        member.updateAdminInfo(request.getName(), request.getEmail(), request.getPhoneNumber());
+        member.changeRole(request.getRole());
+        
+        return MemberResponse.from(member);
+    }
+    
+    /**
+     * 관리자 회원 비밀번호 초기화
+     */
+    @Transactional
+    public void resetAdminPassword(Long id, AdminPasswordResetRequest request) {
+        Member member = memberRepository.findById(id)
+                .orElseThrow(() -> new BusinessException(ErrorCode.MEMBER_NOT_FOUND));
+        
+        member.changePassword(passwordEncoder.encode(request.getNewPassword()));
+    }
+    
+    /**
+     * 관리자 회원 비활성화
+     */
+    @Transactional
+    public void deactivateAdminMember(Long id) {
+        Member member = memberRepository.findById(id)
+                .orElseThrow(() -> new BusinessException(ErrorCode.MEMBER_NOT_FOUND));
+        member.deactivate();
+    }
+    
+    /**
+     * 관리자 회원 활성화
+     */
+    @Transactional
+    public void activateAdminMember(Long id) {
+        Member member = memberRepository.findById(id)
+                .orElseThrow(() -> new BusinessException(ErrorCode.MEMBER_NOT_FOUND));
+        member.activate();
     }
 }

@@ -102,6 +102,15 @@ public class Member extends BaseEntity {
     }
     
     /**
+     * 관리자 회원 정보 수정 (이메일 포함)
+     */
+    public void updateAdminInfo(String name, String email, String phoneNumber) {
+        this.name = name;
+        this.email = email;
+        this.phoneNumber = phoneNumber;
+    }
+    
+    /**
      * 회원 비활성화
      */
     public void deactivate() {
