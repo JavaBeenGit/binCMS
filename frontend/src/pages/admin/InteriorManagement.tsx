@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
 import {
   Table, Button, Space, Modal, Form, Input, InputNumber,
-  message, Tag, Popconfirm, Card, Row, Col, Image, Segmented,
+  message, Tag, Popconfirm, Card, Row, Col, Image, Segmented, Upload,
 } from 'antd';
 import {
   PlusOutlined, EditOutlined, DeleteOutlined,
   AppstoreOutlined, UnorderedListOutlined, EyeOutlined, PictureOutlined,
+  UploadOutlined, LoadingOutlined,
 } from '@ant-design/icons';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { CKEditor } from '@ckeditor/ckeditor5-react';
@@ -27,6 +28,7 @@ import {
   InteriorCategory,
 } from '../../api/endpoints/interior';
 import type { ColumnsType } from 'antd/es/table';
+import { fileApi } from '../../api/endpoints/file';
 
 const CATEGORY_MAP: Record<InteriorCategory, string> = {
   ONSITE: '현장시공',
@@ -47,6 +49,9 @@ const InteriorManagement: React.FC<InteriorManagementProps> = ({ category }) => 
   const [selectedItem, setSelectedItem] = useState<InteriorResponse | null>(null);
   const [searchKeyword, setSearchKeyword] = useState('');
   const [editorData, setEditorData] = useState('');
+  const [thumbnailUrl, setThumbnailUrl] = useState<string | null>(null);
+  const [thumbnailPreview, setThumbnailPreview] = useState<string | null>(null);
+  const [uploading, setUploading] = useState(false);
   const [form] = Form.useForm();
 
   // CKEditor 설정
@@ -141,6 +146,8 @@ const InteriorManagement: React.FC<InteriorManagementProps> = ({ category }) => 
     setEditingItem(null);
     form.resetFields();
     setEditorData('');
+    setThumbnailUrl(null);
+    setThumbnailPreview(null);
     setIsModalOpen(true);
   };
 
@@ -148,10 +155,11 @@ const InteriorManagement: React.FC<InteriorManagementProps> = ({ category }) => 
     setEditingItem(item);
     form.setFieldsValue({
       title: item.title,
-      thumbnailUrl: item.thumbnailUrl,
       sortOrder: item.sortOrder,
     });
     setEditorData(item.content || '');
+    setThumbnailUrl(item.thumbnailUrl || null);
+    setThumbnailPreview(item.thumbnailUrl || null);
     setIsModalOpen(true);
   };
 
@@ -165,6 +173,8 @@ const InteriorManagement: React.FC<InteriorManagementProps> = ({ category }) => 
     setEditingItem(null);
     form.resetFields();
     setEditorData('');
+    setThumbnailUrl(null);
+    setThumbnailPreview(null);
   };
 
   const handleSubmit = async () => {
@@ -181,7 +191,7 @@ const InteriorManagement: React.FC<InteriorManagementProps> = ({ category }) => 
           data: {
             title: values.title,
             content: editorData,
-            thumbnailUrl: values.thumbnailUrl || null,
+            thumbnailUrl: thumbnailUrl || undefined,
             sortOrder: values.sortOrder,
           },
         });
@@ -190,7 +200,7 @@ const InteriorManagement: React.FC<InteriorManagementProps> = ({ category }) => 
           category: category!,
           title: values.title,
           content: editorData,
-          thumbnailUrl: values.thumbnailUrl || undefined,
+          thumbnailUrl: thumbnailUrl || undefined,
           sortOrder: values.sortOrder,
         });
       }
@@ -479,10 +489,61 @@ const InteriorManagement: React.FC<InteriorManagementProps> = ({ category }) => 
           </Form.Item>
 
           <Form.Item
-            name="thumbnailUrl"
-            label="대표 이미지 URL"
+            label="대표 이미지"
           >
-            <Input placeholder="대표 이미지 URL을 입력하세요 (미입력 시 본문 첫 이미지 사용)" />
+            <Upload
+              accept="image/*"
+              showUploadList={false}
+              customRequest={async ({ file, onSuccess, onError }) => {
+                try {
+                  setUploading(true);
+                  const res = await fileApi.upload(file as File, 'INTERIOR');
+                  const uploaded = res.data;
+                  const apiBase = import.meta.env.VITE_API_BASE_URL?.replace('/api/v1', '') || 'http://localhost:8080';
+                  const fullThumbUrl = uploaded.thumbnailUrl
+                    ? apiBase + uploaded.thumbnailUrl
+                    : apiBase + uploaded.fileUrl;
+                  const fullFileUrl = apiBase + uploaded.fileUrl;
+                  setThumbnailUrl(fullThumbUrl);
+                  setThumbnailPreview(fullFileUrl);
+                  message.success('이미지가 업로드되었습니다.');
+                  onSuccess?.(uploaded);
+                } catch (err) {
+                  message.error('이미지 업로드에 실패했습니다.');
+                  onError?.(err as Error);
+                } finally {
+                  setUploading(false);
+                }
+              }}
+            >
+              {thumbnailPreview ? (
+                <div style={{ position: 'relative', display: 'inline-block' }}>
+                  <img
+                    src={thumbnailPreview}
+                    alt="대표 이미지"
+                    style={{ width: 200, height: 150, objectFit: 'cover', borderRadius: 8, cursor: 'pointer' }}
+                  />
+                  <div style={{
+                    position: 'absolute', bottom: 0, left: 0, right: 0,
+                    background: 'rgba(0,0,0,0.5)', color: '#fff',
+                    textAlign: 'center', padding: '4px 0', borderRadius: '0 0 8px 8px',
+                    fontSize: 12,
+                  }}>
+                    클릭하여 변경
+                  </div>
+                </div>
+              ) : (
+                <div style={{
+                  width: 200, height: 150, border: '1px dashed #d9d9d9',
+                  borderRadius: 8, display: 'flex', flexDirection: 'column',
+                  alignItems: 'center', justifyContent: 'center', cursor: 'pointer',
+                  background: '#fafafa',
+                }}>
+                  {uploading ? <LoadingOutlined /> : <UploadOutlined style={{ fontSize: 24, color: '#999' }} />}
+                  <div style={{ marginTop: 8, color: '#999' }}>이미지 업로드</div>
+                </div>
+              )}
+            </Upload>
           </Form.Item>
 
           <Form.Item label="내용" required>
