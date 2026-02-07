@@ -12,6 +12,7 @@ import AdminMemberManagement from './pages/admin/AdminMemberManagement';
 import RoleManagement from './pages/admin/RoleManagement';
 import ContentManagement from './pages/admin/ContentManagement';
 import PopupManagement from './pages/admin/PopupManagement';
+import InteriorManagement from './pages/admin/InteriorManagement';
 import ContentPage from './user/pages/ContentPage';
 import { useAuthStore } from './stores/authStore';
 import PermissionGuard from './shared/components/PermissionGuard';
@@ -44,6 +45,9 @@ function App() {
             {/* 권한 체크가 필요한 라우트 */}
             <Route element={<PermissionGuard />}>
               <Route path="posts" element={<PostManagement />} />
+              <Route path="posts/notice" element={<PostManagement boardCode="notice" />} />
+              <Route path="posts/faq" element={<PostManagement boardCode="faq" />} />
+              <Route path="posts/qna" element={<PostManagement boardCode="qna" />} />
               <Route path="statistics" element={<div>통계 관리 (개발 예정)</div>} />
               <Route path="users" element={<div>사용자 관리 (개발 예정)</div>} />
               
@@ -60,6 +64,11 @@ function App() {
               
               {/* 팝업 관리 */}
               <Route path="popups" element={<PopupManagement />} />
+              
+              {/* 인테리어 관리 */}
+              <Route path="interiors/onsite" element={<InteriorManagement category="ONSITE" />} />
+              <Route path="interiors/self-tip" element={<InteriorManagement category="SELF_TIP" />} />
+              <Route path="interiors/story" element={<InteriorManagement category="STORY" />} />
             </Route>
           </Route>
           

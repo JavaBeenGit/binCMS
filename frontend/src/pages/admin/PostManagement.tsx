@@ -2,26 +2,74 @@ import React, { useState } from 'react';
 import { Table, Button, Space, Modal, Form, Input, Select, Switch, message, Tag, Popconfirm } from 'antd';
 import { PlusOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { CKEditor } from '@ckeditor/ckeditor5-react';
+import {
+  ClassicEditor, Essentials, Bold, Italic, Underline, Strikethrough,
+  Heading, Paragraph, Link, List, BlockQuote, Table as CKTable,
+  TableToolbar, Indent, IndentBlock, MediaEmbed, Alignment,
+  Font, HorizontalLine, SourceEditing, HtmlEmbed, Image,
+  ImageToolbar, ImageCaption, ImageStyle, ImageResize, PasteFromOffice,
+  CodeBlock, RemoveFormat, FindAndReplace, Highlight, PageBreak,
+  SpecialCharacters, SpecialCharactersEssentials,
+  GeneralHtmlSupport,
+} from 'ckeditor5';
 import { postApi, PostCreateRequest, PostUpdateRequest, PostResponse } from '../../api/endpoints/post';
 import { boardApi, BoardResponse } from '../../api/endpoints/board';
 import type { ColumnsType } from 'antd/es/table';
 
-const { TextArea } = Input;
-
 interface PostFormValues {
   boardId: number;
   title: string;
-  content: string;
   noticeYn: boolean;
 }
 
-const PostManagement: React.FC = () => {
+interface PostManagementProps {
+  boardCode?: string;
+}
+
+const PostManagement: React.FC<PostManagementProps> = ({ boardCode }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingPost, setEditingPost] = useState<PostResponse | null>(null);
   const [selectedBoardId, setSelectedBoardId] = useState<number | undefined>();
   const [searchKeyword, setSearchKeyword] = useState<string>('');
+  const [editorData, setEditorData] = useState<string>('');
   const [form] = Form.useForm();
   const queryClient = useQueryClient();
+
+  // CKEditor 설정
+  const editorConfig = {
+    licenseKey: 'GPL',
+    plugins: [
+      Essentials, Bold, Italic, Underline, Strikethrough,
+      Heading, Paragraph, Link, List, BlockQuote, CKTable,
+      TableToolbar, Indent, IndentBlock, MediaEmbed, Alignment,
+      Font, HorizontalLine, SourceEditing, HtmlEmbed, Image,
+      ImageToolbar, ImageCaption, ImageStyle, ImageResize, PasteFromOffice,
+      CodeBlock, RemoveFormat, FindAndReplace, Highlight, PageBreak,
+      SpecialCharacters, SpecialCharactersEssentials,
+      GeneralHtmlSupport,
+    ],
+    htmlSupport: {
+      allow: [{ name: /.*/, attributes: true, classes: true, styles: true }],
+    },
+    toolbar: {
+      items: [
+        'heading', '|',
+        'bold', 'italic', 'underline', 'strikethrough', '|',
+        'fontSize', 'fontFamily', 'fontColor', 'fontBackgroundColor', '|',
+        'alignment', '|',
+        'bulletedList', 'numberedList', 'outdent', 'indent', '|',
+        'link', 'blockQuote', 'insertTable', 'mediaEmbed', 'horizontalLine', '|',
+        'codeBlock', 'htmlEmbed', 'specialCharacters', 'pageBreak', '|',
+        'highlight', 'removeFormat', 'findAndReplace', '|',
+        'sourceEditing', '|',
+        'undo', 'redo',
+      ],
+      shouldNotGroupWhenFull: true,
+    },
+    table: { contentToolbar: ['tableColumn', 'tableRow', 'mergeTableCells'] },
+    language: 'ko',
+  } as any;
 
   // 게시판 목록 조회
   const { data: boardsData } = useQuery({
@@ -32,15 +80,24 @@ const PostManagement: React.FC = () => {
     }
   });
 
+  // boardCode로 해당 게시판 ID 자동 매핑
+  const fixedBoardId = React.useMemo(() => {
+    if (!boardCode || !boardsData) return undefined;
+    const found = boardsData.find((b: BoardResponse) => b.boardCode === boardCode);
+    return found?.id;
+  }, [boardCode, boardsData]);
+
+  const effectiveBoardId = fixedBoardId ?? selectedBoardId;
+
   // 게시글 목록 조회
   const { data: postsData, isLoading } = useQuery({
-    queryKey: ['posts', selectedBoardId, searchKeyword],
+    queryKey: ['posts', effectiveBoardId, searchKeyword],
     queryFn: async () => {
-      if (searchKeyword && selectedBoardId) {
-        const response = await postApi.searchPosts({ boardId: selectedBoardId, keyword: searchKeyword });
+      if (searchKeyword && effectiveBoardId) {
+        const response = await postApi.searchPosts({ boardId: effectiveBoardId, keyword: searchKeyword });
         return response.data;
-      } else if (selectedBoardId) {
-        const response = await postApi.getPostsByBoard(selectedBoardId);
+      } else if (effectiveBoardId) {
+        const response = await postApi.getPostsByBoard(effectiveBoardId);
         return response.data;
       } else if (searchKeyword) {
         const response = await postApi.searchPosts({ keyword: searchKeyword });
@@ -93,6 +150,7 @@ const PostManagement: React.FC = () => {
   const handleCreate = () => {
     setEditingPost(null);
     form.resetFields();
+    setEditorData('');
     setIsModalOpen(true);
   };
 
@@ -101,9 +159,9 @@ const PostManagement: React.FC = () => {
     form.setFieldsValue({
       boardId: post.boardId,
       title: post.title,
-      content: post.content,
       noticeYn: post.noticeYn === 'Y'
     });
+    setEditorData(post.content || '');
     setIsModalOpen(true);
   };
 
@@ -115,15 +173,22 @@ const PostManagement: React.FC = () => {
     setIsModalOpen(false);
     setEditingPost(null);
     form.resetFields();
+    setEditorData('');
   };
 
   const handleSubmit = async () => {
     try {
+      if (!editorData.trim()) {
+        message.warning('내용을 입력해주세요.');
+        return;
+      }
       const values = await form.validateFields();
       const formData: PostFormValues = values;
       
       const requestData = {
         ...formData,
+        content: editorData,
+        boardId: fixedBoardId ?? formData.boardId,
         noticeYn: formData.noticeYn ? 'Y' : 'N'
       };
 
@@ -138,6 +203,13 @@ const PostManagement: React.FC = () => {
     }
   };
 
+  // boardCode가 고정된 경우 게시판명 구하기
+  const fixedBoardName = React.useMemo(() => {
+    if (!boardCode || !boardsData) return '';
+    const found = boardsData.find((b: BoardResponse) => b.boardCode === boardCode);
+    return found?.boardName || '';
+  }, [boardCode, boardsData]);
+
   const columns: ColumnsType<PostResponse> = [
     {
       title: 'ID',
@@ -146,13 +218,13 @@ const PostManagement: React.FC = () => {
       width: 80,
       onHeaderCell: () => ({ style: { textAlign: 'center' } }),
     },
-    {
+    ...(!boardCode ? [{
       title: '게시판',
       dataIndex: 'boardName',
       key: 'boardName',
       width: 120,
-      onHeaderCell: () => ({ style: { textAlign: 'center' } }),
-    },
+      onHeaderCell: () => ({ style: { textAlign: 'center' as const } }),
+    }] : []),
     {
       title: '제목',
       dataIndex: 'title',
@@ -231,24 +303,26 @@ const PostManagement: React.FC = () => {
   return (
     <div style={{ padding: '24px' }}>
       <div style={{ marginBottom: 16, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <h2>게시글 관리</h2>
+        <h2>{fixedBoardName || '게시글 관리'}</h2>
         <Button type="primary" icon={<PlusOutlined />} onClick={handleCreate}>
           게시글 작성
         </Button>
       </div>
 
       <Space style={{ marginBottom: 16 }} size="middle">
-        <Select
-          placeholder="게시판 선택"
-          style={{ width: 200 }}
-          allowClear
-          value={selectedBoardId}
-          onChange={setSelectedBoardId}
-          options={boardsData?.map((board: BoardResponse) => ({
-            label: board.boardName,
-            value: board.id
-          }))}
-        />
+        {!boardCode && (
+          <Select
+            placeholder="게시판 선택"
+            style={{ width: 200 }}
+            allowClear
+            value={selectedBoardId}
+            onChange={setSelectedBoardId}
+            options={boardsData?.map((board: BoardResponse) => ({
+              label: board.boardName,
+              value: board.id
+            }))}
+          />
+        )}
         <Input.Search
           placeholder="제목 또는 내용 검색"
           style={{ width: 300 }}
@@ -279,7 +353,7 @@ const PostManagement: React.FC = () => {
         open={isModalOpen}
         onOk={handleSubmit}
         onCancel={handleCancel}
-        width={800}
+        width={1000}
         okText={editingPost ? '수정' : '작성'}
         cancelText="취소"
       >
@@ -288,20 +362,26 @@ const PostManagement: React.FC = () => {
           layout="vertical"
           initialValues={{ noticeYn: false }}
         >
-          <Form.Item
-            name="boardId"
-            label="게시판"
-            rules={[{ required: true, message: '게시판을 선택해주세요.' }]}
-          >
-            <Select
-              placeholder="게시판 선택"
-              disabled={!!editingPost}
-              options={boardsData?.map((board: BoardResponse) => ({
-                label: board.boardName,
-                value: board.id
-              }))}
-            />
-          </Form.Item>
+          {!boardCode ? (
+            <Form.Item
+              name="boardId"
+              label="게시판"
+              rules={[{ required: true, message: '게시판을 선택해주세요.' }]}
+            >
+              <Select
+                placeholder="게시판 선택"
+                disabled={!!editingPost}
+                options={boardsData?.map((board: BoardResponse) => ({
+                  label: board.boardName,
+                  value: board.id
+                }))}
+              />
+            </Form.Item>
+          ) : (
+            <Form.Item label="게시판">
+              <Input value={fixedBoardName} disabled />
+            </Form.Item>
+          )}
 
           <Form.Item
             name="title"
@@ -314,16 +394,20 @@ const PostManagement: React.FC = () => {
             <Input placeholder="제목을 입력하세요" />
           </Form.Item>
 
-          <Form.Item
-            name="content"
-            label="내용"
-            rules={[{ required: true, message: '내용을 입력해주세요.' }]}
-          >
-            <TextArea 
-              rows={10} 
-              placeholder="내용을 입력하세요"
-              showCount
-            />
+          <Form.Item label="내용" required>
+            <div className="post-editor-wrapper">
+              <style>{`.post-editor-wrapper .ck-editor__editable { min-height: 400px; }`}</style>
+              {isModalOpen && (
+                <CKEditor
+                  editor={ClassicEditor}
+                  config={editorConfig}
+                  data={editorData}
+                  onChange={(_event, editor) => {
+                    setEditorData(editor.getData());
+                  }}
+                />
+              )}
+            </div>
           </Form.Item>
 
           <Form.Item

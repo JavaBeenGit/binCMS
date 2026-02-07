@@ -18,6 +18,8 @@ import {
   SafetyCertificateOutlined,
   UserSwitchOutlined,
   LayoutOutlined,
+  NotificationOutlined,
+  PictureOutlined,
 } from '@ant-design/icons';
 import { Outlet, useNavigate, useLocation } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
@@ -45,6 +47,8 @@ const iconMap: Record<string, React.ReactNode> = {
   SafetyCertificateOutlined: <SafetyCertificateOutlined />,
   UserSwitchOutlined: <UserSwitchOutlined />,
   LayoutOutlined: <LayoutOutlined />,
+  NotificationOutlined: <NotificationOutlined />,
+  PictureOutlined: <PictureOutlined />,
 };
 
 const getIcon = (iconName?: string): React.ReactNode => {

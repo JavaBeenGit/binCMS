@@ -5,6 +5,9 @@
 export const menuPermissionMap: Record<string, string> = {
   '/admin': 'MENU_DASHBOARD',
   '/admin/posts': 'MENU_POST',
+  '/admin/posts/notice': 'MENU_POST',
+  '/admin/posts/faq': 'MENU_POST',
+  '/admin/posts/qna': 'MENU_POST',
   '/admin/statistics': 'MENU_STATISTICS',
   '/admin/users': 'MENU_USER',
   '/admin/system/menus': 'MENU_SYSTEM_MENU',
@@ -15,6 +18,9 @@ export const menuPermissionMap: Record<string, string> = {
   '/admin/system/roles': 'MENU_SYSTEM_ROLE',
   '/admin/contents': 'MENU_CONTENT',
   '/admin/popups': 'MENU_POPUP',
+  '/admin/interiors/onsite': 'MENU_INTERIOR',
+  '/admin/interiors/self-tip': 'MENU_INTERIOR',
+  '/admin/interiors/story': 'MENU_INTERIOR',
 };
 
 /**

@@ -44,6 +44,8 @@ public class DataInitializer implements ApplicationRunner {
         initAdminMenus();
         supplementMissingData();
         supplementPopupData();
+        supplementPostSubMenus();
+        supplementInteriorData();
     }
     
     /**
@@ -414,6 +416,51 @@ public class DataInitializer implements ApplicationRunner {
     }
     
     /**
+     * 게시글 관리 하위 메뉴 보충 (공지사항, 자주묻는질문, 견적문의)
+     */
+    private void supplementPostSubMenus() {
+        List<Menu> allMenus = menuRepository.findByMenuTypeOrderBySortOrderAscIdAsc(MenuType.ADMIN);
+        
+        // 게시글 관리 부모 메뉴 찾기
+        Menu postParent = allMenus.stream()
+                .filter(m -> "/admin/posts".equals(m.getMenuUrl()))
+                .findFirst().orElse(null);
+        
+        if (postParent == null) return;
+        Long parentId = postParent.getId();
+        
+        // 하위 메뉴가 이미 있는지 체크
+        boolean hasNotice = allMenus.stream().anyMatch(m -> "/admin/posts/notice".equals(m.getMenuUrl()));
+        boolean hasFaq = allMenus.stream().anyMatch(m -> "/admin/posts/faq".equals(m.getMenuUrl()));
+        boolean hasQna = allMenus.stream().anyMatch(m -> "/admin/posts/qna".equals(m.getMenuUrl()));
+        
+        if (!hasNotice) {
+            menuRepository.save(Menu.builder()
+                    .menuType(MenuType.ADMIN).menuName("공지사항")
+                    .menuUrl("/admin/posts/notice").parentId(parentId)
+                    .depth(2).sortOrder(1).icon("FileTextOutlined")
+                    .description("공지사항 관리").build());
+            log.info("Supplemented missing menu: 공지사항");
+        }
+        if (!hasFaq) {
+            menuRepository.save(Menu.builder()
+                    .menuType(MenuType.ADMIN).menuName("자주묻는질문")
+                    .menuUrl("/admin/posts/faq").parentId(parentId)
+                    .depth(2).sortOrder(2).icon("FileTextOutlined")
+                    .description("자주묻는질문 관리").build());
+            log.info("Supplemented missing menu: 자주묻는질문");
+        }
+        if (!hasQna) {
+            menuRepository.save(Menu.builder()
+                    .menuType(MenuType.ADMIN).menuName("견적문의")
+                    .menuUrl("/admin/posts/qna").parentId(parentId)
+                    .depth(2).sortOrder(3).icon("FileTextOutlined")
+                    .description("견적문의 관리").build());
+            log.info("Supplemented missing menu: 견적문의");
+        }
+    }
+    
+    /**
      * 팝업 관리 메뉴/권한 보충
      */
     private void supplementPopupData() {
@@ -468,6 +515,89 @@ public class DataInitializer implements ApplicationRunner {
                     .build();
             menuRepository.save(popupMenu);
             log.info("Supplemented missing menu: 팝업 관리");
+        }
+    }
+    
+    /**
+     * 인테리어 관리 메뉴/권한 보충
+     */
+    private void supplementInteriorData() {
+        // 1. MENU_INTERIOR 권한 보충
+        if (!permissionRepository.existsByPermCode("MENU_INTERIOR")) {
+            Permission permInterior = Permission.builder()
+                    .permCode("MENU_INTERIOR")
+                    .permName("인테리어 관리 접근")
+                    .permGroup("MENU")
+                    .description("인테리어 관리 메뉴 접근 권한")
+                    .sortOrder(13)
+                    .build();
+            permissionRepository.save(permInterior);
+            log.info("Supplemented missing permission: MENU_INTERIOR");
+            
+            // SYSTEM_ADMIN 역할에 매핑
+            roleRepository.findByRoleCode("SYSTEM_ADMIN").ifPresent(role -> {
+                RolePermission rp = RolePermission.builder()
+                        .role(role)
+                        .permission(permInterior)
+                        .build();
+                rolePermissionRepository.save(rp);
+                log.info("Mapped MENU_INTERIOR to SYSTEM_ADMIN");
+            });
+            
+            // OPERATION_ADMIN 역할에 매핑
+            roleRepository.findByRoleCode("OPERATION_ADMIN").ifPresent(role -> {
+                RolePermission rp = RolePermission.builder()
+                        .role(role)
+                        .permission(permInterior)
+                        .build();
+                rolePermissionRepository.save(rp);
+                log.info("Mapped MENU_INTERIOR to OPERATION_ADMIN");
+            });
+        }
+        
+        // 2. 인테리어 관리 부모 메뉴 보충
+        List<Menu> allMenus = menuRepository.findByMenuTypeOrderBySortOrderAscIdAsc(MenuType.ADMIN);
+        boolean hasInteriorParent = allMenus.stream()
+                .anyMatch(m -> "/admin/interiors".equals(m.getMenuUrl()) || "인테리어 관리".equals(m.getMenuName()));
+        
+        if (!hasInteriorParent) {
+            // 부모 메뉴: 인테리어 관리
+            Menu interiorParent = Menu.builder()
+                    .menuType(MenuType.ADMIN)
+                    .menuName("인테리어 관리")
+                    .menuUrl(null)  // 부모 메뉴는 URL 없음
+                    .parentId(null)
+                    .depth(1)
+                    .sortOrder(3)  // 게시글 관리(2) 다음
+                    .icon("PictureOutlined")
+                    .description("인테리어 관리")
+                    .build();
+            menuRepository.save(interiorParent);
+            Long parentId = interiorParent.getId();
+            log.info("Supplemented missing menu: 인테리어 관리");
+            
+            // 하위 메뉴: 현장시공
+            menuRepository.save(Menu.builder()
+                    .menuType(MenuType.ADMIN).menuName("현장시공")
+                    .menuUrl("/admin/interiors/onsite").parentId(parentId)
+                    .depth(2).sortOrder(1).icon("PictureOutlined")
+                    .description("현장시공 관리").build());
+            
+            // 하위 메뉴: 셀프시공 팁
+            menuRepository.save(Menu.builder()
+                    .menuType(MenuType.ADMIN).menuName("셀프시공 팁")
+                    .menuUrl("/admin/interiors/self-tip").parentId(parentId)
+                    .depth(2).sortOrder(2).icon("PictureOutlined")
+                    .description("셀프시공 팁 관리").build());
+            
+            // 하위 메뉴: 인테리어스토리
+            menuRepository.save(Menu.builder()
+                    .menuType(MenuType.ADMIN).menuName("인테리어스토리")
+                    .menuUrl("/admin/interiors/story").parentId(parentId)
+                    .depth(2).sortOrder(3).icon("PictureOutlined")
+                    .description("인테리어스토리 관리").build());
+            
+            log.info("Supplemented interior sub-menus: 현장시공, 셀프시공 팁, 인테리어스토리");
         }
     }
 }
