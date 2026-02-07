@@ -13,6 +13,7 @@ import RoleManagement from './pages/admin/RoleManagement';
 import ContentManagement from './pages/admin/ContentManagement';
 import PopupManagement from './pages/admin/PopupManagement';
 import InteriorManagement from './pages/admin/InteriorManagement';
+import InquiryManagement from './pages/admin/InquiryManagement';
 import ContentPage from './user/pages/ContentPage';
 import UserLayout from './user/layouts/UserLayout';
 import HomePage from './user/pages/HomePage';
@@ -52,7 +53,7 @@ function App() {
               <Route path="posts" element={<PostManagement />} />
               <Route path="posts/notice" element={<PostManagement boardCode="notice" />} />
               <Route path="posts/faq" element={<PostManagement boardCode="faq" />} />
-              <Route path="posts/qna" element={<PostManagement boardCode="qna" />} />
+              <Route path="posts/qna" element={<InquiryManagement />} />
               <Route path="statistics" element={<div>통계 관리 (개발 예정)</div>} />
               <Route path="users" element={<div>사용자 관리 (개발 예정)</div>} />
               

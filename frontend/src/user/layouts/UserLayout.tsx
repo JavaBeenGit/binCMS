@@ -112,7 +112,7 @@ const UserLayout: React.FC = () => {
         <div className="footer-inner">
           <div>
             <div className="footer-brand">
-              <img src="/uploads/etc/su_design_logo.png" alt="수디자인" className="footer-logo-img" />
+              <img src="/uploads/etc/su_design_logo_footer.png" alt="수디자인" className="footer-logo-img" />
               <span>수디자인</span>
             </div>
             <p className="footer-desc">

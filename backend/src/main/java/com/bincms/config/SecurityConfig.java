@@ -29,6 +29,7 @@ public class SecurityConfig {
                 .requestMatchers("/api/v1/admin/**").permitAll()
                 .requestMatchers("/api/v1/files/**").permitAll()
                 .requestMatchers("/api/v1/public/**").permitAll()
+                .requestMatchers("/api/v1/inquiries/**").permitAll()
                 .requestMatchers("/uploads/**").permitAll()
                 .requestMatchers("/api/v1/health").permitAll()
                 .requestMatchers("/h2-console/**").permitAll()
