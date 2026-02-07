@@ -17,8 +17,8 @@ import {
   ImageToolbar, ImageCaption, ImageStyle, ImageResize, PasteFromOffice,
   CodeBlock, RemoveFormat, FindAndReplace, Highlight, PageBreak,
   SpecialCharacters, SpecialCharactersEssentials,
+  GeneralHtmlSupport,
 } from 'ckeditor5';
-import 'ckeditor5/ckeditor5.css';
 import {
   contentApi,
   ContentResponse,
@@ -100,6 +100,7 @@ const ContentManagement: React.FC = () => {
 
   // ── CKEditor 설정 ──
   const editorConfig = {
+    licenseKey: 'GPL',
     plugins: [
       Essentials, Bold, Italic, Underline, Strikethrough,
       Heading, Paragraph, Link, List, BlockQuote, CKTable,
@@ -108,7 +109,18 @@ const ContentManagement: React.FC = () => {
       ImageToolbar, ImageCaption, ImageStyle, ImageResize, PasteFromOffice,
       CodeBlock, RemoveFormat, FindAndReplace, Highlight, PageBreak,
       SpecialCharacters, SpecialCharactersEssentials,
+      GeneralHtmlSupport,
     ],
+    htmlSupport: {
+      allow: [
+        {
+          name: /.*/,
+          attributes: true,
+          classes: true,
+          styles: true,
+        },
+      ],
+    },
     toolbar: {
       items: [
         'heading', '|',
@@ -349,14 +361,24 @@ const ContentManagement: React.FC = () => {
           </Form.Item>
           <Form.Item label="내용">
             {isCreateModalOpen && (
-              <CKEditor
-                editor={ClassicEditor}
-                config={editorConfig}
-                data={createEditorData}
-                onChange={(_event, editor) => {
-                  setCreateEditorData(editor.getData());
-                }}
-              />
+              <div style={{ border: '1px solid #d9d9d9', borderRadius: 6, overflow: 'hidden' }}>
+                <CKEditor
+                  editor={ClassicEditor}
+                  config={editorConfig}
+                  data={createEditorData}
+                  onChange={(_event, editor) => {
+                    setCreateEditorData(editor.getData());
+                  }}
+                  onReady={(editor) => {
+                    const el = editor.editing.view.document.getRoot();
+                    if (el) {
+                      editor.editing.view.change((writer) => {
+                        writer.setStyle('min-height', '300px', el);
+                      });
+                    }
+                  }}
+                />
+              </div>
             )}
           </Form.Item>
         </Form>
@@ -389,14 +411,24 @@ const ContentManagement: React.FC = () => {
           </Form.Item>
           <Form.Item label="내용">
             {isEditModalOpen && (
-              <CKEditor
-                editor={ClassicEditor}
-                config={editorConfig}
-                data={editEditorData}
-                onChange={(_event, editor) => {
-                  setEditEditorData(editor.getData());
-                }}
-              />
+              <div style={{ border: '1px solid #d9d9d9', borderRadius: 6, overflow: 'hidden' }}>
+                <CKEditor
+                  editor={ClassicEditor}
+                  config={editorConfig}
+                  data={editEditorData}
+                  onChange={(_event, editor) => {
+                    setEditEditorData(editor.getData());
+                  }}
+                  onReady={(editor) => {
+                    const el = editor.editing.view.document.getRoot();
+                    if (el) {
+                      editor.editing.view.change((writer) => {
+                        writer.setStyle('min-height', '300px', el);
+                      });
+                    }
+                  }}
+                />
+              </div>
             )}
           </Form.Item>
         </Form>

@@ -164,15 +164,17 @@ const MenuManagement: React.FC = () => {
 
   const columns: ColumnsType<MenuResponse> = [
     {
-      title: 'ID',
-      dataIndex: 'id',
-      key: 'id',
+      title: '번호',
+      key: 'no',
       width: 80,
+      align: 'center',
+      render: (_: any, __: MenuResponse, index: number) => index + 1,
     },
     {
       title: '메뉴명',
       dataIndex: 'menuName',
       key: 'menuName',
+      onHeaderCell: () => ({ style: { textAlign: 'center' } }),
       render: (text, record) => (
         <span style={{ marginLeft: `${(record.depth - 1) * 20}px` }}>
           {record.depth > 1 && '└ '}
@@ -185,12 +187,7 @@ const MenuManagement: React.FC = () => {
       dataIndex: 'menuUrl',
       key: 'menuUrl',
       ellipsis: true,
-    },
-    {
-      title: '아이콘',
-      dataIndex: 'icon',
-      key: 'icon',
-      width: 100,
+      onHeaderCell: () => ({ style: { textAlign: 'center' } }),
     },
     {
       title: '정렬순서',
@@ -269,9 +266,11 @@ const MenuManagement: React.FC = () => {
     const result: MenuResponse[] = [];
     const traverse = (menuList: MenuResponse[]) => {
       menuList.forEach(menu => {
-        result.push(menu);
-        if (menu.children && menu.children.length > 0) {
-          traverse(menu.children);
+        // children 제거하여 Ant Design Table의 자동 트리 확장 방지
+        const { children, ...menuWithoutChildren } = menu;
+        result.push(menuWithoutChildren as MenuResponse);
+        if (children && children.length > 0) {
+          traverse(children);
         }
       });
     };
