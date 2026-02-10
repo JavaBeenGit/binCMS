@@ -77,6 +77,11 @@
   color: #3C1E1E;
 }
 
+.naver-btn {
+  background: #03C75A;
+  color: #fff;
+}
+
 @media (max-width: 768px) {
   .user-login-card {
     margin: 24px 16px 40px;

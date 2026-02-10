@@ -3,7 +3,7 @@ import { Button } from 'antd';
 import { MailOutlined } from '@ant-design/icons';
 import { useNavigate, Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
-import { getKakaoConfig, buildKakaoAuthUrl } from '../../api/endpoints/oauth';
+import { getKakaoConfig, buildKakaoAuthUrl, getNaverConfig, buildNaverAuthUrl } from '../../api/endpoints/oauth';
 import './UserSignup.css';
 
 /**
@@ -21,11 +21,24 @@ const UserSignup: React.FC = () => {
     staleTime: Infinity,
   });
 
+  // 네이버 OAuth 설정
+  const { data: naverConfig } = useQuery({
+    queryKey: ['naverConfig'],
+    queryFn: getNaverConfig,
+    staleTime: Infinity,
+  });
+
   const handleKakaoSignup = useCallback(() => {
     if (kakaoConfig?.data) {
       window.location.href = buildKakaoAuthUrl(kakaoConfig.data);
     }
   }, [kakaoConfig]);
+
+  const handleNaverSignup = useCallback(() => {
+    if (naverConfig?.data) {
+      window.location.href = buildNaverAuthUrl(naverConfig.data);
+    }
+  }, [naverConfig]);
 
   return (
     <div className="user-signup-page">
@@ -69,10 +82,10 @@ const UserSignup: React.FC = () => {
               block
               size="large"
               className="signup-method-btn signup-naver-btn"
-              disabled
+              onClick={handleNaverSignup}
             >
               <span style={{ color: '#03C75A', fontWeight: 800, fontSize: 16, marginRight: 8 }}>N</span>
-              네이버로 시작하기 (준비중)
+              네이버로 시작하기
             </Button>
 
             <Button

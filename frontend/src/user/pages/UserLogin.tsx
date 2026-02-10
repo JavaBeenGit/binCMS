@@ -4,7 +4,7 @@ import { UserOutlined, LockOutlined } from '@ant-design/icons';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { useNavigate, Link } from 'react-router-dom';
 import { login, type LoginRequest } from '../../api/endpoints/auth';
-import { getKakaoConfig, buildKakaoAuthUrl } from '../../api/endpoints/oauth';
+import { getKakaoConfig, buildKakaoAuthUrl, getNaverConfig, buildNaverAuthUrl } from '../../api/endpoints/oauth';
 import { useAuthStore } from '../../stores/authStore';
 import { useAdminAuthStore } from '../../stores/adminAuthStore';
 import './UserLogin.css';
@@ -45,11 +45,24 @@ const UserLogin: React.FC = () => {
     staleTime: Infinity,
   });
 
+  // 네이버 OAuth 설정
+  const { data: naverConfig } = useQuery({
+    queryKey: ['naverConfig'],
+    queryFn: getNaverConfig,
+    staleTime: Infinity,
+  });
+
   const handleKakaoLogin = useCallback(() => {
     if (kakaoConfig?.data) {
       window.location.href = buildKakaoAuthUrl(kakaoConfig.data);
     }
   }, [kakaoConfig]);
+
+  const handleNaverLogin = useCallback(() => {
+    if (naverConfig?.data) {
+      window.location.href = buildNaverAuthUrl(naverConfig.data);
+    }
+  }, [naverConfig]);
 
   const onFinish = (values: LoginRequest) => {
     loginMutation.mutate(values);
@@ -117,6 +130,14 @@ const UserLogin: React.FC = () => {
                 <path fill="#3C1E1E" d="M12 3C6.48 3 2 6.58 2 10.94c0 2.8 1.86 5.27 4.66 6.67-.15.56-.96 3.58-1 3.73 0 0-.02.08.04.12.06.04.13.01.13.01.17-.02 3.28-2.16 3.8-2.53.76.11 1.55.17 2.37.17 5.52 0 10-3.58 10-7.94S17.52 3 12 3z"/>
               </svg>
               카카오 로그인
+            </button>
+            <button
+              type="button"
+              className="social-btn naver-btn"
+              onClick={handleNaverLogin}
+            >
+              <span style={{ color: '#fff', fontWeight: 800, fontSize: 16 }}>N</span>
+              네이버 로그인
             </button>
           </div>
 

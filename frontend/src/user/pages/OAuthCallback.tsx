@@ -1,19 +1,31 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { Spin, Result, Button } from 'antd';
-import { kakaoLogin } from '../../api/endpoints/oauth';
+import { kakaoLogin, naverLogin } from '../../api/endpoints/oauth';
 import { useAuthStore } from '../../stores/authStore';
+
+interface OAuthCallbackProps {
+  provider: 'kakao' | 'naver';
+}
+
+const PROVIDER_LABELS: Record<string, string> = {
+  kakao: '카카오',
+  naver: '네이버',
+};
 
 /**
  * OAuth 콜백 처리 페이지
  * /oauth/callback/kakao?code=xxx
+ * /oauth/callback/naver?code=xxx&state=xxx
  */
-const OAuthCallback: React.FC = () => {
+const OAuthCallback: React.FC<OAuthCallbackProps> = ({ provider }) => {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const setAuth = useAuthStore((state) => state.setAuth);
   const [error, setError] = useState<string | null>(null);
   const isProcessing = useRef(false); // StrictMode 중복 호출 방지
+
+  const label = PROVIDER_LABELS[provider] || provider;
 
   useEffect(() => {
     if (isProcessing.current) return;
@@ -23,7 +35,7 @@ const OAuthCallback: React.FC = () => {
     const errorParam = searchParams.get('error');
 
     if (errorParam) {
-      setError('카카오 로그인이 취소되었습니다.');
+      setError(`${label} 로그인이 취소되었습니다.`);
       return;
     }
 
@@ -32,17 +44,25 @@ const OAuthCallback: React.FC = () => {
       return;
     }
 
-    // 인가 코드를 백엔드로 전송하여 로그인 처리
-    kakaoLogin(code)
+    // provider에 따라 적절한 로그인 API 호출
+    let loginPromise;
+    if (provider === 'naver') {
+      const state = searchParams.get('state') || '';
+      loginPromise = naverLogin(code, state);
+    } else {
+      loginPromise = kakaoLogin(code);
+    }
+
+    loginPromise
       .then((response) => {
         setAuth(response.data.accessToken, response.data.member);
         navigate('/', { replace: true });
       })
       .catch((err: any) => {
-        console.error('카카오 로그인 실패:', err);
-        setError(err.response?.data?.message || '카카오 로그인에 실패했습니다.');
+        console.error(`${label} 로그인 실패:`, err);
+        setError(err.response?.data?.message || `${label} 로그인에 실패했습니다.`);
       });
-  }, [searchParams, navigate, setAuth]);
+  }, [searchParams, navigate, setAuth, provider, label]);
 
   if (error) {
     return (
@@ -67,7 +87,7 @@ const OAuthCallback: React.FC = () => {
   return (
     <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '60vh', flexDirection: 'column', gap: 16 }}>
       <Spin size="large" />
-      <p style={{ color: '#666', fontSize: 15 }}>카카오 로그인 처리 중...</p>
+      <p style={{ color: '#666', fontSize: 15 }}>{label} 로그인 처리 중...</p>
     </div>
   );
 };

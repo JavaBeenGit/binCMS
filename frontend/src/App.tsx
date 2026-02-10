@@ -105,7 +105,8 @@ function App() {
             <Route path="user/login" element={<UserLogin />} />
             <Route path="user/signup" element={<UserSignup />} />
             <Route path="user/signup/email" element={<EmailSignup />} />
-            <Route path="oauth/callback/kakao" element={<OAuthCallback />} />
+            <Route path="oauth/callback/kakao" element={<OAuthCallback provider="kakao" />} />
+            <Route path="oauth/callback/naver" element={<OAuthCallback provider="naver" />} />
             <Route path="user/mypage" element={<MyPage />} />
             <Route path="interior/onsite" element={<InteriorGalleryPage category="ONSITE" title="현장시공" subtitle="전문 시공팀의 현장 시공 사례를 확인해 보세요" />} />
             <Route path="interior/self-tip" element={<InteriorGalleryPage category="SELF_TIP" title="셀프시공" subtitle="누구나 따라할 수 있는 셀프 인테리어 팁" />} />
