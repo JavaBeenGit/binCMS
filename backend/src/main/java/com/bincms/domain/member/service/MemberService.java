@@ -3,6 +3,7 @@ package com.bincms.domain.member.service;
 import com.bincms.common.exception.BusinessException;
 import com.bincms.common.exception.ErrorCode;
 import com.bincms.common.security.JwtTokenProvider;
+import com.bincms.domain.email.service.EmailService;
 import com.bincms.domain.member.dto.*;
 import com.bincms.domain.member.entity.Member;
 import com.bincms.domain.member.repository.MemberRepository;
@@ -29,15 +30,28 @@ public class MemberService {
     private final PasswordEncoder passwordEncoder;
     private final JwtTokenProvider jwtTokenProvider;
     private final RoleService roleService;
+    private final EmailService emailService;
     
     /**
-     * 회원가입
+     * 회원가입 (이메일 인증 기반)
      */
     @Transactional
     public MemberResponse signup(SignupRequest request) {
         // 로그인 ID 중복 체크
         if (memberRepository.existsByLoginId(request.getLoginId())) {
             throw new BusinessException(ErrorCode.DUPLICATE_RESOURCE, "이미 사용중인 로그인 ID입니다");
+        }
+        
+        // 이메일 중복 체크
+        if (request.getEmail() != null && !request.getEmail().isEmpty()) {
+            if (memberRepository.existsByEmail(request.getEmail())) {
+                throw new BusinessException(ErrorCode.DUPLICATE_RESOURCE, "이미 사용중인 이메일입니다");
+            }
+            
+            // 이메일 인증 여부 확인
+            if (!emailService.isEmailVerified(request.getEmail())) {
+                throw new BusinessException(ErrorCode.INVALID_INPUT_VALUE, "이메일 인증이 완료되지 않았습니다");
+            }
         }
         
         // 기본 역할: USER
@@ -51,10 +65,58 @@ public class MemberService {
                 .name(request.getName())
                 .phoneNumber(request.getPhoneNumber())
                 .role(userRole)
+                .provider("LOCAL")
+                .emailVerified(request.getEmail() != null && !request.getEmail().isEmpty())
                 .build();
         
         Member savedMember = memberRepository.save(member);
         return MemberResponse.from(savedMember);
+    }
+    
+    /**
+     * 소셜 로그인 (카카오/네이버/구글)
+     * 기존 회원이면 로그인, 신규면 자동 가입 후 로그인
+     */
+    @Transactional
+    public LoginResponse socialLogin(String provider, String providerId, String email, String name) {
+        // 기존 소셜 회원 조회
+        Member member = memberRepository.findByProviderAndProviderId(provider, providerId)
+                .orElse(null);
+        
+        if (member == null) {
+            // 같은 이메일로 가입된 LOCAL 회원이 있으면 연동
+            if (email != null && !email.isEmpty()) {
+                member = memberRepository.findByEmail(email).orElse(null);
+            }
+            
+            if (member == null) {
+                // 신규 회원 자동 가입
+                Role userRole = roleService.getRoleByCode("USER");
+                String loginId = provider.toLowerCase() + "_" + providerId;
+                
+                member = Member.builder()
+                        .loginId(loginId)
+                        .email(email)
+                        .password(passwordEncoder.encode(java.util.UUID.randomUUID().toString()))
+                        .name(name != null ? name : "사용자")
+                        .role(userRole)
+                        .provider(provider)
+                        .providerId(providerId)
+                        .emailVerified(email != null && !email.isEmpty())
+                        .build();
+                
+                member = memberRepository.save(member);
+            } else {
+                // 기존 LOCAL 회원에 소셜 연동
+                member.linkSocialAccount(provider, providerId);
+            }
+        }
+        
+        // JWT 토큰 생성
+        String token = jwtTokenProvider.generateToken(member.getLoginId(), member.getRole().getRoleCode());
+        List<String> permissions = roleService.getPermissionsByRoleCode(member.getRole().getRoleCode());
+        
+        return LoginResponse.of(token, MemberResponse.from(member, permissions));
     }
     
     /**

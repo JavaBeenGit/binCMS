@@ -62,6 +62,27 @@ public class Member extends BaseEntity {
     private String phoneNumber;
     
     /**
+     * 인증 제공자 (LOCAL, KAKAO, NAVER, GOOGLE)
+     */
+    @Column(name = "PROVIDER", nullable = false, length = 20)
+    @Comment("인증 제공자")
+    private String provider;
+    
+    /**
+     * 소셜 로그인 제공자 ID
+     */
+    @Column(name = "PROVIDER_ID", length = 255)
+    @Comment("소셜 제공자 ID")
+    private String providerId;
+    
+    /**
+     * 이메일 인증 여부
+     */
+    @Column(name = "EMAIL_VERIFIED", nullable = false)
+    @Comment("이메일 인증 여부")
+    private Boolean emailVerified;
+    
+    /**
      * 회원 역할 (TB_ROLES FK)
      */
     @ManyToOne(fetch = FetchType.LAZY)
@@ -78,14 +99,26 @@ public class Member extends BaseEntity {
     private Boolean active;
     
     @Builder
-    public Member(String loginId, String email, String password, String name, String phoneNumber, Role role) {
+    public Member(String loginId, String email, String password, String name, String phoneNumber, 
+                  Role role, String provider, String providerId, Boolean emailVerified) {
         this.loginId = loginId;
         this.email = email;
         this.password = password;
         this.name = name;
         this.phoneNumber = phoneNumber;
         this.role = role;
+        this.provider = provider != null ? provider : "LOCAL";
+        this.providerId = providerId;
+        this.emailVerified = emailVerified != null ? emailVerified : false;
         this.active = true;
+    }
+    
+    /**
+     * 소셜 계정 연동
+     */
+    public void linkSocialAccount(String provider, String providerId) {
+        this.provider = provider;
+        this.providerId = providerId;
     }
     
     /**

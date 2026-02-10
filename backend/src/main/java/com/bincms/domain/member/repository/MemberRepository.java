@@ -28,6 +28,21 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
     boolean existsByLoginId(String loginId);
     
     /**
+     * 이메일 존재 여부 확인
+     */
+    boolean existsByEmail(String email);
+    
+    /**
+     * 이메일로 회원 조회
+     */
+    Optional<Member> findByEmail(String email);
+    
+    /**
+     * 소셜 로그인 제공자와 ID로 회원 조회
+     */
+    Optional<Member> findByProviderAndProviderId(String provider, String providerId);
+    
+    /**
      * 활성화된 회원 조회
      */
     Optional<Member> findByLoginIdAndActiveTrue(String loginId);

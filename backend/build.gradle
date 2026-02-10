@@ -48,6 +48,9 @@ dependencies {
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
     
+    // Mail
+    implementation 'org.springframework.boot:spring-boot-starter-mail'
+    
     // Development
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
     

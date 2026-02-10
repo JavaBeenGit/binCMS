@@ -1,12 +1,18 @@
 import React, { useState, useEffect } from 'react';
-import { Link, Outlet, useLocation } from 'react-router-dom';
+import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom';
+import { Dropdown, message } from 'antd';
+import { UserOutlined, LogoutOutlined, LoginOutlined } from '@ant-design/icons';
+import { useAuthStore } from '../../stores/authStore';
 import PopupLayer from '../components/PopupLayer';
 import './UserLayout.css';
 
 const UserLayout: React.FC = () => {
   const location = useLocation();
+  const navigate = useNavigate();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const { user, token, clearAuth } = useAuthStore();
+  const isLoggedIn = !!token;
 
   // 스크롤 시 헤더 그림자
   useEffect(() => {
@@ -24,6 +30,28 @@ const UserLayout: React.FC = () => {
   const isActive = (path: string) => location.pathname === path;
   const isInteriorActive = () => location.pathname.startsWith('/interior');
   const isCommunityActive = () => location.pathname === '/free';
+
+  const handleLogout = () => {
+    clearAuth();
+    message.success('로그아웃 되었습니다');
+    navigate('/');
+  };
+
+  const userMenuItems = [
+    {
+      key: 'mypage',
+      label: '마이페이지',
+      icon: <UserOutlined />,
+      onClick: () => navigate('/user/mypage'),
+    },
+    { type: 'divider' as const },
+    {
+      key: 'logout',
+      label: '로그아웃',
+      icon: <LogoutOutlined />,
+      onClick: handleLogout,
+    },
+  ];
 
   return (
     <div className="user-layout">
@@ -68,6 +96,24 @@ const UserLayout: React.FC = () => {
             </Link>
           </nav>
 
+          {/* User Auth Area (Desktop) */}
+          <div className="header-auth">
+            {isLoggedIn ? (
+              <Dropdown menu={{ items: userMenuItems }} placement="bottomRight">
+                <button className="auth-user-btn">
+                  <UserOutlined />
+                  <span className="auth-user-name">{user?.name}</span>
+                </button>
+              </Dropdown>
+            ) : (
+              <div className="auth-links">
+                <Link to="/user/login" className="auth-link">로그인</Link>
+                <span className="auth-divider">|</span>
+                <Link to="/user/signup" className="auth-link">회원가입</Link>
+              </div>
+            )}
+          </div>
+
           {/* Mobile Hamburger */}
           <button
             className={`mobile-menu-btn ${mobileOpen ? 'open' : ''}`}
@@ -108,6 +154,28 @@ const UserLayout: React.FC = () => {
         <Link to="/inquiry" className={`mobile-nav-item ${isActive('/inquiry') ? 'active' : ''}`}>
           견적문의
         </Link>
+
+        <div className="mobile-nav-auth">
+          {isLoggedIn ? (
+            <>
+              <span className="mobile-nav-user">
+                <UserOutlined /> {user?.name}님
+              </span>
+              <button className="mobile-nav-logout" onClick={handleLogout}>
+                <LogoutOutlined /> 로그아웃
+              </button>
+            </>
+          ) : (
+            <>
+              <Link to="/user/login" className="mobile-nav-auth-link">
+                <LoginOutlined /> 로그인
+              </Link>
+              <Link to="/user/signup" className="mobile-nav-auth-link signup">
+                회원가입
+              </Link>
+            </>
+          )}
+        </div>
       </nav>
 
       {/* ── 팝업 레이어 ── */}

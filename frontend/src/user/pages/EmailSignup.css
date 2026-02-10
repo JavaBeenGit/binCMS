@@ -1,0 +1,146 @@
+/* ================================================================
+   이메일 인증 회원가입 페이지
+================================================================ */
+
+.email-signup-card {
+  max-width: 520px;
+  margin: 40px auto 60px;
+  padding: 40px;
+  background: #fff;
+  border-radius: 12px;
+  border: 1px solid #e8e8e8;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+}
+
+.signup-steps {
+  margin-bottom: 36px;
+}
+
+.signup-steps .ant-steps-item-finish .ant-steps-item-icon {
+  background: #1a1a2e;
+  border-color: #1a1a2e;
+}
+
+.signup-steps .ant-steps-item-process .ant-steps-item-icon {
+  background: #c9a96e;
+  border-color: #c9a96e;
+}
+
+.step-content {
+  margin-top: 24px;
+}
+
+.step-description {
+  text-align: center;
+  margin-bottom: 32px;
+}
+
+.step-icon {
+  font-size: 40px;
+  color: #c9a96e;
+  margin-bottom: 16px;
+}
+
+.step-description h3 {
+  font-size: 20px;
+  font-weight: 700;
+  color: #222;
+  margin-bottom: 8px;
+}
+
+.step-description p {
+  font-size: 14px;
+  color: #666;
+  line-height: 1.6;
+}
+
+.step-btn {
+  height: 48px !important;
+  font-size: 16px !important;
+  font-weight: 600 !important;
+  border-radius: 8px !important;
+  background: #1a1a2e !important;
+  border-color: #1a1a2e !important;
+}
+
+.step-btn:hover:not(:disabled) {
+  background: #2d2d4e !important;
+  border-color: #2d2d4e !important;
+}
+
+.code-input input {
+  font-size: 24px !important;
+  letter-spacing: 8px;
+  text-align: center;
+  font-weight: 700;
+}
+
+.countdown {
+  margin-top: 12px;
+  font-size: 14px;
+  color: #e74c3c;
+}
+
+.countdown strong {
+  font-size: 16px;
+}
+
+.resend-area {
+  text-align: center;
+  font-size: 13px;
+  color: #888;
+}
+
+.resend-area .ant-btn-link {
+  font-size: 13px;
+  padding: 0 4px;
+}
+
+.verified-email {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #f0fdf4;
+  color: #16a34a;
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  margin-top: 8px;
+}
+
+.verified-email .anticon {
+  font-size: 16px;
+}
+
+.email-signup-links {
+  text-align: center;
+  margin-top: 24px;
+  padding-top: 20px;
+  border-top: 1px solid #f0f0f0;
+}
+
+.email-signup-links a {
+  color: #888;
+  font-size: 14px;
+  text-decoration: none;
+}
+
+.email-signup-links a:hover {
+  color: #2563eb;
+}
+
+@media (max-width: 768px) {
+  .email-signup-card {
+    margin: 24px 16px 40px;
+    padding: 28px 20px;
+  }
+
+  .signup-steps {
+    margin-bottom: 24px;
+  }
+
+  .step-description h3 {
+    font-size: 18px;
+  }
+}

@@ -1,0 +1,118 @@
+/* ================================================================
+   사용자 회원가입 선택 페이지
+================================================================ */
+
+.user-signup-card {
+  max-width: 480px;
+  margin: 40px auto 60px;
+  padding: 40px;
+  background: #fff;
+  border-radius: 12px;
+  border: 1px solid #e8e8e8;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+}
+
+.user-signup-title {
+  text-align: center;
+  font-size: 24px;
+  font-weight: 700;
+  color: #222;
+  margin-bottom: 32px;
+}
+
+.signup-methods {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.signup-method-btn {
+  height: 48px !important;
+  font-size: 15px !important;
+  font-weight: 600 !important;
+  border-radius: 8px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+.signup-email-btn {
+  background: #1a1a2e !important;
+  border-color: #1a1a2e !important;
+}
+
+.signup-email-btn:hover {
+  background: #2d2d4e !important;
+  border-color: #2d2d4e !important;
+}
+
+.signup-kakao-btn {
+  background: #FEE500 !important;
+  border-color: #FEE500 !important;
+  color: #3C1E1E !important;
+}
+
+.signup-naver-btn {
+  background: #fff !important;
+  border: 1px solid #ddd !important;
+  color: #333 !important;
+}
+
+.signup-google-btn {
+  background: #fff !important;
+  border: 1px solid #ddd !important;
+  color: #333 !important;
+}
+
+.signup-divider {
+  display: flex;
+  align-items: center;
+  text-align: center;
+  margin: 8px 0;
+}
+
+.signup-divider::before,
+.signup-divider::after {
+  content: '';
+  flex: 1;
+  border-bottom: 1px solid #e8e8e8;
+}
+
+.signup-divider span {
+  padding: 0 16px;
+  font-size: 13px;
+  color: #999;
+}
+
+.user-signup-btn {
+  height: 48px !important;
+  font-size: 16px !important;
+  font-weight: 600 !important;
+  border-radius: 8px !important;
+  margin-top: 8px;
+}
+
+.user-signup-links {
+  text-align: center;
+  margin-top: 24px;
+  font-size: 14px;
+  color: #888;
+}
+
+.user-signup-links a {
+  color: #2563eb;
+  font-weight: 600;
+  margin-left: 8px;
+  text-decoration: none;
+}
+
+.user-signup-links a:hover {
+  text-decoration: underline;
+}
+
+@media (max-width: 768px) {
+  .user-signup-card {
+    margin: 24px 16px 40px;
+    padding: 28px 20px;
+  }
+}

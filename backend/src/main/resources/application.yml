@@ -72,6 +72,35 @@ spring:
         '[hibernate.connection.charSet]': UTF-8
         '[hibernate.connection.characterEncoding]': UTF-8
         '[hibernate.connection.useUnicode]': true
+  
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: ${GMAIL_USERNAME:been8046@gmail.com}
+    password: ${GMAIL_APP_PASSWORD:tbly qxkg rrtg yhoi}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+            required: true
+          connectiontimeout: 5000
+          timeout: 5000
+          writetimeout: 5000
+
+app:
+  mail:
+    from: ${GMAIL_USERNAME:been8046@gmail.com}
+    from-name: BIN INTERIOR
+    verification-code-expiry: 300  # 5분 (초)
+  oauth:
+    kakao:
+      client-id: b7dd2f517dfa726d8000490128ef5ce1
+      client-secret: daMDkSRYIcA3NMx5OmnIebzHdm6VVuY5
+      redirect-uri: http://localhost:3000/oauth/callback/kakao
+      token-url: https://kauth.kakao.com/oauth/token
+      user-info-url: https://kapi.kakao.com/v2/user/me
 
 cors:
   allowed-origins:

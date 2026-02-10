@@ -21,6 +21,10 @@ import PostListPage from './user/pages/PostListPage';
 import FreeBoardPage from './user/pages/FreeBoardPage';
 import InteriorGalleryPage from './user/pages/InteriorGalleryPage';
 import InquiryPage from './user/pages/InquiryPage';
+import UserLogin from './user/pages/UserLogin';
+import UserSignup from './user/pages/UserSignup';
+import EmailSignup from './user/pages/EmailSignup';
+import OAuthCallback from './user/pages/OAuthCallback';
 import { useAuthStore } from './stores/authStore';
 import PermissionGuard from './shared/components/PermissionGuard';
 
@@ -90,6 +94,11 @@ function App() {
             <Route path="free" element={<FreeBoardPage boardCode="free" title="자유게시판" subtitle="자유롭게 소통하는 공간입니다" />} />
             <Route path="faq" element={<PostListPage boardCode="faq" title="자주묻는질문" subtitle="궁금한 점을 확인해 보세요" />} />
             <Route path="inquiry" element={<InquiryPage />} />
+            <Route path="user/login" element={<UserLogin />} />
+            <Route path="user/signup" element={<UserSignup />} />
+            <Route path="user/signup/email" element={<EmailSignup />} />
+            <Route path="oauth/callback/kakao" element={<OAuthCallback />} />
+            <Route path="user/mypage" element={<div className="page-banner"><h1>마이페이지</h1><p>회원 정보를 관리하세요</p></div>} />
             <Route path="interior/onsite" element={<InteriorGalleryPage category="ONSITE" title="현장시공" subtitle="전문 시공팀의 현장 시공 사례를 확인해 보세요" />} />
             <Route path="interior/self-tip" element={<InteriorGalleryPage category="SELF_TIP" title="셀프시공" subtitle="누구나 따라할 수 있는 셀프 인테리어 팁" />} />
             <Route path="interior/story" element={<InteriorGalleryPage category="STORY" title="인테리어스토리" subtitle="감각적인 인테리어 이야기를 들려드립니다" />} />

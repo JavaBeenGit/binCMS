@@ -1,0 +1,85 @@
+/* ================================================================
+   사용자 로그인 페이지
+================================================================ */
+
+.user-login-card {
+  max-width: 440px;
+  margin: 40px auto 60px;
+  padding: 40px;
+  background: #fff;
+  border-radius: 12px;
+  border: 1px solid #e8e8e8;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+}
+
+.user-login-title {
+  text-align: center;
+  font-size: 24px;
+  font-weight: 700;
+  color: #222;
+  margin-bottom: 32px;
+}
+
+.user-login-btn {
+  height: 48px !important;
+  font-size: 16px !important;
+  font-weight: 600 !important;
+  border-radius: 8px !important;
+}
+
+.user-login-links {
+  text-align: center;
+  margin-top: 20px;
+  font-size: 14px;
+  color: #888;
+}
+
+.user-login-links a {
+  color: #2563eb;
+  font-weight: 600;
+  margin-left: 8px;
+  text-decoration: none;
+}
+
+.user-login-links a:hover {
+  text-decoration: underline;
+}
+
+/* 소셜 로그인 버튼 */
+.social-login-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+
+.social-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  height: 48px;
+  border-radius: 8px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.2s;
+  border: none;
+}
+
+.social-btn:hover {
+  opacity: 0.85;
+}
+
+.kakao-btn {
+  background: #FEE500;
+  color: #3C1E1E;
+}
+
+@media (max-width: 768px) {
+  .user-login-card {
+    margin: 24px 16px 40px;
+    padding: 28px 20px;
+  }
+}
