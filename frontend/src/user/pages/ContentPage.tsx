@@ -41,7 +41,7 @@ const ContentPage: React.FC = () => {
         title="페이지를 찾을 수 없습니다"
         subTitle={`요청하신 페이지(${contentKey})가 존재하지 않거나 비활성 상태입니다.`}
         extra={
-          <Button type="primary" icon={<HomeOutlined />} onClick={() => navigate('/')}>
+          <Button type="primary" icon={<HomeOutlined />} onClick={() => navigate('/user')}>
             홈으로
           </Button>
         }

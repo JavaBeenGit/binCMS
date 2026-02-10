@@ -51,6 +51,7 @@ public class DataInitializer implements ApplicationRunner {
         supplementFreeBoardData();
         supplementInteriorData();
         supplementUserManagementData();
+        supplementUserMenus();
     }
     
     /**
@@ -692,5 +693,85 @@ public class DataInitializer implements ApplicationRunner {
             menuRepository.save(userMenu);
             log.info("Supplemented missing menu: 사용자 관리");
         }
+    }
+
+    /**
+     * 사용자 화면 메뉴 보충 (MenuType.USER)
+     */
+    private void supplementUserMenus() {
+        List<Menu> userMenus = menuRepository.findByMenuTypeOrderBySortOrderAscIdAsc(MenuType.USER);
+        if (!userMenus.isEmpty()) {
+            log.info("User menus already exist (count={}), skipping", userMenus.size());
+            return;
+        }
+
+        log.info("Initializing user menus...");
+
+        // 1. HOME
+        menuRepository.save(Menu.builder()
+                .menuType(MenuType.USER).menuName("HOME")
+                .menuUrl("/user").parentId(null)
+                .depth(1).sortOrder(1).icon("HomeOutlined")
+                .description("사용자 홈").build());
+
+        // 2. 공지사항
+        menuRepository.save(Menu.builder()
+                .menuType(MenuType.USER).menuName("공지사항")
+                .menuUrl("/user/notice").parentId(null)
+                .depth(1).sortOrder(2).icon("NotificationOutlined")
+                .description("공지사항").build());
+
+        // 3. 자유게시판
+        menuRepository.save(Menu.builder()
+                .menuType(MenuType.USER).menuName("자유게시판")
+                .menuUrl("/user/free").parentId(null)
+                .depth(1).sortOrder(3).icon("CommentOutlined")
+                .description("자유게시판").build());
+
+        // 4. 인테리어 (부모 메뉴)
+        Menu interior = Menu.builder()
+                .menuType(MenuType.USER).menuName("인테리어")
+                .menuUrl(null).parentId(null)
+                .depth(1).sortOrder(4).icon("PictureOutlined")
+                .description("인테리어").build();
+        menuRepository.save(interior);
+        Long interiorId = interior.getId();
+
+        // 4-1. 현장시공
+        menuRepository.save(Menu.builder()
+                .menuType(MenuType.USER).menuName("현장시공")
+                .menuUrl("/user/interior/onsite").parentId(interiorId)
+                .depth(2).sortOrder(1).icon("PictureOutlined")
+                .description("현장시공").build());
+
+        // 4-2. 셀프시공
+        menuRepository.save(Menu.builder()
+                .menuType(MenuType.USER).menuName("셀프시공")
+                .menuUrl("/user/interior/self-tip").parentId(interiorId)
+                .depth(2).sortOrder(2).icon("ToolOutlined")
+                .description("셀프시공 팁").build());
+
+        // 4-3. 인테리어스토리
+        menuRepository.save(Menu.builder()
+                .menuType(MenuType.USER).menuName("인테리어스토리")
+                .menuUrl("/user/interior/story").parentId(interiorId)
+                .depth(2).sortOrder(3).icon("BookOutlined")
+                .description("인테리어스토리").build());
+
+        // 5. 자주묻는질문
+        menuRepository.save(Menu.builder()
+                .menuType(MenuType.USER).menuName("자주묻는질문")
+                .menuUrl("/user/faq").parentId(null)
+                .depth(1).sortOrder(5).icon("QuestionCircleOutlined")
+                .description("자주묻는질문").build());
+
+        // 6. 견적문의
+        menuRepository.save(Menu.builder()
+                .menuType(MenuType.USER).menuName("견적문의")
+                .menuUrl("/user/inquiry").parentId(null)
+                .depth(1).sortOrder(6).icon("FormOutlined")
+                .description("견적문의").build());
+
+        log.info("User menus initialized successfully - total: 9 menus");
     }
 }

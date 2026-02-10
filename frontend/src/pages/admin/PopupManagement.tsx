@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import {
   Table, Button, Space, Modal, Form, Input, InputNumber, Switch,
-  message, Tag, Popconfirm, Card, Descriptions, DatePicker,
+  message, Tag, Popconfirm, Card, Descriptions, DatePicker, Tooltip,
   Input as AntInput,
 } from 'antd';
 import {
@@ -35,7 +35,7 @@ const { RangePicker } = DatePicker;
 const PopupManagement: React.FC = () => {
   const queryClient = useQueryClient();
   const [currentPage, setCurrentPage] = useState(1);
-  const [pageSize, setPageSize] = useState(20);
+  const [pageSize, setPageSize] = useState(10);
   const [searchKeyword, setSearchKeyword] = useState('');
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
@@ -301,15 +301,21 @@ const PopupManagement: React.FC = () => {
       align: 'center',
       render: (_: unknown, record: PopupResponse) => (
         <Space size="small">
-          <Button size="small" icon={<EyeOutlined />} onClick={() => handleDetail(record)} />
-          <Button size="small" icon={<EditOutlined />} onClick={() => handleEdit(record)} />
+          <Tooltip title="상세보기">
+            <Button size="small" icon={<EyeOutlined />} onClick={() => handleDetail(record)} />
+          </Tooltip>
+          <Tooltip title="수정">
+            <Button size="small" type="primary" icon={<EditOutlined />} onClick={() => handleEdit(record)} />
+          </Tooltip>
           <Popconfirm
             title="정말 삭제하시겠습니까?"
             onConfirm={() => deleteMutation.mutate(record.id)}
             okText="삭제"
             cancelText="취소"
           >
-            <Button size="small" danger icon={<DeleteOutlined />} />
+            <Tooltip title="삭제">
+              <Button size="small" danger icon={<DeleteOutlined />} />
+            </Tooltip>
           </Popconfirm>
         </Space>
       ),
@@ -419,6 +425,9 @@ const PopupManagement: React.FC = () => {
           </Space>
         }
       >
+        <div style={{ marginBottom: 8, color: '#666', fontSize: 14 }}>
+          총 {data?.totalElements || 0}건 ({currentPage}/{Math.max(1, Math.ceil((data?.totalElements || 0) / pageSize))} 페이지)
+        </div>
         <Table
           bordered
           columns={columns}
@@ -429,11 +438,9 @@ const PopupManagement: React.FC = () => {
             current: currentPage,
             pageSize,
             total: data?.totalElements || 0,
-            showSizeChanger: true,
-            showTotal: (total) => `총 ${total}건`,
-            onChange: (page, size) => {
+            showSizeChanger: false,
+            onChange: (page) => {
               setCurrentPage(page);
-              setPageSize(size);
             },
           }}
           size="middle"

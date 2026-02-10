@@ -30,7 +30,7 @@ const UserLogin: React.FC = () => {
       } else {
         // 일반 사용자는 사용자 스토어에 저장
         setAuth(response.data.accessToken, response.data.member);
-        navigate('/');
+        navigate('/user');
       }
     },
     onError: (error: any) => {

@@ -55,7 +55,7 @@ const InquiryManagement: React.FC = () => {
   // 목록 조회
   const { data, isLoading } = useQuery({
     queryKey: ['inquiries', currentPage, filterStatus],
-    queryFn: () => inquiryApi.getAll(currentPage - 1, 20, filterStatus),
+    queryFn: () => inquiryApi.getAll(currentPage - 1, 10, filterStatus),
   });
 
   // 상세 조회
@@ -122,11 +122,12 @@ const InquiryManagement: React.FC = () => {
 
   const columns: ColumnsType<InquiryResponse> = [
     {
-      title: 'No',
-      dataIndex: 'id',
-      key: 'id',
+      title: '번호',
+      key: 'no',
       width: 70,
       align: 'center',
+      render: (_: unknown, __: InquiryResponse, index: number) =>
+        totalElements - ((currentPage - 1) * 10) - index,
     },
     {
       title: '상태',
@@ -206,30 +207,19 @@ const InquiryManagement: React.FC = () => {
     {
       title: '관리',
       key: 'actions',
-      width: 200,
+      width: 120,
       align: 'center',
       render: (_, record) => (
         <Space size="small">
-          <Button
-            type="link"
-            icon={<EyeOutlined />}
-            onClick={() => handleViewDetail(record)}
-          >
-            상세
-          </Button>
-          <Button
-            type="link"
-            onClick={() => handleOpenStatusModal(record)}
-          >
-            상태변경
-          </Button>
-          <Button
-            type="link"
-            icon={<EditOutlined />}
-            onClick={() => handleOpenMemoModal(record)}
-          >
-            메모
-          </Button>
+          <Tooltip title="상세보기">
+            <Button size="small" icon={<EyeOutlined />} onClick={() => handleViewDetail(record)} />
+          </Tooltip>
+          <Tooltip title="상태변경">
+            <Button size="small" icon={<SyncOutlined />} onClick={() => handleOpenStatusModal(record)} />
+          </Tooltip>
+          <Tooltip title="메모">
+            <Button size="small" icon={<EditOutlined />} onClick={() => handleOpenMemoModal(record)} />
+          </Tooltip>
         </Space>
       ),
     },
@@ -303,6 +293,9 @@ const InquiryManagement: React.FC = () => {
       </div>
 
       {/* 테이블 */}
+      <div style={{ marginBottom: 8, color: '#666', fontSize: 14 }}>
+        총 {totalElements}건 ({currentPage}/{Math.max(1, Math.ceil(totalElements / 10))} 페이지)
+      </div>
       <Table
         columns={columns}
         dataSource={inquiries}
@@ -310,9 +303,9 @@ const InquiryManagement: React.FC = () => {
         loading={isLoading}
         pagination={{
           current: currentPage,
-          pageSize: 20,
+          pageSize: 10,
           total: totalElements,
-          showTotal: (total) => `총 ${total}건`,
+          showSizeChanger: false,
           onChange: (page) => setCurrentPage(page),
         }}
         rowClassName={(record) => record.status === 'PENDING' ? 'inquiry-row-pending' : ''}

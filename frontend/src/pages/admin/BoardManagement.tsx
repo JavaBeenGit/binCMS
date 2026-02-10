@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Table, Button, Space, Tag, Popconfirm, message, Modal, Form, Input, InputNumber } from 'antd';
+import { Table, Button, Space, Tag, Popconfirm, message, Modal, Form, Input, InputNumber, Tooltip } from 'antd';
 import { PlusOutlined, EditOutlined, DeleteOutlined, CheckCircleOutlined, StopOutlined } from '@ant-design/icons';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import type { ColumnsType } from 'antd/es/table';
@@ -130,11 +130,11 @@ const BoardManagement: React.FC = () => {
 
   const columns: ColumnsType<BoardResponse> = [
     {
-      title: 'ID',
-      dataIndex: 'id',
-      key: 'id',
+      title: '번호',
+      key: 'no',
       width: 80,
-      onHeaderCell: () => ({ style: { textAlign: 'center' } }),
+      align: 'center',
+      render: (_: unknown, __: BoardResponse, index: number) => (boardsData?.data?.length || 0) - index,
     },
     {
       title: '게시판 코드',
@@ -184,20 +184,15 @@ const BoardManagement: React.FC = () => {
       render: (date: string) => new Date(date).toLocaleString('ko-KR'),
     },
     {
-      title: '작업',
+      title: '관리',
       key: 'action',
-      width: 180,
+      width: 100,
       align: 'center',
       render: (_, record) => (
         <Space size="small">
-          <Button
-            type="link"
-            size="small"
-            icon={<EditOutlined />}
-            onClick={() => handleEdit(record)}
-          >
-            수정
-          </Button>
+          <Tooltip title="수정">
+            <Button size="small" type="primary" icon={<EditOutlined />} onClick={() => handleEdit(record)} />
+          </Tooltip>
           {record.useYn === 'Y' ? (
             <Popconfirm
               title="게시판을 비활성화하시겠습니까?"
@@ -205,9 +200,9 @@ const BoardManagement: React.FC = () => {
               okText="예"
               cancelText="아니오"
             >
-              <Button type="link" size="small" danger icon={<StopOutlined />}>
-                비활성화
-              </Button>
+              <Tooltip title="비활성화">
+                <Button size="small" danger icon={<StopOutlined />} />
+              </Tooltip>
             </Popconfirm>
           ) : (
             <Popconfirm
@@ -216,13 +211,9 @@ const BoardManagement: React.FC = () => {
               okText="예"
               cancelText="아니오"
             >
-              <Button
-                type="link"
-                size="small"
-                icon={<CheckCircleOutlined />}
-              >
-                활성화
-              </Button>
+              <Tooltip title="활성화">
+                <Button size="small" type="primary" ghost icon={<CheckCircleOutlined />} />
+              </Tooltip>
             </Popconfirm>
           )}
         </Space>
@@ -239,13 +230,16 @@ const BoardManagement: React.FC = () => {
         </Button>
       </div>
 
+      <div style={{ marginBottom: 8, color: '#666', fontSize: 14 }}>
+        총 {boardsData?.data?.length || 0}건
+      </div>
       <Table
         bordered
         columns={columns}
         dataSource={boardsData?.data || []}
         rowKey="id"
         loading={isLoading}
-        pagination={{ pageSize: 10 }}
+        pagination={{ pageSize: 10, showSizeChanger: false }}
       />
 
       <Modal

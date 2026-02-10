@@ -28,13 +28,13 @@ const UserLayout: React.FC = () => {
   }, [location.pathname]);
 
   const isActive = (path: string) => location.pathname === path;
-  const isInteriorActive = () => location.pathname.startsWith('/interior');
-  const isCommunityActive = () => location.pathname === '/free';
+  const isInteriorActive = () => location.pathname.startsWith('/user/interior');
+  const isCommunityActive = () => location.pathname === '/user/free';
 
   const handleLogout = () => {
     clearAuth();
     message.success('로그아웃 되었습니다');
-    navigate('/');
+    navigate('/user');
   };
 
   const userMenuItems = [
@@ -59,20 +59,20 @@ const UserLayout: React.FC = () => {
       <header className={`user-header ${scrolled ? 'scrolled' : ''}`}>
         <div className="header-inner">
           {/* 로고 */}
-          <Link to="/" className="header-logo">
+          <Link to="/user" className="header-logo">
             <img src="/uploads/etc/su_design_logo.png" alt="수디자인" className="header-logo-img" />
             <span className="logo-text">수디자인</span>
           </Link>
 
           {/* Desktop Navigation */}
           <nav className="header-nav">
-            <Link to="/" className={`nav-item ${isActive('/') ? 'active' : ''}`}>
+            <Link to="/user" className={`nav-item ${isActive('/user') ? 'active' : ''}`}>
               HOME
             </Link>
-            <Link to="/notice" className={`nav-item ${isActive('/notice') ? 'active' : ''}`}>
+            <Link to="/user/notice" className={`nav-item ${isActive('/user/notice') ? 'active' : ''}`}>
               공지사항
             </Link>
-            <Link to="/free" className={`nav-item ${isCommunityActive() ? 'active' : ''}`}>
+            <Link to="/user/free" className={`nav-item ${isCommunityActive() ? 'active' : ''}`}>
               자유게시판
             </Link>
 
@@ -82,16 +82,16 @@ const UserLayout: React.FC = () => {
                 인테리어
               </span>
               <div className="nav-dropdown">
-                <Link to="/interior/onsite">현장시공</Link>
-                <Link to="/interior/self-tip">셀프시공</Link>
-                <Link to="/interior/story">인테리어스토리</Link>
+                <Link to="/user/interior/onsite">현장시공</Link>
+                <Link to="/user/interior/self-tip">셀프시공</Link>
+                <Link to="/user/interior/story">인테리어스토리</Link>
               </div>
             </div>
 
-            <Link to="/faq" className={`nav-item ${isActive('/faq') ? 'active' : ''}`}>
+            <Link to="/user/faq" className={`nav-item ${isActive('/user/faq') ? 'active' : ''}`}>
               자주묻는질문
             </Link>
-            <Link to="/inquiry" className={`nav-item ${isActive('/inquiry') ? 'active' : ''}`}>
+            <Link to="/user/inquiry" className={`nav-item ${isActive('/user/inquiry') ? 'active' : ''}`}>
               견적문의
             </Link>
           </nav>
@@ -127,31 +127,31 @@ const UserLayout: React.FC = () => {
 
       {/* ── Mobile Navigation ── */}
       <nav className={`mobile-nav ${mobileOpen ? 'open' : ''}`}>
-        <Link to="/" className={`mobile-nav-item ${isActive('/') ? 'active' : ''}`}>
+        <Link to="/user" className={`mobile-nav-item ${isActive('/user') ? 'active' : ''}`}>
           HOME
         </Link>
-        <Link to="/notice" className={`mobile-nav-item ${isActive('/notice') ? 'active' : ''}`}>
+        <Link to="/user/notice" className={`mobile-nav-item ${isActive('/user/notice') ? 'active' : ''}`}>
           공지사항
         </Link>
-        <Link to="/free" className={`mobile-nav-item ${isActive('/free') ? 'active' : ''}`}>
+        <Link to="/user/free" className={`mobile-nav-item ${isActive('/user/free') ? 'active' : ''}`}>
           자유게시판
         </Link>
 
         <span className="mobile-nav-group-title">인테리어</span>
-        <Link to="/interior/onsite" className={`mobile-nav-sub-item ${isActive('/interior/onsite') ? 'active' : ''}`}>
+        <Link to="/user/interior/onsite" className={`mobile-nav-sub-item ${isActive('/user/interior/onsite') ? 'active' : ''}`}>
           현장시공
         </Link>
-        <Link to="/interior/self-tip" className={`mobile-nav-sub-item ${isActive('/interior/self-tip') ? 'active' : ''}`}>
+        <Link to="/user/interior/self-tip" className={`mobile-nav-sub-item ${isActive('/user/interior/self-tip') ? 'active' : ''}`}>
           셀프시공
         </Link>
-        <Link to="/interior/story" className={`mobile-nav-sub-item ${isActive('/interior/story') ? 'active' : ''}`}>
+        <Link to="/user/interior/story" className={`mobile-nav-sub-item ${isActive('/user/interior/story') ? 'active' : ''}`}>
           인테리어스토리
         </Link>
 
-        <Link to="/faq" className={`mobile-nav-item ${isActive('/faq') ? 'active' : ''}`}>
+        <Link to="/user/faq" className={`mobile-nav-item ${isActive('/user/faq') ? 'active' : ''}`}>
           자주묻는질문
         </Link>
-        <Link to="/inquiry" className={`mobile-nav-item ${isActive('/inquiry') ? 'active' : ''}`}>
+        <Link to="/user/inquiry" className={`mobile-nav-item ${isActive('/user/inquiry') ? 'active' : ''}`}>
           견적문의
         </Link>
 
@@ -209,18 +209,18 @@ const UserLayout: React.FC = () => {
           <div>
             <div className="footer-title">서비스</div>
             <ul className="footer-links">
-              <li><Link to="/interior/onsite">현장시공</Link></li>
-              <li><Link to="/interior/self-tip">셀프시공</Link></li>
-              <li><Link to="/interior/story">인테리어스토리</Link></li>
+              <li><Link to="/user/interior/onsite">현장시공</Link></li>
+              <li><Link to="/user/interior/self-tip">셀프시공</Link></li>
+              <li><Link to="/user/interior/story">인테리어스토리</Link></li>
             </ul>
           </div>
           <div>
             <div className="footer-title">고객지원</div>
             <ul className="footer-links">
-              <li><Link to="/notice">공지사항</Link></li>
-              <li><Link to="/free">자유게시판</Link></li>
-              <li><Link to="/faq">자주묻는질문</Link></li>
-              <li><Link to="/inquiry">견적문의</Link></li>
+              <li><Link to="/user/notice">공지사항</Link></li>
+              <li><Link to="/user/free">자유게시판</Link></li>
+              <li><Link to="/user/faq">자주묻는질문</Link></li>
+              <li><Link to="/user/inquiry">견적문의</Link></li>
             </ul>
           </div>
         </div>

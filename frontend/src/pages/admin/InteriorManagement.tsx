@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import {
   Table, Button, Space, Modal, Form, Input, InputNumber,
-  message, Tag, Popconfirm, Card, Row, Col, Image, Segmented, Upload,
+  message, Tag, Popconfirm, Card, Row, Col, Image, Segmented, Upload, Pagination, Tooltip,
 } from 'antd';
 import {
   PlusOutlined, EditOutlined, DeleteOutlined,
@@ -53,6 +53,7 @@ const InteriorManagement: React.FC<InteriorManagementProps> = ({ category }) => 
   const [thumbnailUrl, setThumbnailUrl] = useState<string | null>(null);
   const [thumbnailPreview, setThumbnailPreview] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
+  const [currentPage, setCurrentPage] = useState(0);
   const [form] = Form.useForm();
 
   // CKEditor 설정
@@ -100,18 +101,21 @@ const InteriorManagement: React.FC<InteriorManagementProps> = ({ category }) => 
     language: 'ko',
   } as any;
 
+  // 갤러리 12개, 리스트 10개
+  const pageSize = viewMode === 'gallery' ? 12 : 10;
+
   // 데이터 조회
   const { data: pageData, isLoading } = useQuery({
-    queryKey: ['interiors', category, searchKeyword],
+    queryKey: ['interiors', category, searchKeyword, currentPage, pageSize],
     queryFn: async () => {
       if (searchKeyword) {
-        const res = await interiorApi.search(searchKeyword, category);
+        const res = await interiorApi.search(searchKeyword, category, currentPage, pageSize);
         return res.data;
       } else if (category) {
-        const res = await interiorApi.getByCategory(category);
+        const res = await interiorApi.getByCategory(category, currentPage, pageSize);
         return res.data;
       } else {
-        const res = await interiorApi.getAll();
+        const res = await interiorApi.getAll(currentPage, pageSize);
         return res.data;
       }
     },
@@ -311,7 +315,8 @@ const InteriorManagement: React.FC<InteriorManagementProps> = ({ category }) => 
       width: 70,
       align: 'center',
       onHeaderCell: () => ({ style: { textAlign: 'center' } }),
-      render: (_, __, idx) => idx + 1,
+      render: (_: unknown, __: InteriorResponse, idx: number) =>
+        (pageData?.totalElements || 0) - (currentPage * pageSize) - idx,
     },
     {
       title: '썸네일',
@@ -383,25 +388,25 @@ const InteriorManagement: React.FC<InteriorManagementProps> = ({ category }) => 
       render: (text) => new Date(text).toLocaleDateString('ko-KR'),
     },
     {
-      title: '작업',
+      title: '관리',
       key: 'action',
-      width: 160,
+      width: 100,
       align: 'center',
       onHeaderCell: () => ({ style: { textAlign: 'center' } }),
       render: (_, record) => (
-        <Space size={4}>
-          <Button type="link" icon={<EditOutlined />} size="small" onClick={() => handleEdit(record)}>
-            수정
-          </Button>
+        <Space size="small">
+          <Tooltip title="수정">
+            <Button size="small" type="primary" icon={<EditOutlined />} onClick={() => handleEdit(record)} />
+          </Tooltip>
           <Popconfirm
             title="삭제하시겠습니까?"
             onConfirm={() => deleteMutation.mutate(record.id)}
             okText="예"
             cancelText="아니오"
           >
-            <Button type="link" danger icon={<DeleteOutlined />} size="small">
-              삭제
-            </Button>
+            <Tooltip title="삭제">
+              <Button size="small" danger icon={<DeleteOutlined />} />
+            </Tooltip>
           </Popconfirm>
         </Space>
       ),
@@ -420,7 +425,7 @@ const InteriorManagement: React.FC<InteriorManagementProps> = ({ category }) => 
               { label: '리스트', value: 'list', icon: <UnorderedListOutlined /> },
             ]}
             value={viewMode}
-            onChange={(v) => setViewMode(v as 'gallery' | 'list')}
+            onChange={(v) => { setViewMode(v as 'gallery' | 'list'); setCurrentPage(0); }}
           />
           <Button type="primary" icon={<PlusOutlined />} onClick={handleCreate}>
             등록
@@ -441,8 +446,22 @@ const InteriorManagement: React.FC<InteriorManagementProps> = ({ category }) => 
       </div>
 
       {/* 뷰 */}
+      <div style={{ marginBottom: 8, color: '#666', fontSize: 14 }}>
+        총 {pageData?.totalElements || 0}건 ({currentPage + 1}/{Math.max(1, Math.ceil((pageData?.totalElements || 0) / pageSize))} 페이지)
+      </div>
       {viewMode === 'gallery' ? (
-        renderGalleryView()
+        <>
+        {renderGalleryView()}
+        <div style={{ marginTop: 16, textAlign: 'center' }}>
+          <Pagination
+            current={currentPage + 1}
+            pageSize={pageSize}
+            total={pageData?.totalElements || 0}
+            showSizeChanger={false}
+            onChange={(page) => setCurrentPage(page - 1)}
+          />
+        </div>
+        </>
       ) : (
         <Table
           bordered
@@ -451,11 +470,11 @@ const InteriorManagement: React.FC<InteriorManagementProps> = ({ category }) => 
           rowKey="id"
           loading={isLoading}
           pagination={{
-            current: (pageData?.pageable?.pageNumber || 0) + 1,
-            pageSize: pageData?.pageable?.pageSize || 20,
+            current: currentPage + 1,
+            pageSize,
             total: pageData?.totalElements || 0,
-            showSizeChanger: true,
-            showTotal: (total) => `총 ${total}개`,
+            showSizeChanger: false,
+            onChange: (page) => setCurrentPage(page - 1),
           }}
         />
       )}

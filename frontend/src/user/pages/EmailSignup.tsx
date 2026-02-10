@@ -138,7 +138,7 @@ const EmailSignup: React.FC = () => {
                 <Button
                   key="home"
                   size="large"
-                  onClick={() => navigate('/')}
+                  onClick={() => navigate('/user')}
                 >
                   홈으로
                 </Button>,

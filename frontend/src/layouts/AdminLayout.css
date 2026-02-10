@@ -46,3 +46,11 @@
   background: #fff;
   border-radius: 8px;
 }
+
+/* 관리자 목록 페이지 페이지네이션 가운데 정렬 */
+.admin-content .ant-table-pagination {
+  justify-content: center;
+}
+.admin-content .ant-pagination {
+  justify-content: center;
+}
