@@ -83,6 +83,44 @@ export const buildNaverAuthUrl = (config: OAuthConfig) => {
 };
 
 /**
+ * 구글 OAuth 설정 조회
+ */
+export const getGoogleConfig = async () => {
+  const response = await apiClient.get<{
+    success: boolean;
+    data: OAuthConfig;
+  }>('/public/oauth/google/config');
+  return response.data;
+};
+
+/**
+ * 구글 인가 코드로 로그인
+ */
+export const googleLogin = async (code: string) => {
+  const response = await apiClient.post<{
+    success: boolean;
+    data: LoginResponse;
+    message: string;
+  }>('/public/oauth/google', { code });
+  return response.data;
+};
+
+/**
+ * 구글 인가 URL 생성
+ */
+export const buildGoogleAuthUrl = (config: OAuthConfig) => {
+  const params = new URLSearchParams({
+    client_id: config.clientId,
+    redirect_uri: config.redirectUri,
+    response_type: 'code',
+    scope: 'openid email profile',
+    access_type: 'offline',
+    prompt: 'consent',
+  });
+  return `${config.authUrl}?${params.toString()}`;
+};
+
+/**
  * CSRF 방지용 랜덤 state 생성
  */
 const generateRandomState = (): string => {

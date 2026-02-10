@@ -82,6 +82,17 @@
   color: #fff;
 }
 
+.google-btn {
+  background: #fff;
+  color: #444;
+  border: 1px solid #dadce0 !important;
+}
+
+.google-btn:hover {
+  background: #f7f8f8;
+  opacity: 1;
+}
+
 @media (max-width: 768px) {
   .user-login-card {
     margin: 24px 16px 40px;

@@ -84,9 +84,10 @@ public class MemberService {
                 .orElse(null);
         
         if (member == null) {
-            // 같은 이메일로 가입된 LOCAL 회원이 있으면 연동
+            // 같은 이메일로 가입된 LOCAL 회원이 있으면 소셜 연동
+            // (다른 소셜 제공자의 계정은 매칭하지 않음 — 각 소셜 계정은 별도 회원)
             if (email != null && !email.isEmpty()) {
-                member = memberRepository.findByEmail(email).orElse(null);
+                member = memberRepository.findByEmailAndProvider(email, "LOCAL").orElse(null);
             }
             
             if (member == null) {

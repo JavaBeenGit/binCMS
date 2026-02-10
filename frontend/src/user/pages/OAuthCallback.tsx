@@ -1,16 +1,17 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { Spin, Result, Button } from 'antd';
-import { kakaoLogin, naverLogin } from '../../api/endpoints/oauth';
+import { kakaoLogin, naverLogin, googleLogin } from '../../api/endpoints/oauth';
 import { useAuthStore } from '../../stores/authStore';
 
 interface OAuthCallbackProps {
-  provider: 'kakao' | 'naver';
+  provider: 'kakao' | 'naver' | 'google';
 }
 
 const PROVIDER_LABELS: Record<string, string> = {
   kakao: '카카오',
   naver: '네이버',
+  google: '구글',
 };
 
 /**
@@ -49,6 +50,8 @@ const OAuthCallback: React.FC<OAuthCallbackProps> = ({ provider }) => {
     if (provider === 'naver') {
       const state = searchParams.get('state') || '';
       loginPromise = naverLogin(code, state);
+    } else if (provider === 'google') {
+      loginPromise = googleLogin(code);
     } else {
       loginPromise = kakaoLogin(code);
     }

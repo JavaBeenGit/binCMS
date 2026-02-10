@@ -38,6 +38,11 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
     Optional<Member> findByEmail(String email);
     
     /**
+     * 이메일 + 제공자로 회원 조회 (소셜 로그인 시 LOCAL 회원만 매칭용)
+     */
+    Optional<Member> findByEmailAndProvider(String email, String provider);
+    
+    /**
      * 소셜 로그인 제공자와 ID로 회원 조회
      */
     Optional<Member> findByProviderAndProviderId(String provider, String providerId);
