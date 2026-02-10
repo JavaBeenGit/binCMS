@@ -26,6 +26,10 @@ export interface PostResponse {
   regDt: string;
   modDt: string;
   regNo: string;
+  authorId: number | null;
+  authorName: string | null;
+  authorLoginId: string | null;
+  displayAuthorName: string | null;
 }
 
 export interface PostSearchParams {
@@ -72,6 +76,27 @@ export const postApi = {
 
   deletePost: async (id: number): Promise<ApiResponse<void>> => {
     const response = await client.delete(`/posts/${id}`);
+    return response.data;
+  }
+};
+
+// ── 사용자용 게시글 API (인증 필요) ──
+export const userPostApi = {
+  /** 사용자 게시글 작성 */
+  createPost: async (boardCode: string, data: { title: string; content: string }): Promise<ApiResponse<PostResponse>> => {
+    const response = await client.post(`/user/posts/${boardCode}`, data);
+    return response.data;
+  },
+
+  /** 사용자 게시글 수정 */
+  updatePost: async (id: number, data: { title: string; content: string }): Promise<ApiResponse<PostResponse>> => {
+    const response = await client.put(`/user/posts/${id}`, data);
+    return response.data;
+  },
+
+  /** 사용자 게시글 삭제 */
+  deletePost: async (id: number): Promise<ApiResponse<void>> => {
+    const response = await client.delete(`/user/posts/${id}`);
     return response.data;
   }
 };

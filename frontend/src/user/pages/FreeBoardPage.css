@@ -1,6 +1,13 @@
 /* ================================================================
-   자유게시판 목록 / 상세 페이지
+   자유게시판 목록 / 상세 / 글쓰기 페이지
 ================================================================ */
+
+/* ── 툴바 (글쓰기 버튼) ── */
+.free-board-toolbar {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 16px;
+}
 
 /* ── 목록 ── */
 .free-board-list {
@@ -58,6 +65,65 @@
 }
 
 /* 기존 공통 스타일 재사용: col-no, col-title, col-date, col-views, post-pagination, back-btn, post-detail-* */
+
+/* ── 상세 페이지 수정/삭제 버튼 ── */
+.post-detail-actions {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+  margin-top: 24px;
+  padding-top: 16px;
+  border-top: 1px solid #eee;
+}
+
+/* ── 글쓰기/수정 폼 ── */
+.post-form {
+  background: #fff;
+  border-radius: 8px;
+  padding: 0;
+}
+
+.post-form-header {
+  margin-bottom: 24px;
+}
+
+.post-form-header h2 {
+  font-size: 20px;
+  font-weight: 600;
+  color: #333;
+  margin: 0;
+}
+
+.post-form-field {
+  margin-bottom: 20px;
+}
+
+.post-form-field label {
+  display: block;
+  font-size: 14px;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 8px;
+}
+
+.post-editor-wrapper {
+  border: 1px solid #d9d9d9;
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.post-editor-wrapper .ck-editor__editable {
+  min-height: 300px;
+}
+
+.post-form-actions {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 24px;
+  padding-top: 20px;
+  border-top: 1px solid #eee;
+}
 
 /* ── 반응형 ── */
 @media (max-width: 768px) {

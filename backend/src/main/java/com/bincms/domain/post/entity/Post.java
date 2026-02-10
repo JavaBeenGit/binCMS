@@ -11,6 +11,7 @@ import org.hibernate.annotations.Comment;
 
 /**
  * 게시글 엔티티
+ * - 작성자는 BaseEntity의 REG_NO(회원 PK)로 관리
  */
 @Entity
 @Table(name = "TB_POSTS", indexes = {

@@ -1,5 +1,7 @@
 package com.bincms.config;
 
+import com.bincms.common.security.JwtAuthenticationFilter;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -8,10 +10,14 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
 @EnableWebSecurity
+@RequiredArgsConstructor
 public class SecurityConfig {
+    
+    private final JwtAuthenticationFilter jwtAuthenticationFilter;
     
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -24,6 +30,7 @@ public class SecurityConfig {
                 .requestMatchers("/api/v1/auth/**").permitAll()
                 .requestMatchers("/api/v1/boards/**").permitAll()
                 .requestMatchers("/api/v1/posts/**").permitAll()
+                .requestMatchers("/api/v1/user/posts/**").permitAll()
                 .requestMatchers("/api/v1/comments/**").permitAll()
                 .requestMatchers("/api/v1/contents/**").permitAll()
                 .requestMatchers("/api/v1/menus/**").permitAll()
@@ -39,7 +46,9 @@ public class SecurityConfig {
             )
             .headers(headers -> headers
                 .frameOptions(frame -> frame.sameOrigin())
-            );
+            )
+            // JWT 필터를 UsernamePasswordAuthenticationFilter 앞에 등록
+            .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
         
         return http.build();
     }
