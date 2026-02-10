@@ -1,0 +1,84 @@
+/* ================================================================
+   자유게시판 목록 / 상세 페이지
+================================================================ */
+
+/* ── 목록 ── */
+.free-board-list {
+  border-top: 2px solid #333;
+}
+
+.free-board-header {
+  display: grid;
+  grid-template-columns: 80px 1fr 100px 120px 80px;
+  padding: 14px 16px;
+  background: #f8f9fa;
+  font-size: 13px;
+  font-weight: 600;
+  color: #666;
+  border-bottom: 1px solid #ddd;
+}
+
+.free-board-item {
+  display: grid;
+  grid-template-columns: 80px 1fr 100px 120px 80px;
+  padding: 14px 16px;
+  border-bottom: 1px solid #eee;
+  cursor: pointer;
+  transition: background 0.15s;
+  font-size: 14px;
+  color: #333;
+}
+
+.free-board-item:hover {
+  background: #f5f7ff;
+}
+
+.free-board-item.notice {
+  background: #fffbf0;
+}
+
+.col-author {
+  text-align: center;
+  color: #666;
+  font-size: 13px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* 댓글 수 배지 */
+.comment-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  margin-left: 6px;
+  color: #2563eb;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+/* 기존 공통 스타일 재사용: col-no, col-title, col-date, col-views, post-pagination, back-btn, post-detail-* */
+
+/* ── 반응형 ── */
+@media (max-width: 768px) {
+  .free-board-header {
+    grid-template-columns: 60px 1fr 80px;
+  }
+
+  .free-board-item {
+    grid-template-columns: 60px 1fr 80px;
+  }
+
+  .col-author {
+    display: none;
+  }
+
+  .col-views {
+    display: none;
+  }
+
+  .free-board-header .col-author,
+  .free-board-header .col-views {
+    display: none;
+  }
+}

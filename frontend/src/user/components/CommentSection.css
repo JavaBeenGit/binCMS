@@ -1,0 +1,192 @@
+/* ================================================================
+   댓글 섹션 스타일
+================================================================ */
+
+.comment-section {
+  margin-top: 48px;
+  border-top: 2px solid #333;
+  padding-top: 32px;
+}
+
+.comment-section-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: #222;
+  margin-bottom: 24px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.comment-count {
+  color: #2563eb;
+  font-size: 16px;
+}
+
+/* ── 댓글 목록 ── */
+.comments-list {
+  margin-bottom: 32px;
+}
+
+.comment-item {
+  padding: 16px 0;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.comment-item.reply {
+  margin-left: 32px;
+  padding-left: 16px;
+  border-left: 3px solid #e8e8e8;
+  background: #fafafa;
+  padding: 12px 16px;
+  margin-bottom: 4px;
+  border-bottom: none;
+  border-radius: 0 4px 4px 0;
+}
+
+.comment-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.comment-author {
+  font-weight: 600;
+  font-size: 14px;
+  color: #333;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.comment-date {
+  font-size: 12px;
+  color: #999;
+}
+
+.comment-content {
+  font-size: 14px;
+  line-height: 1.7;
+  color: #444;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.comment-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+.comment-action-btn {
+  background: none;
+  border: none;
+  color: #888;
+  font-size: 12px;
+  cursor: pointer;
+  padding: 2px 4px;
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  transition: color 0.2s;
+}
+
+.comment-action-btn:hover {
+  color: #2563eb;
+}
+
+/* ── 수정 폼 ── */
+.comment-edit-form {
+  margin-top: 8px;
+}
+
+.comment-edit-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+/* ── 답글 폼 ── */
+.reply-form {
+  margin-top: 12px;
+  padding: 16px;
+  background: #f8f9fa;
+  border-radius: 8px;
+  border: 1px solid #e8e8e8;
+}
+
+.reply-form-row {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.reply-form-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 8px;
+  justify-content: flex-end;
+}
+
+/* ── 대댓글 목록 ── */
+.replies-list {
+  margin-top: 8px;
+}
+
+/* ── 댓글 없음 ── */
+.no-comments {
+  text-align: center;
+  padding: 32px;
+  color: #999;
+  font-size: 14px;
+  background: #fafafa;
+  border-radius: 8px;
+  margin-bottom: 24px;
+}
+
+/* ── 댓글 입력 폼 ── */
+.comment-form {
+  background: #f8f9fa;
+  border-radius: 8px;
+  padding: 20px;
+  border: 1px solid #e8e8e8;
+}
+
+.comment-form-header {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.comment-form-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 12px;
+}
+
+/* ── 반응형 ── */
+@media (max-width: 768px) {
+  .comment-item.reply {
+    margin-left: 16px;
+  }
+
+  .comment-form-header {
+    flex-direction: column;
+  }
+
+  .comment-form-header .ant-input,
+  .comment-form-header .ant-input-password {
+    width: 100% !important;
+  }
+
+  .reply-form-row {
+    flex-direction: column;
+  }
+
+  .reply-form-row .ant-input,
+  .reply-form-row .ant-input-password {
+    width: 100% !important;
+  }
+}

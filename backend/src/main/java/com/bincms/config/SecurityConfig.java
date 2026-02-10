@@ -24,6 +24,7 @@ public class SecurityConfig {
                 .requestMatchers("/api/v1/auth/**").permitAll()
                 .requestMatchers("/api/v1/boards/**").permitAll()
                 .requestMatchers("/api/v1/posts/**").permitAll()
+                .requestMatchers("/api/v1/comments/**").permitAll()
                 .requestMatchers("/api/v1/contents/**").permitAll()
                 .requestMatchers("/api/v1/menus/**").permitAll()
                 .requestMatchers("/api/v1/admin/**").permitAll()

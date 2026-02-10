@@ -23,6 +23,7 @@ const UserLayout: React.FC = () => {
 
   const isActive = (path: string) => location.pathname === path;
   const isInteriorActive = () => location.pathname.startsWith('/interior');
+  const isCommunityActive = () => location.pathname === '/free';
 
   return (
     <div className="user-layout">
@@ -42,6 +43,9 @@ const UserLayout: React.FC = () => {
             </Link>
             <Link to="/notice" className={`nav-item ${isActive('/notice') ? 'active' : ''}`}>
               공지사항
+            </Link>
+            <Link to="/free" className={`nav-item ${isCommunityActive() ? 'active' : ''}`}>
+              자유게시판
             </Link>
 
             {/* 인테리어 (드롭다운) */}
@@ -82,6 +86,9 @@ const UserLayout: React.FC = () => {
         </Link>
         <Link to="/notice" className={`mobile-nav-item ${isActive('/notice') ? 'active' : ''}`}>
           공지사항
+        </Link>
+        <Link to="/free" className={`mobile-nav-item ${isActive('/free') ? 'active' : ''}`}>
+          자유게시판
         </Link>
 
         <span className="mobile-nav-group-title">인테리어</span>
@@ -143,6 +150,7 @@ const UserLayout: React.FC = () => {
             <div className="footer-title">고객지원</div>
             <ul className="footer-links">
               <li><Link to="/notice">공지사항</Link></li>
+              <li><Link to="/free">자유게시판</Link></li>
               <li><Link to="/faq">자주묻는질문</Link></li>
               <li><Link to="/inquiry">견적문의</Link></li>
             </ul>

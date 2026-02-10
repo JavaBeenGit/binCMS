@@ -1,5 +1,7 @@
 package com.bincms.config;
 
+import com.bincms.domain.board.entity.Board;
+import com.bincms.domain.board.repository.BoardRepository;
 import com.bincms.domain.member.entity.Member;
 import com.bincms.domain.member.repository.MemberRepository;
 import com.bincms.domain.menu.entity.Menu;
@@ -35,6 +37,7 @@ public class DataInitializer implements ApplicationRunner {
     private final RoleRepository roleRepository;
     private final PermissionRepository permissionRepository;
     private final RolePermissionRepository rolePermissionRepository;
+    private final BoardRepository boardRepository;
     private final PasswordEncoder passwordEncoder;
     
     @Override
@@ -45,6 +48,7 @@ public class DataInitializer implements ApplicationRunner {
         supplementMissingData();
         supplementPopupData();
         supplementPostSubMenus();
+        supplementFreeBoardData();
         supplementInteriorData();
     }
     
@@ -432,6 +436,7 @@ public class DataInitializer implements ApplicationRunner {
         // 하위 메뉴가 이미 있는지 체크
         boolean hasNotice = allMenus.stream().anyMatch(m -> "/admin/posts/notice".equals(m.getMenuUrl()));
         boolean hasFaq = allMenus.stream().anyMatch(m -> "/admin/posts/faq".equals(m.getMenuUrl()));
+        boolean hasFree = allMenus.stream().anyMatch(m -> "/admin/posts/free".equals(m.getMenuUrl()));
         boolean hasQna = allMenus.stream().anyMatch(m -> "/admin/posts/qna".equals(m.getMenuUrl()));
         
         if (!hasNotice) {
@@ -450,16 +455,51 @@ public class DataInitializer implements ApplicationRunner {
                     .description("자주묻는질문 관리").build());
             log.info("Supplemented missing menu: 자주묻는질문");
         }
+        if (!hasFree) {
+            menuRepository.save(Menu.builder()
+                    .menuType(MenuType.ADMIN).menuName("자유게시판")
+                    .menuUrl("/admin/posts/free").parentId(parentId)
+                    .depth(2).sortOrder(3).icon("FileTextOutlined")
+                    .description("자유게시판 관리").build());
+            log.info("Supplemented missing menu: 자유게시판");
+        }
         if (!hasQna) {
             menuRepository.save(Menu.builder()
                     .menuType(MenuType.ADMIN).menuName("견적문의")
                     .menuUrl("/admin/posts/qna").parentId(parentId)
-                    .depth(2).sortOrder(3).icon("FileTextOutlined")
+                    .depth(2).sortOrder(4).icon("FileTextOutlined")
                     .description("견적문의 관리").build());
             log.info("Supplemented missing menu: 견적문의");
         }
     }
     
+    /**
+     * 자유게시판(TB_BOARDS) 데이터 보충
+     */
+    private void supplementFreeBoardData() {
+        // notice 게시판이 없으면 생성
+        if (!boardRepository.existsByBoardCode("notice")) {
+            boardRepository.save(Board.builder()
+                    .boardCode("notice").boardName("공지사항")
+                    .description("공지사항 게시판").sortOrder(1).build());
+            log.info("Supplemented missing board: notice (공지사항)");
+        }
+        // faq 게시판이 없으면 생성
+        if (!boardRepository.existsByBoardCode("faq")) {
+            boardRepository.save(Board.builder()
+                    .boardCode("faq").boardName("자주묻는질문")
+                    .description("자주묻는질문 게시판").sortOrder(2).build());
+            log.info("Supplemented missing board: faq (자주묻는질문)");
+        }
+        // free 게시판이 없으면 생성
+        if (!boardRepository.existsByBoardCode("free")) {
+            boardRepository.save(Board.builder()
+                    .boardCode("free").boardName("자유게시판")
+                    .description("자유게시판").sortOrder(3).build());
+            log.info("Supplemented missing board: free (자유게시판)");
+        }
+    }
+
     /**
      * 팝업 관리 메뉴/권한 보충
      */

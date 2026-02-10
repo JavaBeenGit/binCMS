@@ -18,6 +18,7 @@ import ContentPage from './user/pages/ContentPage';
 import UserLayout from './user/layouts/UserLayout';
 import HomePage from './user/pages/HomePage';
 import PostListPage from './user/pages/PostListPage';
+import FreeBoardPage from './user/pages/FreeBoardPage';
 import InteriorGalleryPage from './user/pages/InteriorGalleryPage';
 import InquiryPage from './user/pages/InquiryPage';
 import { useAuthStore } from './stores/authStore';
@@ -53,6 +54,7 @@ function App() {
               <Route path="posts" element={<PostManagement />} />
               <Route path="posts/notice" element={<PostManagement boardCode="notice" />} />
               <Route path="posts/faq" element={<PostManagement boardCode="faq" />} />
+              <Route path="posts/free" element={<PostManagement boardCode="free" />} />
               <Route path="posts/qna" element={<InquiryManagement />} />
               <Route path="statistics" element={<div>통계 관리 (개발 예정)</div>} />
               <Route path="users" element={<div>사용자 관리 (개발 예정)</div>} />
@@ -85,6 +87,7 @@ function App() {
           >
             <Route index element={<HomePage />} />
             <Route path="notice" element={<PostListPage boardCode="notice" title="공지사항" subtitle="BIN INTERIOR의 소식을 전해드립니다" />} />
+            <Route path="free" element={<FreeBoardPage boardCode="free" title="자유게시판" subtitle="자유롭게 소통하는 공간입니다" />} />
             <Route path="faq" element={<PostListPage boardCode="faq" title="자주묻는질문" subtitle="궁금한 점을 확인해 보세요" />} />
             <Route path="inquiry" element={<InquiryPage />} />
             <Route path="interior/onsite" element={<InteriorGalleryPage category="ONSITE" title="현장시공" subtitle="전문 시공팀의 현장 시공 사례를 확인해 보세요" />} />
