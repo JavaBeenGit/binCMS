@@ -127,6 +127,11 @@ public class MemberService {
             }
         }
         
+        // 차단된 사용자 체크 (탈퇴 회원 재가입이 아닌 경우에만)
+        if (!member.getActive() && member.getName() != null && !"탈퇴회원".equals(member.getName())) {
+            throw new BusinessException(ErrorCode.FORBIDDEN, "차단된 계정입니다. 관리자에게 문의해주세요.");
+        }
+        
         // JWT 토큰 생성
         String token = jwtTokenProvider.generateToken(member.getLoginId(), member.getRole().getRoleCode());
         List<String> permissions = roleService.getPermissionsByRoleCode(member.getRole().getRoleCode());
@@ -139,10 +144,15 @@ public class MemberService {
      */
     @Transactional
     public LoginResponse login(LoginRequest request) {
-        // 회원 조회
-        Member member = memberRepository.findByLoginIdAndActiveTrue(request.getLoginId())
+        // 회원 조회 (차단 여부 무관하게 먼저 조회)
+        Member member = memberRepository.findByLoginId(request.getLoginId())
                 .orElseThrow(() -> new BusinessException(ErrorCode.INVALID_INPUT_VALUE, 
                         "로그인 ID 또는 비밀번호가 올바르지 않습니다"));
+        
+        // 차단된 사용자 체크
+        if (!member.getActive()) {
+            throw new BusinessException(ErrorCode.FORBIDDEN, "차단된 계정입니다. 관리자에게 문의해주세요.");
+        }
         
         // 비밀번호 검증
         if (!passwordEncoder.matches(request.getPassword(), member.getPassword())) {

@@ -78,7 +78,7 @@ const UserManagement: React.FC = () => {
   const deactivateMutation = useMutation({
     mutationFn: (id: number) => userMemberApi.deactivateUser(id),
     onSuccess: () => {
-      message.success('사용자가 비활성화되었습니다.');
+      message.success('사용자가 차단되었습니다.');
       queryClient.invalidateQueries({ queryKey: ['userMembers'] });
     },
   });
@@ -86,7 +86,7 @@ const UserManagement: React.FC = () => {
   const activateMutation = useMutation({
     mutationFn: (id: number) => userMemberApi.activateUser(id),
     onSuccess: () => {
-      message.success('사용자가 활성화되었습니다.');
+      message.success('사용자 차단이 해제되었습니다.');
       queryClient.invalidateQueries({ queryKey: ['userMembers'] });
     },
   });
@@ -195,7 +195,7 @@ const UserManagement: React.FC = () => {
       width: 80,
       align: 'center',
       render: (active: boolean) =>
-        active ? <Tag color="success">활성</Tag> : <Tag color="error">비활성</Tag>,
+        active ? <Tag color="success">정상</Tag> : <Tag color="error">차단</Tag>,
     },
     {
       title: '가입일',
@@ -227,25 +227,25 @@ const UserManagement: React.FC = () => {
           </Tooltip>
           {record.active ? (
             <Popconfirm
-              title="비활성화"
-              description={`${record.name} 사용자를 비활성화하시겠습니까?`}
+              title="차단"
+              description={`${record.name} 사용자를 차단하시겠습니까?`}
               onConfirm={() => deactivateMutation.mutate(record.id)}
               okText="확인"
               cancelText="취소"
             >
-              <Tooltip title="비활성화">
+              <Tooltip title="차단">
                 <Button size="small" danger icon={<StopOutlined />} />
               </Tooltip>
             </Popconfirm>
           ) : (
             <Popconfirm
-              title="활성화"
-              description={`${record.name} 사용자를 활성화하시겠습니까?`}
+              title="차단해제"
+              description={`${record.name} 사용자를 차단해제하시겠습니까?`}
               onConfirm={() => activateMutation.mutate(record.id)}
               okText="확인"
               cancelText="취소"
             >
-              <Tooltip title="활성화">
+              <Tooltip title="차단해제">
                 <Button size="small" type="primary" ghost icon={<CheckCircleOutlined />} />
               </Tooltip>
             </Popconfirm>
@@ -280,8 +280,8 @@ const UserManagement: React.FC = () => {
               value={activeFilter}
               onChange={(val) => { setActiveFilter(val); setCurrentPage(0); }}
             >
-              <Option value={true}>활성</Option>
-              <Option value={false}>비활성</Option>
+              <Option value={true}>정상</Option>
+              <Option value={false}>차단</Option>
             </Select>
             <Input
               placeholder="이름, 아이디, 이메일 검색"
@@ -341,7 +341,7 @@ const UserManagement: React.FC = () => {
               {selectedUser.emailVerified ? <Tag color="success">인증됨</Tag> : <Tag color="warning">미인증</Tag>}
             </Descriptions.Item>
             <Descriptions.Item label="상태">
-              {selectedUser.active ? <Tag color="success">활성</Tag> : <Tag color="error">비활성</Tag>}
+              {selectedUser.active ? <Tag color="success">정상</Tag> : <Tag color="error">차단</Tag>}
             </Descriptions.Item>
             <Descriptions.Item label="가입일">
               {selectedUser.regDt ? new Date(selectedUser.regDt).toLocaleString('ko-KR') : '-'}

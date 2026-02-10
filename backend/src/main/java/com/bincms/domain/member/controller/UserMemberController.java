@@ -69,20 +69,20 @@ public class UserMemberController {
     }
     
     /**
-     * 사용자 비활성화
+     * 사용자 차단
      */
     @PatchMapping("/{id}/deactivate")
     public ApiResponse<Void> deactivateUser(@PathVariable Long id) {
         memberService.deactivateUserMember(id);
-        return ApiResponse.success(null, "사용자가 비활성화되었습니다.");
+        return ApiResponse.success(null, "사용자가 차단되었습니다.");
     }
     
     /**
-     * 사용자 활성화
+     * 사용자 차단해제
      */
     @PatchMapping("/{id}/activate")
     public ApiResponse<Void> activateUser(@PathVariable Long id) {
         memberService.activateUserMember(id);
-        return ApiResponse.success(null, "사용자가 활성화되었습니다.");
+        return ApiResponse.success(null, "사용자 차단이 해제되었습니다.");
     }
 }
