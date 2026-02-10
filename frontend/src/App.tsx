@@ -14,6 +14,7 @@ import ContentManagement from './pages/admin/ContentManagement';
 import PopupManagement from './pages/admin/PopupManagement';
 import InteriorManagement from './pages/admin/InteriorManagement';
 import InquiryManagement from './pages/admin/InquiryManagement';
+import UserManagement from './pages/admin/UserManagement';
 import ContentPage from './user/pages/ContentPage';
 import UserLayout from './user/layouts/UserLayout';
 import HomePage from './user/pages/HomePage';
@@ -26,26 +27,32 @@ import UserSignup from './user/pages/UserSignup';
 import EmailSignup from './user/pages/EmailSignup';
 import OAuthCallback from './user/pages/OAuthCallback';
 import { useAuthStore } from './stores/authStore';
+import { useAdminAuthStore } from './stores/adminAuthStore';
 import PermissionGuard from './shared/components/PermissionGuard';
 
 function App() {
-  const isAuthenticated = useAuthStore((state) => state.isAuthenticated());
+  const isAdminAuthenticated = useAdminAuthStore((state) => state.isAuthenticated());
 
   return (
     <ConfigProvider locale={koKR}>
       <BrowserRouter>
         <Routes>
-          <Route path="/login" element={<Login />} />
-          <Route path="/signup" element={<Signup />} />
+          {/* Admin Login/Signup */}
+          <Route path="/admin/login" element={<Login />} />
+          <Route path="/admin/signup" element={<Signup />} />
+          
+          {/* 기존 /login 리디렉트 */}
+          <Route path="/login" element={<Navigate to="/admin/login" replace />} />
+          <Route path="/signup" element={<Navigate to="/admin/signup" replace />} />
           
           {/* Admin Routes */}
           <Route 
             path="/admin" 
             element={
-              isAuthenticated ? (
+              isAdminAuthenticated ? (
                 <AdminLayout />
               ) : (
-                <Navigate to="/login" replace />
+                <Navigate to="/admin/login" replace />
               )
             }
           >
@@ -61,7 +68,7 @@ function App() {
               <Route path="posts/free" element={<PostManagement boardCode="free" />} />
               <Route path="posts/qna" element={<InquiryManagement />} />
               <Route path="statistics" element={<div>통계 관리 (개발 예정)</div>} />
-              <Route path="users" element={<div>사용자 관리 (개발 예정)</div>} />
+              <Route path="users" element={<UserManagement />} />
               
               {/* 시스템 관리 */}
               <Route path="system/menus" element={<MenuManagement />} />

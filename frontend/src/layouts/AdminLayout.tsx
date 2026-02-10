@@ -23,7 +23,7 @@ import {
 } from '@ant-design/icons';
 import { Outlet, useNavigate, useLocation } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
-import { useAuthStore } from '../stores/authStore';
+import { useAdminAuthStore } from '../stores/adminAuthStore';
 import { menuApi, MenuType, MenuResponse } from '../api/endpoints/menu';
 import { hasPermission } from '../shared/constants/permissions';
 import type { MenuProps } from 'antd';
@@ -63,7 +63,7 @@ const AdminLayout: React.FC = () => {
   const [collapsed, setCollapsed] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
-  const { user, clearAuth } = useAuthStore();
+  const { user, clearAuth } = useAdminAuthStore();
 
   // DB에서 관리자 메뉴 조회
   const { data: menusData } = useQuery({
@@ -133,7 +133,7 @@ const AdminLayout: React.FC = () => {
   // 로그아웃
   const handleLogout = () => {
     clearAuth();
-    navigate('/login');
+    navigate('/admin/login');
   };
 
   // 사용자 드롭다운 메뉴

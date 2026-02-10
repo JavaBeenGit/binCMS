@@ -57,4 +57,18 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
     Page<Member> findByRoleCodesAndKeyword(@Param("roleCodes") List<String> roleCodes,
                                             @Param("keyword") String keyword,
                                             Pageable pageable);
+    
+    /**
+     * 사용자 회원 목록 조회 (USER 역할, 검색 + 필터)
+     */
+    @Query("SELECT m FROM Member m JOIN FETCH m.role r WHERE r.roleCode = 'USER' " +
+           "AND (:keyword IS NULL OR :keyword = '' OR " +
+           "m.name LIKE %:keyword% OR m.loginId LIKE %:keyword% OR m.email LIKE %:keyword%) " +
+           "AND (:provider IS NULL OR :provider = '' OR m.provider = :provider) " +
+           "AND (:active IS NULL OR m.active = :active) " +
+           "ORDER BY m.regDt DESC")
+    Page<Member> findUserMembers(@Param("keyword") String keyword,
+                                 @Param("provider") String provider,
+                                 @Param("active") Boolean active,
+                                 Pageable pageable);
 }

@@ -245,4 +245,74 @@ public class MemberService {
                 .orElseThrow(() -> new BusinessException(ErrorCode.MEMBER_NOT_FOUND));
         member.activate();
     }
+    
+    // ==================== 사용자 회원 관리 ====================
+    
+    /**
+     * 사용자 회원 목록 조회 (페이징, 검색, 필터)
+     */
+    public Page<MemberResponse> getUserMembers(String keyword, String provider, Boolean active, Pageable pageable) {
+        Page<Member> members = memberRepository.findUserMembers(keyword, provider, active, pageable);
+        return members.map(MemberResponse::from);
+    }
+    
+    /**
+     * 사용자 회원 상세 조회
+     */
+    public MemberResponse getUserMemberById(Long id) {
+        Member member = memberRepository.findById(id)
+                .orElseThrow(() -> new BusinessException(ErrorCode.MEMBER_NOT_FOUND));
+        return MemberResponse.from(member);
+    }
+    
+    /**
+     * 사용자 회원 정보 수정 (로그인 ID 제외)
+     */
+    @Transactional
+    public MemberResponse updateUserMember(Long id, UserMemberUpdateRequest request) {
+        Member member = memberRepository.findById(id)
+                .orElseThrow(() -> new BusinessException(ErrorCode.MEMBER_NOT_FOUND));
+        
+        member.updateAdminInfo(request.getName(), request.getEmail(), request.getPhoneNumber());
+        
+        if (request.getActive() != null) {
+            if (request.getActive()) {
+                member.activate();
+            } else {
+                member.deactivate();
+            }
+        }
+        
+        return MemberResponse.from(member);
+    }
+    
+    /**
+     * 사용자 비밀번호 초기화
+     */
+    @Transactional
+    public void resetUserPassword(Long id, AdminPasswordResetRequest request) {
+        Member member = memberRepository.findById(id)
+                .orElseThrow(() -> new BusinessException(ErrorCode.MEMBER_NOT_FOUND));
+        member.changePassword(passwordEncoder.encode(request.getNewPassword()));
+    }
+    
+    /**
+     * 사용자 비활성화
+     */
+    @Transactional
+    public void deactivateUserMember(Long id) {
+        Member member = memberRepository.findById(id)
+                .orElseThrow(() -> new BusinessException(ErrorCode.MEMBER_NOT_FOUND));
+        member.deactivate();
+    }
+    
+    /**
+     * 사용자 활성화
+     */
+    @Transactional
+    public void activateUserMember(Long id) {
+        Member member = memberRepository.findById(id)
+                .orElseThrow(() -> new BusinessException(ErrorCode.MEMBER_NOT_FOUND));
+        member.activate();
+    }
 }

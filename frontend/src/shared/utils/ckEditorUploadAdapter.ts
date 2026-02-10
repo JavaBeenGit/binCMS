@@ -3,7 +3,7 @@
  * - 파일 서버(/api/v1/files/upload)로 이미지를 업로드하고
  * - 업로드된 URL을 CKEditor에 반환합니다.
  */
-import { useAuthStore } from '../../stores/authStore';
+import { useAdminAuthStore } from '../../stores/adminAuthStore';
 
 const API_BASE = import.meta.env.VITE_API_BASE_URL || '/api/v1';
 
@@ -26,7 +26,7 @@ class CKEditorUploadAdapter {
     formData.append('file', file);
     formData.append('refType', 'EDITOR');
 
-    const token = useAuthStore.getState().token;
+    const token = useAdminAuthStore.getState().token;
 
     const response = await fetch(`${API_BASE}/files/upload`, {
       method: 'POST',

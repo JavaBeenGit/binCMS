@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { useAdminAuthStore } from '../stores/adminAuthStore';
 import { useAuthStore } from '../stores/authStore';
 
 const apiClient = axios.create({
@@ -12,8 +13,11 @@ const apiClient = axios.create({
 // Request interceptor
 apiClient.interceptors.request.use(
   (config) => {
-    // Zustand store에서 직접 토큰 가져오기
-    const token = useAuthStore.getState().token;
+    // 현재 경로에 따라 관리자/사용자 토큰 선택
+    const isAdminPage = window.location.pathname.startsWith('/admin');
+    const token = isAdminPage
+      ? useAdminAuthStore.getState().token
+      : useAuthStore.getState().token;
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
@@ -31,9 +35,14 @@ apiClient.interceptors.response.use(
   },
   (error) => {
     if (error.response?.status === 401) {
-      // 인증 실패 시 스토어 초기화 및 로그인 페이지로 이동
-      useAuthStore.getState().clearAuth();
-      window.location.href = '/login';
+      const isAdminPage = window.location.pathname.startsWith('/admin');
+      if (isAdminPage) {
+        useAdminAuthStore.getState().clearAuth();
+        window.location.href = '/admin/login';
+      } else {
+        useAuthStore.getState().clearAuth();
+        window.location.href = '/user/login';
+      }
     }
     return Promise.reject(error);
   }

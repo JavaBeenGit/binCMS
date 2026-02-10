@@ -21,6 +21,8 @@ public class MemberResponse {
     private String phoneNumber;
     private String roleCode;
     private String roleName;
+    private String provider;
+    private Boolean emailVerified;
     private List<String> permissions;
     private Boolean active;
     private LocalDateTime regDt;
@@ -38,6 +40,8 @@ public class MemberResponse {
                 .phoneNumber(member.getPhoneNumber())
                 .roleCode(member.getRole() != null ? member.getRole().getRoleCode() : null)
                 .roleName(member.getRole() != null ? member.getRole().getRoleName() : null)
+                .provider(member.getProvider())
+                .emailVerified(member.getEmailVerified())
                 .permissions(permissions)
                 .active(member.getActive())
                 .regDt(member.getRegDt())

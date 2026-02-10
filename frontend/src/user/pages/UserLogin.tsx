@@ -6,6 +6,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import { login, type LoginRequest } from '../../api/endpoints/auth';
 import { getKakaoConfig, buildKakaoAuthUrl } from '../../api/endpoints/oauth';
 import { useAuthStore } from '../../stores/authStore';
+import { useAdminAuthStore } from '../../stores/adminAuthStore';
 import './UserLogin.css';
 
 /**
@@ -14,13 +15,23 @@ import './UserLogin.css';
 const UserLogin: React.FC = () => {
   const navigate = useNavigate();
   const setAuth = useAuthStore((state) => state.setAuth);
+  const setAdminAuth = useAdminAuthStore((state) => state.setAuth);
 
   const loginMutation = useMutation({
     mutationFn: login,
     onSuccess: (response) => {
       message.success('로그인 성공');
-      setAuth(response.data.accessToken, response.data.member);
-      navigate('/');
+      
+      const { roleCode } = response.data.member;
+      // 관리자 역할이면 관리자 스토어에 저장 후 관리자 화면으로
+      if (roleCode === 'SYSTEM_ADMIN' || roleCode === 'OPERATION_ADMIN' || roleCode === 'GENERAL_ADMIN') {
+        setAdminAuth(response.data.accessToken, response.data.member);
+        navigate('/admin');
+      } else {
+        // 일반 사용자는 사용자 스토어에 저장
+        setAuth(response.data.accessToken, response.data.member);
+        navigate('/');
+      }
     },
     onError: (error: any) => {
       message.error(error.response?.data?.message || '로그인에 실패했습니다');

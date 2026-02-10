@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { useNavigate, useLocation, Outlet } from 'react-router-dom';
 import { message } from 'antd';
-import { useAuthStore } from '../../stores/authStore';
+import { useAdminAuthStore } from '../../stores/adminAuthStore';
 import { hasPermission } from '../constants/permissions';
 
 /**
@@ -12,7 +12,7 @@ import { hasPermission } from '../constants/permissions';
 const PermissionGuard: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const user = useAuthStore((state) => state.user);
+  const user = useAdminAuthStore((state) => state.user);
   const userPermissions = user?.permissions || [];
   const allowed = hasPermission(location.pathname, userPermissions);
 

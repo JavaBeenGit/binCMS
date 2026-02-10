@@ -1,13 +1,13 @@
 import React from 'react';
 import { Card, Row, Col, Statistic } from 'antd';
 import { UserOutlined, FileTextOutlined, TeamOutlined } from '@ant-design/icons';
-import { useAuthStore } from '../../stores/authStore';
+import { useAdminAuthStore } from '../../stores/adminAuthStore';
 
 /**
  * 대시보드 페이지
  */
 const Dashboard: React.FC = () => {
-  const user = useAuthStore((state) => state.user);
+  const user = useAdminAuthStore((state) => state.user);
 
   return (
     <div>

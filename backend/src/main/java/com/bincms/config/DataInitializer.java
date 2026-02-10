@@ -50,6 +50,7 @@ public class DataInitializer implements ApplicationRunner {
         supplementPostSubMenus();
         supplementFreeBoardData();
         supplementInteriorData();
+        supplementUserManagementData();
     }
     
     /**
@@ -638,6 +639,58 @@ public class DataInitializer implements ApplicationRunner {
                     .description("인테리어스토리 관리").build());
             
             log.info("Supplemented interior sub-menus: 현장시공, 셀프시공 팁, 인테리어스토리");
+        }
+    }
+    
+    /**
+     * 사용자 관리 메뉴/권한 보충
+     */
+    private void supplementUserManagementData() {
+        // 1. MENU_USER 권한 보충
+        if (!permissionRepository.existsByPermCode("MENU_USER")) {
+            Permission permUser = Permission.builder()
+                    .permCode("MENU_USER")
+                    .permName("사용자 관리 접근")
+                    .permGroup("MENU")
+                    .description("사용자 관리 메뉴 접근 권한")
+                    .sortOrder(4)
+                    .build();
+            permissionRepository.save(permUser);
+            log.info("Supplemented missing permission: MENU_USER");
+            
+            // SYSTEM_ADMIN 역할에 매핑
+            roleRepository.findByRoleCode("SYSTEM_ADMIN").ifPresent(role -> {
+                rolePermissionRepository.save(RolePermission.builder()
+                        .role(role).permission(permUser).build());
+                log.info("Mapped MENU_USER to SYSTEM_ADMIN");
+            });
+            
+            // OPERATION_ADMIN 역할에 매핑
+            roleRepository.findByRoleCode("OPERATION_ADMIN").ifPresent(role -> {
+                rolePermissionRepository.save(RolePermission.builder()
+                        .role(role).permission(permUser).build());
+                log.info("Mapped MENU_USER to OPERATION_ADMIN");
+            });
+        }
+        
+        // 2. 사용자 관리 메뉴 보충
+        List<Menu> allMenus = menuRepository.findByMenuTypeOrderBySortOrderAscIdAsc(MenuType.ADMIN);
+        boolean hasUserMenu = allMenus.stream()
+                .anyMatch(m -> "/admin/users".equals(m.getMenuUrl()));
+        
+        if (!hasUserMenu) {
+            Menu userMenu = Menu.builder()
+                    .menuType(MenuType.ADMIN)
+                    .menuName("사용자 관리")
+                    .menuUrl("/admin/users")
+                    .parentId(null)
+                    .depth(1)
+                    .sortOrder(4)
+                    .icon("TeamOutlined")
+                    .description("사용자 회원 관리")
+                    .build();
+            menuRepository.save(userMenu);
+            log.info("Supplemented missing menu: 사용자 관리");
         }
     }
 }
