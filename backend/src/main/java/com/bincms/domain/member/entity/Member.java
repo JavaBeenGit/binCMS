@@ -153,6 +153,17 @@ public class Member extends BaseEntity {
     }
     
     /**
+     * 회원탈퇴 처리 (비활성화 + 개인정보 익명화)
+     */
+    public void withdraw() {
+        this.active = false;
+        this.name = "탈퇴회원";
+        this.email = null;
+        this.phoneNumber = null;
+        this.providerId = null;
+    }
+    
+    /**
      * 회원 활성화
      */
     public void activate() {

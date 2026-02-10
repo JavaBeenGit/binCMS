@@ -26,6 +26,7 @@ import UserLogin from './user/pages/UserLogin';
 import UserSignup from './user/pages/UserSignup';
 import EmailSignup from './user/pages/EmailSignup';
 import OAuthCallback from './user/pages/OAuthCallback';
+import MyPage from './user/pages/MyPage';
 import { useAuthStore } from './stores/authStore';
 import { useAdminAuthStore } from './stores/adminAuthStore';
 import PermissionGuard from './shared/components/PermissionGuard';
@@ -105,7 +106,7 @@ function App() {
             <Route path="user/signup" element={<UserSignup />} />
             <Route path="user/signup/email" element={<EmailSignup />} />
             <Route path="oauth/callback/kakao" element={<OAuthCallback />} />
-            <Route path="user/mypage" element={<div className="page-banner"><h1>마이페이지</h1><p>회원 정보를 관리하세요</p></div>} />
+            <Route path="user/mypage" element={<MyPage />} />
             <Route path="interior/onsite" element={<InteriorGalleryPage category="ONSITE" title="현장시공" subtitle="전문 시공팀의 현장 시공 사례를 확인해 보세요" />} />
             <Route path="interior/self-tip" element={<InteriorGalleryPage category="SELF_TIP" title="셀프시공" subtitle="누구나 따라할 수 있는 셀프 인테리어 팁" />} />
             <Route path="interior/story" element={<InteriorGalleryPage category="STORY" title="인테리어스토리" subtitle="감각적인 인테리어 이야기를 들려드립니다" />} />

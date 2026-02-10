@@ -19,11 +19,17 @@ export interface MemberResponse {
   email?: string;
   name: string;
   phoneNumber?: string;
+  provider?: string;
   roleCode: string;
   roleName: string;
   permissions?: string[];
   active: boolean;
   regDt: string;
+}
+
+export interface WithdrawRequest {
+  password?: string;
+  reason?: string;
 }
 
 export interface LoginResponse {
@@ -53,5 +59,17 @@ export const login = async (data: LoginRequest) => {
     data: LoginResponse;
     message: string;
   }>('/auth/login', data);
+  return response.data;
+};
+
+/**
+ * 회원탈퇴
+ */
+export const withdrawMember = async (data: WithdrawRequest) => {
+  const response = await apiClient.post<{
+    success: boolean;
+    data: null;
+    message: string;
+  }>('/auth/withdraw', data);
   return response.data;
 };

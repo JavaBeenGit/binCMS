@@ -90,22 +90,36 @@ public class MemberService {
             }
             
             if (member == null) {
-                // 신규 회원 자동 가입
-                Role userRole = roleService.getRoleByCode("USER");
+                // 탈퇴한 회원이 같은 소셜 계정으로 재가입하는 경우 확인
                 String loginId = provider.toLowerCase() + "_" + providerId;
+                member = memberRepository.findByLoginId(loginId).orElse(null);
                 
-                member = Member.builder()
-                        .loginId(loginId)
-                        .email(email)
-                        .password(passwordEncoder.encode(java.util.UUID.randomUUID().toString()))
-                        .name(name != null ? name : "사용자")
-                        .role(userRole)
-                        .provider(provider)
-                        .providerId(providerId)
-                        .emailVerified(email != null && !email.isEmpty())
-                        .build();
-                
-                member = memberRepository.save(member);
+                if (member != null) {
+                    // 탈퇴 회원 재활성화
+                    member.activate();
+                    member.linkSocialAccount(provider, providerId);
+                    member.updateAdminInfo(
+                            name != null ? name : "사용자",
+                            email,
+                            null
+                    );
+                } else {
+                    // 신규 회원 자동 가입
+                    Role userRole = roleService.getRoleByCode("USER");
+                    
+                    member = Member.builder()
+                            .loginId(loginId)
+                            .email(email)
+                            .password(passwordEncoder.encode(java.util.UUID.randomUUID().toString()))
+                            .name(name != null ? name : "사용자")
+                            .role(userRole)
+                            .provider(provider)
+                            .providerId(providerId)
+                            .emailVerified(email != null && !email.isEmpty())
+                            .build();
+                    
+                    member = memberRepository.save(member);
+                }
             } else {
                 // 기존 LOCAL 회원에 소셜 연동
                 member.linkSocialAccount(provider, providerId);
@@ -314,5 +328,30 @@ public class MemberService {
         Member member = memberRepository.findById(id)
                 .orElseThrow(() -> new BusinessException(ErrorCode.MEMBER_NOT_FOUND));
         member.activate();
+    }
+    
+    // ==================== 회원탈퇴 ====================
+    
+    /**
+     * 회원탈퇴 (본인 요청)
+     * LOCAL 회원은 비밀번호 확인 필수, 소셜 회원은 바로 탈퇴
+     */
+    @Transactional
+    public void withdrawMember(String loginId, WithdrawRequest request) {
+        Member member = memberRepository.findByLoginId(loginId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.MEMBER_NOT_FOUND));
+        
+        // LOCAL 회원은 비밀번호 확인
+        if ("LOCAL".equals(member.getProvider())) {
+            if (request.getPassword() == null || request.getPassword().isBlank()) {
+                throw new BusinessException(ErrorCode.INVALID_INPUT_VALUE, "비밀번호를 입력해주세요");
+            }
+            if (!passwordEncoder.matches(request.getPassword(), member.getPassword())) {
+                throw new BusinessException(ErrorCode.INVALID_PASSWORD, "비밀번호가 올바르지 않습니다");
+            }
+        }
+        
+        // 개인정보 익명화 + 비활성화
+        member.withdraw();
     }
 }
