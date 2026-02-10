@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { Table, Button, Space, Modal, Form, Input, Select, Switch, message, Tag, Popconfirm } from 'antd';
-import { PlusOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons';
+import { Table, Button, Space, Modal, Form, Input, Select, Switch, message, Tag, Popconfirm, Tooltip } from 'antd';
+import { PlusOutlined, EditOutlined, DeleteOutlined, EyeOutlined } from '@ant-design/icons';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { CKEditor } from '@ckeditor/ckeditor5-react';
 import {
@@ -15,6 +15,7 @@ import {
 } from 'ckeditor5';
 import { CKEditorUploadAdapterPlugin } from '../../shared/utils/ckEditorUploadAdapter';
 import { postApi, PostCreateRequest, PostUpdateRequest, PostResponse } from '../../api/endpoints/post';
+import { Descriptions } from 'antd';
 import { boardApi, BoardResponse } from '../../api/endpoints/board';
 import type { ColumnsType } from 'antd/es/table';
 
@@ -31,6 +32,8 @@ interface PostManagementProps {
 const PostManagement: React.FC<PostManagementProps> = ({ boardCode }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingPost, setEditingPost] = useState<PostResponse | null>(null);
+  const [detailPost, setDetailPost] = useState<PostResponse | null>(null);
+  const [isDetailOpen, setIsDetailOpen] = useState(false);
   const [selectedBoardId, setSelectedBoardId] = useState<number | undefined>();
   const [searchKeyword, setSearchKeyword] = useState<string>('');
   const [editorData, setEditorData] = useState<string>('');
@@ -165,6 +168,11 @@ const PostManagement: React.FC<PostManagementProps> = ({ boardCode }) => {
     setIsModalOpen(true);
   };
 
+  const handleDetail = (post: PostResponse) => {
+    setDetailPost(post);
+    setIsDetailOpen(true);
+  };
+
   const handleEdit = (post: PostResponse) => {
     setEditingPost(post);
     form.setFieldsValue({
@@ -223,11 +231,12 @@ const PostManagement: React.FC<PostManagementProps> = ({ boardCode }) => {
 
   const columns: ColumnsType<PostResponse> = [
     {
-      title: 'ID',
-      dataIndex: 'id',
-      key: 'id',
+      title: '번호',
+      key: 'no',
       width: 80,
-      onHeaderCell: () => ({ style: { textAlign: 'center' } }),
+      align: 'center',
+      render: (_: unknown, __: PostResponse, index: number) =>
+        (postsData?.totalElements || 0) - ((postsData?.pageable?.pageNumber || 0) * 10) - index,
     },
     ...(!boardCode ? [{
       title: '게시판',
@@ -277,34 +286,27 @@ const PostManagement: React.FC<PostManagementProps> = ({ boardCode }) => {
       ),
     },
     {
-      title: '작업',
+      title: '관리',
       key: 'action',
       width: 120,
       align: 'center',
       render: (_, record) => (
         <Space size="small">
-          <Button 
-            type="link" 
-            icon={<EditOutlined />} 
-            onClick={() => handleEdit(record)}
-            size="small"
-          >
-            수정
-          </Button>
+          <Tooltip title="상세보기">
+            <Button size="small" icon={<EyeOutlined />} onClick={() => handleDetail(record)} />
+          </Tooltip>
+          <Tooltip title="수정">
+            <Button size="small" type="primary" icon={<EditOutlined />} onClick={() => handleEdit(record)} />
+          </Tooltip>
           <Popconfirm
             title="게시글을 삭제하시겠습니까?"
             onConfirm={() => handleDelete(record.id)}
             okText="예"
             cancelText="아니오"
           >
-            <Button 
-              type="link" 
-              danger 
-              icon={<DeleteOutlined />}
-              size="small"
-            >
-              삭제
-            </Button>
+            <Tooltip title="삭제">
+              <Button size="small" danger icon={<DeleteOutlined />} />
+            </Tooltip>
           </Popconfirm>
         </Space>
       ),
@@ -344,6 +346,9 @@ const PostManagement: React.FC<PostManagementProps> = ({ boardCode }) => {
         />
       </Space>
 
+      <div style={{ marginBottom: 8, color: '#666', fontSize: 14 }}>
+        총 {postsData?.totalElements || 0}건 ({(postsData?.pageable?.pageNumber || 0) + 1}/{Math.max(1, Math.ceil((postsData?.totalElements || 0) / 10))} 페이지)
+      </div>
       <Table
         bordered
         columns={columns}
@@ -352,10 +357,9 @@ const PostManagement: React.FC<PostManagementProps> = ({ boardCode }) => {
         loading={isLoading}
         pagination={{
           current: (postsData?.pageable?.pageNumber || 0) + 1,
-          pageSize: postsData?.pageable?.pageSize || 20,
+          pageSize: 10,
           total: postsData?.totalElements || 0,
-          showSizeChanger: true,
-          showTotal: (total) => `총 ${total}개`,
+          showSizeChanger: false,
         }}
       />
 
@@ -429,6 +433,52 @@ const PostManagement: React.FC<PostManagementProps> = ({ boardCode }) => {
             <Switch checkedChildren="공지" unCheckedChildren="일반" />
           </Form.Item>
         </Form>
+      </Modal>
+
+      {/* 상세보기 모달 */}
+      <Modal
+        title="게시글 상세보기"
+        open={isDetailOpen}
+        onCancel={() => setIsDetailOpen(false)}
+        footer={[
+          <Button key="edit" type="primary" icon={<EditOutlined />} onClick={() => { setIsDetailOpen(false); if (detailPost) handleEdit(detailPost); }}>
+            수정
+          </Button>,
+          <Button key="close" onClick={() => setIsDetailOpen(false)}>
+            닫기
+          </Button>,
+        ]}
+        width={900}
+      >
+        {detailPost && (
+          <>
+            <Descriptions bordered column={2} size="small" style={{ marginBottom: 16 }}>
+              {!boardCode && (
+                <Descriptions.Item label="게시판">{detailPost.boardName}</Descriptions.Item>
+              )}
+              <Descriptions.Item label="제목" span={boardCode ? 2 : 1}>{detailPost.title}</Descriptions.Item>
+              <Descriptions.Item label="공지여부">
+                <Tag color={detailPost.noticeYn === 'Y' ? 'red' : 'default'}>
+                  {detailPost.noticeYn === 'Y' ? '공지' : '일반'}
+                </Tag>
+              </Descriptions.Item>
+              <Descriptions.Item label="상태">
+                <Tag color={detailPost.useYn === 'Y' ? 'green' : 'red'}>
+                  {detailPost.useYn === 'Y' ? '사용' : '미사용'}
+                </Tag>
+              </Descriptions.Item>
+              <Descriptions.Item label="조회수">{detailPost.viewCount}</Descriptions.Item>
+              <Descriptions.Item label="작성일">{new Date(detailPost.regDt).toLocaleString('ko-KR')}</Descriptions.Item>
+              {detailPost.modDt && (
+                <Descriptions.Item label="수정일">{new Date(detailPost.modDt).toLocaleString('ko-KR')}</Descriptions.Item>
+              )}
+            </Descriptions>
+            <div
+              style={{ border: '1px solid #f0f0f0', borderRadius: 4, padding: 16, minHeight: 200 }}
+              dangerouslySetInnerHTML={{ __html: detailPost.content || '' }}
+            />
+          </>
+        )}
       </Modal>
     </div>
   );

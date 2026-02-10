@@ -23,7 +23,7 @@ const MyPage: React.FC = () => {
     onSuccess: () => {
       message.success('회원탈퇴가 완료되었습니다. 이용해주셔서 감사합니다.');
       clearAuth();
-      navigate('/');
+      navigate('/user');
     },
     onError: (error: any) => {
       const msg = error.response?.data?.message || '회원탈퇴에 실패했습니다';

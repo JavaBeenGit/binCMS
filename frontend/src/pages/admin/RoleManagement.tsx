@@ -188,11 +188,11 @@ const RoleManagement: React.FC = () => {
 
   const columns: ColumnsType<RoleResponse> = [
     {
-      title: 'ID',
-      dataIndex: 'id',
-      key: 'id',
+      title: '번호',
+      key: 'no',
       width: 70,
       align: 'center',
+      render: (_: unknown, __: RoleResponse, index: number) => (rolesData?.length || 0) - index,
     },
     {
       title: '역할 코드',
@@ -253,21 +253,17 @@ const RoleManagement: React.FC = () => {
       ),
     },
     {
-      title: '작업',
+      title: '관리',
       key: 'action',
-      width: 280,
+      width: 160,
       align: 'center',
       render: (_, record) => (
         <Space size="small">
           <Tooltip title="상세보기">
-            <Button type="link" icon={<EyeOutlined />} size="small" onClick={() => handleDetail(record)}>
-              상세
-            </Button>
+            <Button size="small" icon={<EyeOutlined />} onClick={() => handleDetail(record)} />
           </Tooltip>
           <Tooltip title="수정">
-            <Button type="link" icon={<EditOutlined />} size="small" onClick={() => handleEdit(record)}>
-              수정
-            </Button>
+            <Button size="small" type="primary" icon={<EditOutlined />} onClick={() => handleEdit(record)} />
           </Tooltip>
           {record.useYn === 'Y' ? (
             !isDefaultRole(record.roleCode) && (
@@ -278,16 +274,16 @@ const RoleManagement: React.FC = () => {
                 okText="예"
                 cancelText="아니오"
               >
-                <Button type="link" danger icon={<StopOutlined />} size="small">
-                  비활성화
-                </Button>
+                <Tooltip title="비활성화">
+                  <Button size="small" danger icon={<StopOutlined />} />
+                </Tooltip>
               </Popconfirm>
             )
           ) : (
-            <Button type="link" icon={<CheckCircleOutlined />} size="small"
-              onClick={() => activateMutation.mutate(record.id)}>
-              활성화
-            </Button>
+            <Tooltip title="활성화">
+              <Button size="small" type="primary" ghost icon={<CheckCircleOutlined />}
+                onClick={() => activateMutation.mutate(record.id)} />
+            </Tooltip>
           )}
           {!isDefaultRole(record.roleCode) && (
             <Popconfirm
@@ -297,9 +293,9 @@ const RoleManagement: React.FC = () => {
               okText="삭제"
               cancelText="취소"
             >
-              <Button type="link" danger icon={<DeleteOutlined />} size="small">
-                삭제
-              </Button>
+              <Tooltip title="삭제">
+                <Button size="small" danger icon={<DeleteOutlined />} />
+              </Tooltip>
             </Popconfirm>
           )}
         </Space>
@@ -327,6 +323,9 @@ const RoleManagement: React.FC = () => {
         </Button>
       </div>
 
+      <div style={{ marginBottom: 8, color: '#666', fontSize: 14 }}>
+        총 {rolesData?.length || 0}건
+      </div>
       <Table
         bordered
         columns={columns}

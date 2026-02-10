@@ -178,11 +178,12 @@ const AdminMemberManagement: React.FC = () => {
 
   const columns: ColumnsType<AdminMemberResponse> = [
     {
-      title: 'ID',
-      dataIndex: 'id',
-      key: 'id',
+      title: '번호',
+      key: 'no',
       width: 70,
       align: 'center',
+      render: (_: unknown, __: AdminMemberResponse, index: number) =>
+        (membersData?.totalElements || 0) - (currentPage * pageSize) - index,
     },
     {
       title: '로그인 ID',
@@ -251,31 +252,17 @@ const AdminMemberManagement: React.FC = () => {
       render: (regDt: string) => regDt ? new Date(regDt).toLocaleString('ko-KR') : '-',
     },
     {
-      title: '작업',
+      title: '관리',
       key: 'action',
-      width: 220,
+      width: 140,
       align: 'center',
       render: (_, record) => (
         <Space size="small">
           <Tooltip title="수정">
-            <Button
-              type="link"
-              icon={<EditOutlined />}
-              onClick={() => handleEdit(record)}
-              size="small"
-            >
-              수정
-            </Button>
+            <Button size="small" type="primary" icon={<EditOutlined />} onClick={() => handleEdit(record)} />
           </Tooltip>
           <Tooltip title="비밀번호 초기화">
-            <Button
-              type="link"
-              icon={<KeyOutlined />}
-              onClick={() => handlePasswordReset(record)}
-              size="small"
-            >
-              PW초기화
-            </Button>
+            <Button size="small" icon={<KeyOutlined />} onClick={() => handlePasswordReset(record)} />
           </Tooltip>
           {record.active ? (
             <Popconfirm
@@ -285,19 +272,15 @@ const AdminMemberManagement: React.FC = () => {
               okText="예"
               cancelText="아니오"
             >
-              <Button type="link" danger icon={<StopOutlined />} size="small">
-                비활성화
-              </Button>
+              <Tooltip title="비활성화">
+                <Button size="small" danger icon={<StopOutlined />} />
+              </Tooltip>
             </Popconfirm>
           ) : (
-            <Button
-              type="link"
-              icon={<CheckCircleOutlined />}
-              onClick={() => activateMutation.mutate(record.id)}
-              size="small"
-            >
-              활성화
-            </Button>
+            <Tooltip title="활성화">
+              <Button size="small" type="primary" ghost icon={<CheckCircleOutlined />}
+                onClick={() => activateMutation.mutate(record.id)} />
+            </Tooltip>
           )}
         </Space>
       ),
@@ -323,6 +306,9 @@ const AdminMemberManagement: React.FC = () => {
         </Space>
       </div>
 
+      <div style={{ marginBottom: 8, color: '#666', fontSize: 14 }}>
+        총 {membersData?.totalElements || 0}건 ({currentPage + 1}/{Math.max(1, Math.ceil((membersData?.totalElements || 0) / pageSize))} 페이지)
+      </div>
       <Table
         bordered
         columns={columns}
@@ -333,7 +319,7 @@ const AdminMemberManagement: React.FC = () => {
           current: currentPage + 1,
           pageSize: pageSize,
           total: membersData?.totalElements || 0,
-          showTotal: (total) => `총 ${total}명`,
+          showSizeChanger: false,
           onChange: (page) => setCurrentPage(page - 1),
         }}
       />

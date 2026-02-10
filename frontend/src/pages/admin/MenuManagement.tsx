@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Table, Button, Space, Modal, Form, Input, Select, message, Tag, Popconfirm, Tabs, InputNumber } from 'antd';
+import { Table, Button, Space, Modal, Form, Input, Select, message, Tag, Popconfirm, Tabs, InputNumber, Tooltip } from 'antd';
 import { PlusOutlined, EditOutlined, DeleteOutlined, CheckCircleOutlined, StopOutlined } from '@ant-design/icons';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { menuApi, MenuCreateRequest, MenuUpdateRequest, MenuResponse, MenuType } from '../../api/endpoints/menu';
@@ -24,17 +24,30 @@ const MenuManagement: React.FC = () => {
   const [editingMenu, setEditingMenu] = useState<MenuResponse | null>(null);
   const [activeTab, setActiveTab] = useState<MenuType>(MenuType.ADMIN);
   const [includeInactive, setIncludeInactive] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
   const [form] = Form.useForm();
   const queryClient = useQueryClient();
 
-  // 메뉴 목록 조회
-  const { data: menusData, isLoading } = useQuery({
-    queryKey: ['menus', activeTab, includeInactive],
+  // 메뉴 목록 조회 (관리자)
+  const { data: adminMenusData, isLoading: isAdminLoading } = useQuery({
+    queryKey: ['menus', MenuType.ADMIN, includeInactive],
     queryFn: async () => {
-      const response = await menuApi.getMenusByType(activeTab, includeInactive);
+      const response = await menuApi.getMenusByType(MenuType.ADMIN, includeInactive);
       return response.data;
     }
   });
+
+  // 메뉴 목록 조회 (사용자)
+  const { data: userMenusData, isLoading: isUserLoading } = useQuery({
+    queryKey: ['menus', MenuType.USER, includeInactive],
+    queryFn: async () => {
+      const response = await menuApi.getMenusByType(MenuType.USER, includeInactive);
+      return response.data;
+    }
+  });
+
+  const menusData = activeTab === MenuType.ADMIN ? adminMenusData : userMenusData;
+  const isLoading = activeTab === MenuType.ADMIN ? isAdminLoading : isUserLoading;
 
   // 부모 메뉴 선택용 (플랫 리스트)
   const flattenMenus = (menus: MenuResponse[]): MenuResponse[] => {
@@ -216,29 +229,19 @@ const MenuManagement: React.FC = () => {
       ),
     },
     {
-      title: '작업',
+      title: '관리',
       key: 'action',
-      width: 200,
+      width: 120,
       align: 'center',
       render: (_, record) => (
         <Space size="small">
-          <Button 
-            type="link" 
-            icon={<EditOutlined />} 
-            onClick={() => handleEdit(record)}
-            size="small"
-          >
-            수정
-          </Button>
+          <Tooltip title="수정">
+            <Button size="small" type="primary" icon={<EditOutlined />} onClick={() => handleEdit(record)} />
+          </Tooltip>
           {record.useYn === 'N' && (
-            <Button
-              type="link"
-              icon={<CheckCircleOutlined />}
-              onClick={() => handleActivate(record.id)}
-              size="small"
-            >
-              활성화
-            </Button>
+            <Tooltip title="활성화">
+              <Button size="small" type="primary" ghost icon={<CheckCircleOutlined />} onClick={() => handleActivate(record.id)} />
+            </Tooltip>
           )}
           <Popconfirm
             title="메뉴를 삭제하시겠습니까?"
@@ -247,14 +250,9 @@ const MenuManagement: React.FC = () => {
             okText="예"
             cancelText="아니오"
           >
-            <Button 
-              type="link" 
-              danger 
-              icon={<DeleteOutlined />}
-              size="small"
-            >
-              삭제
-            </Button>
+            <Tooltip title="삭제">
+              <Button size="small" danger icon={<DeleteOutlined />} />
+            </Tooltip>
           </Popconfirm>
         </Space>
       ),
@@ -295,25 +293,31 @@ const MenuManagement: React.FC = () => {
         </Space>
       </div>
 
-      <Tabs activeKey={activeTab} onChange={(key) => setActiveTab(key as MenuType)}>
+      <Tabs activeKey={activeTab} onChange={(key) => { setActiveTab(key as MenuType); setCurrentPage(1); }}>
         <TabPane tab="관리자 메뉴" key={MenuType.ADMIN}>
+          <div style={{ marginBottom: 8, color: '#666', fontSize: 14 }}>
+            총 {adminMenusData ? flattenForTable(adminMenusData).length : 0}건 ({currentPage}/{Math.max(1, Math.ceil((adminMenusData ? flattenForTable(adminMenusData).length : 0) / 10))} 페이지)
+          </div>
           <Table
             bordered
             columns={columns}
-            dataSource={menusData ? flattenForTable(menusData) : []}
+            dataSource={adminMenusData ? flattenForTable(adminMenusData) : []}
             rowKey="id"
-            loading={isLoading}
-            pagination={false}
+            loading={isAdminLoading}
+            pagination={{ pageSize: 10, showSizeChanger: false, current: currentPage, onChange: (page) => setCurrentPage(page) }}
           />
         </TabPane>
         <TabPane tab="사용자 메뉴" key={MenuType.USER}>
+          <div style={{ marginBottom: 8, color: '#666', fontSize: 14 }}>
+            총 {userMenusData ? flattenForTable(userMenusData).length : 0}건 ({currentPage}/{Math.max(1, Math.ceil((userMenusData ? flattenForTable(userMenusData).length : 0) / 10))} 페이지)
+          </div>
           <Table
             bordered
             columns={columns}
-            dataSource={menusData ? flattenForTable(menusData) : []}
+            dataSource={userMenusData ? flattenForTable(userMenusData) : []}
             rowKey="id"
-            loading={isLoading}
-            pagination={false}
+            loading={isUserLoading}
+            pagination={{ pageSize: 10, showSizeChanger: false, current: currentPage, onChange: (page) => setCurrentPage(page) }}
           />
         </TabPane>
       </Tabs>

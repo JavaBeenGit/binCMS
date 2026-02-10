@@ -147,10 +147,10 @@ const UserManagement: React.FC = () => {
   // ===== 테이블 컬럼 =====
   const columns: ColumnsType<UserMemberResponse> = [
     {
-      title: 'No',
+      title: '번호',
       width: 60,
       align: 'center',
-      render: (_, __, index) => totalElements - (currentPage * pageSize) - index,
+      render: (_: unknown, __: UserMemberResponse, index: number) => totalElements - (currentPage * pageSize) - index,
     },
     {
       title: '아이디',
@@ -296,6 +296,9 @@ const UserManagement: React.FC = () => {
           </Space>
         }
       >
+        <div style={{ marginBottom: 8, color: '#666', fontSize: 14 }}>
+          총 {totalElements}건 ({currentPage + 1}/{Math.max(1, Math.ceil(totalElements / pageSize))} 페이지)
+        </div>
         <Table
           columns={columns}
           dataSource={members}
@@ -305,11 +308,9 @@ const UserManagement: React.FC = () => {
             current: currentPage + 1,
             pageSize,
             total: totalElements,
-            showSizeChanger: true,
-            showTotal: (total) => `총 ${total}명`,
-            onChange: (page, size) => {
+            showSizeChanger: false,
+            onChange: (page) => {
               setCurrentPage(page - 1);
-              setPageSize(size);
             },
           }}
           size="middle"

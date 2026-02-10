@@ -59,7 +59,7 @@ const OAuthCallback: React.FC<OAuthCallbackProps> = ({ provider }) => {
     loginPromise
       .then((response) => {
         setAuth(response.data.accessToken, response.data.member);
-        navigate('/', { replace: true });
+        navigate('/user', { replace: true });
       })
       .catch((err: any) => {
         console.error(`${label} 로그인 실패:`, err);
@@ -78,7 +78,7 @@ const OAuthCallback: React.FC<OAuthCallbackProps> = ({ provider }) => {
             <Button type="primary" key="login" onClick={() => navigate('/user/login', { replace: true })}>
               로그인 페이지로
             </Button>,
-            <Button key="home" onClick={() => navigate('/', { replace: true })}>
+            <Button key="home" onClick={() => navigate('/user', { replace: true })}>
               홈으로
             </Button>,
           ]}

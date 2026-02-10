@@ -31,7 +31,7 @@ import type { ColumnsType } from 'antd/es/table';
 const ContentManagement: React.FC = () => {
   const queryClient = useQueryClient();
   const [currentPage, setCurrentPage] = useState(1);
-  const [pageSize, setPageSize] = useState(20);
+  const [pageSize, setPageSize] = useState(10);
   const [searchKeyword, setSearchKeyword] = useState('');
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
@@ -202,11 +202,12 @@ const ContentManagement: React.FC = () => {
   // ── 테이블 컬럼 ──
   const columns: ColumnsType<ContentResponse> = [
     {
-      title: 'ID',
-      dataIndex: 'id',
-      key: 'id',
+      title: '번호',
+      key: 'no',
       width: 70,
       align: 'center',
+      render: (_: unknown, __: ContentResponse, index: number) =>
+        (data?.totalElements || 0) - ((currentPage - 1) * pageSize) - index,
     },
     {
       title: '컨텐츠 키',
@@ -266,15 +267,21 @@ const ContentManagement: React.FC = () => {
       align: 'center',
       render: (_: unknown, record: ContentResponse) => (
         <Space size="small">
-          <Button size="small" icon={<EyeOutlined />} onClick={() => handleDetail(record)} />
-          <Button size="small" icon={<EditOutlined />} onClick={() => handleEdit(record)} />
+          <Tooltip title="상세보기">
+            <Button size="small" icon={<EyeOutlined />} onClick={() => handleDetail(record)} />
+          </Tooltip>
+          <Tooltip title="수정">
+            <Button size="small" type="primary" icon={<EditOutlined />} onClick={() => handleEdit(record)} />
+          </Tooltip>
           <Popconfirm
             title="정말 삭제하시겠습니까?"
             onConfirm={() => deleteMutation.mutate(record.id)}
             okText="삭제"
             cancelText="취소"
           >
-            <Button size="small" danger icon={<DeleteOutlined />} />
+            <Tooltip title="삭제">
+              <Button size="small" danger icon={<DeleteOutlined />} />
+            </Tooltip>
           </Popconfirm>
         </Space>
       ),
@@ -316,6 +323,9 @@ const ContentManagement: React.FC = () => {
           </Space>
         }
       >
+        <div style={{ marginBottom: 8, color: '#666', fontSize: 14 }}>
+          총 {data?.totalElements || 0}건 ({currentPage}/{Math.max(1, Math.ceil((data?.totalElements || 0) / pageSize))} 페이지)
+        </div>
         <Table
           bordered
           columns={columns}
@@ -326,11 +336,9 @@ const ContentManagement: React.FC = () => {
             current: currentPage,
             pageSize,
             total: data?.totalElements || 0,
-            showSizeChanger: true,
-            showTotal: (total) => `총 ${total}건`,
-            onChange: (page, size) => {
+            showSizeChanger: false,
+            onChange: (page) => {
               setCurrentPage(page);
-              setPageSize(size);
             },
           }}
           size="middle"
