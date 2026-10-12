@@ -1,5 +1,6 @@
 package com.bincms.domain.interior.dto;
 
+import com.bincms.domain.interior.entity.InteriorCategory;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
@@ -22,4 +23,7 @@ public class InteriorUpdateRequest {
     private String thumbnailUrl;
     
     private Integer sortOrder;
+    
+    /** 선택: 주면 카테고리를 바꾼다(블로그 이관 도구의 재실행 매핑 변경용). 생략하면 유지. */
+    private InteriorCategory category;
 }

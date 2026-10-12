@@ -74,6 +74,7 @@ public class InteriorService {
                 .orElseThrow(() -> new BusinessException(ErrorCode.INTERIOR_NOT_FOUND));
         interior.update(request.getTitle(), request.getContent(),
                 request.getThumbnailUrl(), request.getSortOrder());
+        interior.changeCategory(request.getCategory());
         return InteriorResponse.from(interior);
     }
     

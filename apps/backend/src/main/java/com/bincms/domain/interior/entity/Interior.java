@@ -74,6 +74,12 @@ public class Interior extends BaseEntity {
         this.sortOrder = sortOrder != null ? sortOrder : this.sortOrder;
     }
     
+    public void changeCategory(InteriorCategory category) {
+        if (category != null) {
+            this.category = category;
+        }
+    }
+    
     public void increaseViewCount() {
         this.viewCount++;
     }
