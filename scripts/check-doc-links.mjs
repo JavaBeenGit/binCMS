@@ -7,13 +7,13 @@ import { join, dirname, resolve, relative } from 'node:path';
 const root = resolve(process.argv[2] ?? '.');
 const SKIP_DIRS = new Set(['node_modules', '.git', 'build', 'dist', '.gradle', '.claude', '.superpowers']);
 // 구현 계획서는 미래 파일의 본문을 그대로 인용하므로(상대 링크가 그 파일 위치 기준) 검사 대상에서 뺀다.
-const SKIP_PATHS = ['docs/superpowers/plans'];
+const SKIP_PATH_SUFFIXES = ['docs/superpowers/plans'];
 
 function* walk(dir) {
   for (const name of readdirSync(dir)) {
     if (SKIP_DIRS.has(name)) continue;
     const p = join(dir, name);
-    if (SKIP_PATHS.includes(relative(root, p).replace(/\\/g, '/'))) continue;
+    if (SKIP_PATH_SUFFIXES.some((sfx) => p.replace(/\\/g, '/').endsWith(sfx))) continue;
     if (statSync(p).isDirectory()) yield* walk(p);
     else if (name.endsWith('.md')) yield p;
   }
