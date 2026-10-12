@@ -37,5 +37,6 @@ RFC 폴더는 두지 않는다(1인 프로젝트 — 토론은 설계서 `docs/s
 ## 가이드
 
 - [`guides/dev-setup.md`](guides/dev-setup.md) — 로컬 개발 환경 세팅 (정본)
+- [`guides/blog-import.md`](guides/blog-import.md) — 네이버 블로그 → 갤러리 이관 도구 사용법·카테고리 매핑
 - [`conventions.md`](conventions.md) — 코딩 컨벤션 (요약은 [`apps/CLAUDE.md`](../../apps/CLAUDE.md))
 - [`db-naming.md`](db-naming.md) — DB 명명 규칙
