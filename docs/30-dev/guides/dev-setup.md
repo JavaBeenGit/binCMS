@@ -18,14 +18,14 @@
 ### 2-A. Docker Desktop을 쓰는 경우 (3307, 권장)
 
 ```bash
-docker compose -f backend/docker-compose.yml up -d --wait
+docker compose -f apps/backend/docker-compose.yml up -d --wait
 ```
 
 MySQL 8.4가 호스트 3307에 뜨고 DB `bincms`·계정 `bincms/bincms1234`가 자동 생성된다. 백엔드 기동 시 `DB_PORT=3307`을 준다(§3).
 
 ### 2-B. 네이티브 MySQL/MariaDB가 이미 있는 경우 (3306)
 
-root로 한 번 실행(`backend/db/init-local.sql`):
+root로 한 번 실행(`apps/backend/db/init-local.sql`):
 
 ```sql
 CREATE DATABASE IF NOT EXISTS bincms CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
@@ -35,6 +35,10 @@ FLUSH PRIVILEGES;
 ```
 
 백엔드는 기본값으로 `localhost:3306`에 붙는다. 검증 PC의 3306은 **MariaDB 10.6**(Windows 서비스 `MariaDB`)이며 root 비밀번호를 몰라 이 경로는 실측하지 못했다 — MySQL 드라이버·다이얼렉트로 MariaDB 10.6에 붙는 것은 일반적으로 동작하지만, 문제가 생기면 2-A를 쓴다.
+
+## 2-C. 한 번에 띄우기 (Docker 경로)
+
+저장소 루트에서 `.\dev.ps1` — MySQL 컨테이너를 올리고 백엔드·프론트를 각각 새 PowerShell 창에서 기동한다. 아래 §3·§4는 개별 기동 방법이다.
 
 ## 3. 백엔드 (8080)
 
@@ -48,7 +52,7 @@ PowerShell에서 Docker 경로: `$env:DB_PORT=3307; .\gradlew.bat bootRun`
 
 - 첫 실행은 JDK 21 + Gradle 8.7 + 의존성 다운로드로 수 분(검증 PC: 약 3분).
 - `local` 프로파일이 기본. `ddl-auto: update`라 테이블이 자동 생성되고, `DataInitializer`가 역할·권한·메뉴·관리자 계정·샘플 데이터를 심는다.
-- 비밀값: `backend/application-secret.yml`(git 제외)이 있으면 `spring.config.import`로 읽는다. 없어도 기동은 되지만 소셜 로그인·메일이 비활성(§5).
+- 비밀값: `apps/backend/application-secret.yml`(git 제외)이 있으면 `spring.config.import`로 읽는다. 없어도 기동은 되지만 소셜 로그인·메일이 비활성(§5).
 - 준비 판정: `curl http://localhost:8080/api/v1/health` → `{"success":true,...}` (검증 PC: 기동 후 약 10초).
 - 로컬 관리자 계정: `admin` / `1234` (DataInitializer가 생성). 확인: `curl -X POST localhost:8080/api/v1/auth/login -H "Content-Type: application/json" -d '{"loginId":"admin","password":"1234"}'` → `accessToken` 포함 응답.
 
@@ -67,8 +71,8 @@ npm run dev
 ## 5. 알려진 문제 (2026-10-12 기준)
 
 - `npm run lint`는 ESLint 설정 파일이 없어 실패한다(`ESLint couldn't find a configuration file`). 5단계에서 도입.
-- OAuth(카카오·네이버·구글)·Gmail 비밀값은 `application.yml`에 없다. `backend/application-secret.example.yml`을 복사해 `backend/application-secret.yml`(git 제외)을 만들고 값을 채워야 소셜 로그인·메일 인증이 동작한다. 값은 저장소 소유자에게 받는다. 키 재발급은 3단계.
-- 업로드 경로는 `FILE_UPLOAD_DIR` 환경변수, 기본값 `backend/uploads`(git 제외)다. 헤더·푸터 로고는 `/uploads/etc/su_design_logo.png`·`su_design_logo_footer.png`를 읽는데 이 파일이 저장소에 없어 새 PC에서는 로고가 깨져 보인다(6단계에서 로고를 `frontend/public/`으로 이전).
+- OAuth(카카오·네이버·구글)·Gmail 비밀값은 `application.yml`에 없다. `apps/backend/application-secret.example.yml`을 복사해 `apps/backend/application-secret.yml`(git 제외)을 만들고 값을 채워야 소셜 로그인·메일 인증이 동작한다. 값은 저장소 소유자에게 받는다. 키 재발급은 3단계.
+- 업로드 경로는 `FILE_UPLOAD_DIR` 환경변수, 기본값 `apps/backend/uploads`(git 제외)다. 헤더·푸터 로고는 `/uploads/etc/su_design_logo.png`·`su_design_logo_footer.png`를 읽는데 이 파일이 저장소에 없어 새 PC에서는 로고가 깨져 보인다(6단계에서 로고를 `apps/frontend/public/`으로 이전).
 - 백엔드 테스트는 Testcontainers(MySQL 8.4)를 쓰므로 **Docker Desktop이 떠 있어야** `gradlew.bat build`·`gradlew.bat test`가 통과한다. 첫 실행은 이미지 다운로드로 수 분. `~/.testcontainers.properties`에 `docker.host=tcp://localhost:2375`가 있으면 Docker Desktop의 "Expose daemon on tcp://localhost:2375" 옵션이 켜져 있어야 한다(검증 PC는 켜져 있음). docker-java 기본 API 1.32를 Docker 29가 거부해 `build.gradle`에서 `api.version=1.44`를 준다.
 - 프론트 단위 테스트는 없다(설계서 §6: 린트 + 실기동 검증).
 - `ckeditor5`는 `47.4.0`에 고정돼 있다. `^` 범위로 올리면 47.7.x(LTS)에서 GPL 키가 거부돼(`license-key-lts-not-allowed`) 에디터가 비활성이 된다. `package-lock.json`을 커밋하므로 `npm ci`를 쓰면 안전하다.
@@ -76,4 +80,4 @@ npm run dev
 
 ## 6. 종료
 
-각 터미널에서 Ctrl+C. Docker DB는 `docker compose -f backend/docker-compose.yml down` (데이터는 볼륨 `mysql-data`에 남는다).
+각 터미널에서 Ctrl+C. Docker DB는 `docker compose -f apps/backend/docker-compose.yml down` (데이터는 볼륨 `mysql-data`에 남는다).

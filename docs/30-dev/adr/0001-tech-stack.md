@@ -27,7 +27,7 @@
 | 파일 | 로컬 디스크 업로드, `/uploads/**` 정적 서빙 |
 | API 응답 | `ApiResponse<T>` `{ success, data, message }` + `PageResponse<T>`, 전역 `GlobalExceptionHandler` |
 | 테스트 | 현재 0개 → **목표(3·5단계)**: JUnit 5 + MockMvc + Testcontainers(MySQL) |
-| 패키지 매니저 | npm (lock 파일은 git 제외 — 목표(2단계): lock 커밋 여부 결정) |
+| 패키지 매니저 | npm, `package-lock.json` 커밋(2026-10-12 — CKEditor 버전 사고 이후), 설치는 `npm ci` |
 | 배포 | 미정 → ADR-0005(8단계) |
 
 ## Consequences

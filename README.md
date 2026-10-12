@@ -25,8 +25,11 @@
 ```
 binCms/
 ├── CLAUDE.md          # Claude 작업 진입 안내서
-├── backend/           # Spring Boot (Gradle)          ← 2단계에서 apps/backend 로 이동
-├── frontend/          # React + Vite                  ← 2단계에서 apps/frontend 로 이동
+├── dev.ps1            # Docker MySQL + 백엔드 + 프론트 일괄 기동
+├── apps/
+│   ├── CLAUDE.md      # 코드 레이어 진입 안내서(컨벤션 요약)
+│   ├── backend/       # Spring Boot (Gradle)
+│   └── frontend/      # React + Vite
 ├── docs/
 │   ├── 00-common/     # 업체 정보·용어집
 │   ├── 10-product/    # 사이트맵·기획
@@ -43,7 +46,7 @@ binCms/
 
 ```bash
 # 터미널 1 — DB
-docker compose -f backend/docker-compose.yml up -d --wait   # MySQL 3307
+docker compose -f apps/backend/docker-compose.yml up -d --wait   # MySQL 3307
 # 터미널 2 — 백엔드 (터미널을 점유함)
 cd backend && DB_PORT=3307 ./gradlew.bat bootRun              # http://localhost:8080/api/v1/health
 # 터미널 3 — 프론트

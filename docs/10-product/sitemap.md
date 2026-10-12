@@ -1,6 +1,6 @@
 # 사이트맵 (현재 코드 기준)
 
-> 출처: `frontend/src/App.tsx` 라우트, 권한은 `frontend/src/shared/constants/permissions.ts`. 2026-10-12. 라우트를 바꾸면 이 표도 같은 브랜치에서 고친다(5단계에서 `features/` 가이드로 승격).
+> 출처: `apps/frontend/src/App.tsx` 라우트, 권한은 `apps/frontend/src/shared/constants/permissions.ts`. 2026-10-12. 라우트를 바꾸면 이 표도 같은 브랜치에서 고친다(5단계에서 `features/` 가이드로 승격).
 
 ## 사용자 (`/user`, 레이아웃 `UserLayout`)
 
@@ -27,9 +27,9 @@
 
 | URL | 화면 | 권한(프론트 가드) | 코드 |
 |---|---|---|---|
-| `/admin/login`, `/admin/signup` | 관리자 로그인·가입 | 비로그인 | `pages/auth/Login`, `Signup` |
+| `/admin/login`, `/admin/signup` | 관리자 로그인·가입 | 비로그인 | `admin/pages/auth/Login`, `Signup` |
 | `/login`, `/signup` | → `/admin/...` 리다이렉트 | | |
-| `/admin` | 대시보드 | `MENU_DASHBOARD` (가드 밖, 로그인만) | `pages/admin/Dashboard` |
+| `/admin` | 대시보드 | `MENU_DASHBOARD` (가드 밖, 로그인만) | `admin/pages/Dashboard` |
 | `/admin/posts`, `/admin/posts/{notice,faq}` | 게시글 관리 | `MENU_POST` | `PostManagement` |
 | `/admin/posts/free` | 자유게시판 게시글 관리 | **매핑 없음 → 로그인만** (`menuPermissionMap` 누락, 매핑 없는 경로는 허용. 3단계에서 보강) | `PostManagement` |
 | `/admin/posts/qna` | 견적문의 관리 | `MENU_POST` | `InquiryManagement` |
@@ -44,7 +44,7 @@
 | `/admin/profile` | "개발 예정" 플레이스홀더 | 로그인 | `App.tsx` 인라인 |
 | `/admin/statistics`, `/admin/system/ips`, `/admin/system/codes` | "개발 예정" 플레이스홀더 | `MENU_STATISTICS`, `MENU_SYSTEM_IP`, `MENU_SYSTEM_CODE` | `App.tsx` 인라인 |
 
-권한 코드 ↔ 라우트 매핑의 정본은 `frontend/src/shared/constants/permissions.ts`(`menuPermissionMap`). 위 표의 권한 열이 그 파일과 다르면 파일이 맞다 — 표를 고친다.
+권한 코드 ↔ 라우트 매핑의 정본은 `apps/frontend/src/shared/constants/permissions.ts`(`menuPermissionMap`). 위 표의 권한 열이 그 파일과 다르면 파일이 맞다 — 표를 고친다.
 
 위 "권한(프론트 가드)"은 메뉴 노출·라우트 가드이고, **서버는 별도로 역할을 강제**한다(2026-10-12): `/api/v1/admin/**`는 관리자 3역할 토큰이 없으면 401/403이므로 `/admin/posts/free`처럼 프론트 매핑이 빠진 화면도 비관리자는 데이터를 못 본다. 규칙 전문은 [ADR-0003](../30-dev/adr/0003-auth-jwt.md).
 

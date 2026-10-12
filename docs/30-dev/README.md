@@ -8,7 +8,7 @@
 30-dev/
 ├── adr/            # 결정 기록 (영구). 0000-template.md 복사해서 작성
 ├── db-naming.md    # DB 오브젝트 명명 규칙 (단일 출처)
-├── conventions.md  # 코딩 컨벤션 (2단계에서 작성)
+├── conventions.md  # 코딩 컨벤션 (현행 규칙 + 목표 표시)
 ├── guides/         # how-to: dev-setup, features/(5단계), admin-manual(7단계)
 └── runbook/        # 배포·백업·장애 대응 (8단계)
 ```
@@ -36,4 +36,5 @@ RFC 폴더는 두지 않는다(1인 프로젝트 — 토론은 설계서 `docs/s
 ## 가이드
 
 - [`guides/dev-setup.md`](guides/dev-setup.md) — 로컬 개발 환경 세팅 (정본)
+- [`conventions.md`](conventions.md) — 코딩 컨벤션 (요약은 [`apps/CLAUDE.md`](../../apps/CLAUDE.md))
 - [`db-naming.md`](db-naming.md) — DB 명명 규칙
