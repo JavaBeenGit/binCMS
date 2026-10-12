@@ -145,3 +145,10 @@
     gap: 16px;
   }
 }
+
+/* 목록·상세 로딩 중 */
+.loading-center {
+  display: flex;
+  justify-content: center;
+  padding: 48px 0;
+}

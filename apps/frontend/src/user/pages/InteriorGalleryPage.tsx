@@ -1,23 +1,37 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { Spin, Empty, Pagination, Modal } from 'antd';
+import { useNavigate, useParams } from 'react-router-dom';
+import { Spin, Empty, Pagination, Modal, message } from 'antd';
 import { EyeOutlined, CalendarOutlined } from '@ant-design/icons';
 import { publicInteriorApi } from '@/shared/api/endpoints/public';
 import { InteriorResponse, InteriorCategory } from '@/shared/api/endpoints/interior';
+import { usePageMeta } from '@/shared/utils/usePageMeta';
 import 'ckeditor5/ckeditor5.css';
 import './InteriorGalleryPage.css';
 
-import { usePageMeta } from '@/shared/utils/usePageMeta';
 interface InteriorGalleryPageProps {
   category: InteriorCategory;
   title: string;
   subtitle?: string;
 }
 
+/** URL 조각 ↔ 카테고리 (sitemap.xml 과 같은 규칙) */
+const CATEGORY_SLUG: Record<InteriorCategory, string> = {
+  ONSITE: 'onsite',
+  SELF_TIP: 'self-tip',
+  STORY: 'story',
+};
+
+/**
+ * 갤러리 목록 + 상세 모달. 상세는 /user/interior/{slug}/{id} 딥링크로 열린다(공유·검색엔진용).
+ */
 const InteriorGalleryPage: React.FC<InteriorGalleryPageProps> = ({ category, title, subtitle }) => {
-  usePageMeta(title, subtitle);
+  const navigate = useNavigate();
+  const { id: idParam } = useParams<{ id?: string }>();
+  const selectedId = idParam && /^\d+$/.test(idParam) ? Number(idParam) : null;
+  const listPath = `/user/interior/${CATEGORY_SLUG[category]}`;
+
   const [currentPage, setCurrentPage] = useState(1);
-  const [selectedItem, setSelectedItem] = useState<InteriorResponse | null>(null);
   const pageSize = 12;
 
   const { data, isLoading } = useQuery({
@@ -28,15 +42,25 @@ const InteriorGalleryPage: React.FC<InteriorGalleryPageProps> = ({ category, tit
     },
   });
 
-  // 상세 조회 (조회수 증가)
-  const { data: detailData } = useQuery({
-    queryKey: ['public-interior-detail', selectedItem?.id],
+  // 상세 조회 (조회수 증가). id 가 URL 에 있을 때만.
+  const { data: detail, isError: detailError } = useQuery({
+    queryKey: ['public-interior-detail', selectedId],
     queryFn: async () => {
-      const res = await publicInteriorApi.getById(selectedItem!.id);
+      const res = await publicInteriorApi.getById(selectedId!);
       return res.data;
     },
-    enabled: !!selectedItem,
+    enabled: selectedId !== null,
+    retry: false,
   });
+
+  useEffect(() => {
+    if (detailError) {
+      message.warning('찾을 수 없는 글입니다.');
+      navigate(listPath, { replace: true });
+    }
+  }, [detailError, navigate, listPath]);
+
+  usePageMeta(detail?.title ? `${detail.title} - ${title}` : title, subtitle);
 
   const items = data?.content || [];
   const totalElements = data?.totalElements || 0;
@@ -49,8 +73,6 @@ const InteriorGalleryPage: React.FC<InteriorGalleryPageProps> = ({ category, tit
     return null;
   };
 
-  const detail = detailData || selectedItem;
-
   return (
     <div>
       <div className="page-banner">
@@ -59,9 +81,7 @@ const InteriorGalleryPage: React.FC<InteriorGalleryPageProps> = ({ category, tit
       </div>
       <div className="page-container">
         {isLoading ? (
-          <div style={{ textAlign: 'center', padding: 60 }}>
-            <Spin size="large" />
-          </div>
+          <div className="loading-center"><Spin size="large" /></div>
         ) : items.length === 0 ? (
           <Empty description="등록된 콘텐츠가 없습니다." />
         ) : (
@@ -73,11 +93,11 @@ const InteriorGalleryPage: React.FC<InteriorGalleryPageProps> = ({ category, tit
                   <div
                     key={item.id}
                     className="gallery-card"
-                    onClick={() => setSelectedItem(item)}
+                    onClick={() => navigate(`${listPath}/${item.id}`)}
                   >
                     <div className="gallery-card-img">
                       {thumb ? (
-                        <img src={thumb} alt={item.title} />
+                        <img src={thumb} alt={item.title} loading="lazy" />
                       ) : (
                         <div className="gallery-card-placeholder">
                           <span>🏠</span>
@@ -111,16 +131,16 @@ const InteriorGalleryPage: React.FC<InteriorGalleryPageProps> = ({ category, tit
         )}
       </div>
 
-      {/* 상세 모달 */}
+      {/* 상세 모달 — 닫으면 목록 URL 로 */}
       <Modal
-        open={!!selectedItem}
-        onCancel={() => setSelectedItem(null)}
+        open={selectedId !== null && !detailError}
+        onCancel={() => navigate(listPath)}
         footer={null}
         width={900}
         title={detail?.title}
         styles={{ body: { maxHeight: '70vh', overflowY: 'auto' } }}
       >
-        {detail && (
+        {detail ? (
           <div className="interior-detail">
             <div className="interior-detail-meta">
               <span><CalendarOutlined /> {new Date(detail.regDt).toLocaleDateString('ko-KR')}</span>
@@ -131,6 +151,8 @@ const InteriorGalleryPage: React.FC<InteriorGalleryPageProps> = ({ category, tit
               dangerouslySetInnerHTML={{ __html: detail.content || '' }}
             />
           </div>
+        ) : (
+          <div className="loading-center"><Spin /></div>
         )}
       </Modal>
     </div>

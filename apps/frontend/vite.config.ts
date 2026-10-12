@@ -39,6 +39,8 @@ export default defineConfig({
         manualChunks: {
           vendor: ['react', 'react-dom', 'react-router-dom'],
           ui: ['antd'],
+          // CKEditor 는 관리자·자유게시판 글쓰기에서만 쓴다 — 지연 로딩되는 별도 청크
+          editor: ['ckeditor5', '@ckeditor/ckeditor5-react'],
         },
       },
     },
