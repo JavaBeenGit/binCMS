@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -36,6 +37,25 @@ class DashboardSummaryTest extends AbstractIntegrationTest {
         assertThat(after.path("interiors").asLong()).isEqualTo(before.path("interiors").asLong() + 1);
         assertThat(after.path("members").asLong()).isGreaterThanOrEqualTo(1);   // admin 계정
         assertThat(after.has("posts")).isTrue();
+    }
+
+    @Test
+    @DisplayName("게시글 수는 '사용' 상태만 센다 — 삭제(비활성)한 글은 빠진다")
+    void postsCountExcludesDeactivated() throws Exception {
+        String admin = adminBearer();
+        long before = summary(admin).path("posts").asLong();
+
+        String created = mockMvc.perform(post("/api/v1/admin/posts").header("Authorization", admin)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"boardId\":1,\"title\":\"dash-post\",\"content\":\"<p>x</p>\"}"))
+                .andExpect(status().is2xxSuccessful())
+                .andReturn().getResponse().getContentAsString();
+        long id = objectMapper.readTree(created).path("data").path("id").asLong();
+        assertThat(summary(admin).path("posts").asLong()).isEqualTo(before + 1);
+
+        mockMvc.perform(delete("/api/v1/admin/posts/" + id).header("Authorization", admin))
+                .andExpect(status().is2xxSuccessful());
+        assertThat(summary(admin).path("posts").asLong()).isEqualTo(before);
     }
 
     @Test

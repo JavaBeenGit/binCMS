@@ -32,7 +32,7 @@ public class AdminDashboardController {
     public ApiResponse<Map<String, Long>> summary() {
         Map<String, Long> data = new LinkedHashMap<>();
         data.put("members", memberRepository.count());
-        data.put("posts", postRepository.count());
+        data.put("posts", postRepository.countByUseYn("Y"));
         data.put("interiors", interiorRepository.countByUseYn("Y"));
         data.put("pendingInquiries", inquiryRepository.countByStatus("PENDING"));
         return ApiResponse.success(data);

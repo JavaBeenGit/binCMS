@@ -30,6 +30,9 @@ public interface PostRepository extends JpaRepository<Post, Long> {
      * 전체 게시글 목록 조회 (페이징)
      */
     Page<Post> findByUseYnOrderByIdDesc(String useYn, Pageable pageable);
+
+    /** 대시보드: 사용 중인 글 수 (삭제는 useYn='N' 비활성이라 count() 는 지운 글도 센다) */
+    long countByUseYn(String useYn);
     
     /**
      * 게시판별 게시글 검색 (제목+내용)
