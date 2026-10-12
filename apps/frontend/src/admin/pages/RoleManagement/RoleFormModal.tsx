@@ -127,7 +127,7 @@ const RoleFormModal: React.FC<RoleFormModalProps> = ({ open, mode, editing, perm
                 size="small"
                 title={<span style={{ fontSize: 13 }}>{GROUP_LABELS[group] || group}</span>}
                 style={{ marginBottom: 8 }}
-                bodyStyle={{ padding: '8px 16px' }}
+                styles={{ body: { padding: '8px 16px' } }}
               >
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '4px 16px' }}>
                   {perms.map((p) => (

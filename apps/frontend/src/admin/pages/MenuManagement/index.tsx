@@ -9,7 +9,6 @@ import { buildMenuColumns } from './menuColumns';
 import { flattenForTable, flattenMenus } from './menuTree';
 import MenuFormModal, { MenuFormValues } from './MenuFormModal';
 
-const { TabPane } = Tabs;
 const PAGE_SIZE = 10;
 
 /**
@@ -151,21 +150,24 @@ const MenuManagement: React.FC = () => {
           setActiveTab(key as MenuType);
           setCurrentPage(1);
         }}
-      >
-        {tabs.map((tab) => (
-          <TabPane tab={tab.label} key={tab.type}>
-            <ListSummary total={tab.rows.length} page={currentPage - 1} pageSize={PAGE_SIZE} />
-            <Table
-              bordered
-              columns={columns}
-              dataSource={tab.rows}
-              rowKey="id"
-              loading={tab.loading}
-              pagination={{ pageSize: PAGE_SIZE, showSizeChanger: false, current: currentPage, onChange: (page) => setCurrentPage(page) }}
-            />
-          </TabPane>
-        ))}
-      </Tabs>
+        items={tabs.map((tab) => ({
+          key: tab.type,
+          label: tab.label,
+          children: (
+            <>
+              <ListSummary total={tab.rows.length} page={currentPage - 1} pageSize={PAGE_SIZE} />
+              <Table
+                bordered
+                columns={columns}
+                dataSource={tab.rows}
+                rowKey="id"
+                loading={tab.loading}
+                pagination={{ pageSize: PAGE_SIZE, showSizeChanger: false, current: currentPage, onChange: (page) => setCurrentPage(page) }}
+              />
+            </>
+          ),
+        }))}
+      />
 
       <MenuFormModal
         open={formOpen}
