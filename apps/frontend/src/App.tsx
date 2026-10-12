@@ -98,6 +98,8 @@ function App() {
                 <Route path="interiors/self-tip" element={<InteriorManagement category="SELF_TIP" />} />
                 <Route path="interiors/story" element={<InteriorManagement category="STORY" />} />
               </Route>
+              {/* 없는 관리자 경로는 대시보드로 */}
+              <Route path="*" element={<Navigate to="/admin" replace />} />
             </Route>
 
             {/* Root redirect → 사용자 홈 */}
@@ -126,6 +128,9 @@ function App() {
               ))}
               <Route path="page/:contentKey" element={<ContentPage />} />
             </Route>
+
+            {/* 그 외 모든 경로(삭제된 /admin/signup 포함)는 홈으로 */}
+            <Route path="*" element={<Navigate to="/user" replace />} />
           </Routes>
         </Suspense>
       </BrowserRouter>
