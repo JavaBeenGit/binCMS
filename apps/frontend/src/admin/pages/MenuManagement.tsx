@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Table, Button, Space, Modal, Form, Input, Select, message, Tag, Popconfirm, Tabs, InputNumber, Tooltip } from 'antd';
 import { PlusOutlined, EditOutlined, DeleteOutlined, CheckCircleOutlined, StopOutlined } from '@ant-design/icons';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { menuApi, MenuCreateRequest, MenuUpdateRequest, MenuResponse, MenuType } from '../../api/endpoints/menu';
+import { menuApi, MenuCreateRequest, MenuUpdateRequest, MenuResponse, MenuType } from '@/shared/api/endpoints/menu';
 import type { ColumnsType } from 'antd/es/table';
 
 const { TextArea } = Input;

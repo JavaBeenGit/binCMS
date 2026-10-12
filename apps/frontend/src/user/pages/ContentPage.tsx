@@ -3,7 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { Spin, Result, Button, Typography } from 'antd';
 import { ArrowLeftOutlined, HomeOutlined } from '@ant-design/icons';
-import { publicContentApi } from '../../api/endpoints/content';
+import { publicContentApi } from '@/shared/api/endpoints/content';
 import 'ckeditor5/ckeditor5.css';
 
 const { Title } = Typography;

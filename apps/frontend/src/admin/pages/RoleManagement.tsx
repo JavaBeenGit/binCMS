@@ -8,7 +8,7 @@ import {
   CheckCircleOutlined, SafetyCertificateOutlined, EyeOutlined,
 } from '@ant-design/icons';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { roleApi, RoleResponse, PermissionResponse } from '../../api/endpoints/adminMember';
+import { roleApi, RoleResponse, PermissionResponse } from '@/shared/api/endpoints/adminMember';
 import type { ColumnsType } from 'antd/es/table';
 
 const { TextArea } = Input;

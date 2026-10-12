@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Button, Input, message, Modal, Spin } from 'antd';
 import { DeleteOutlined, EditOutlined, CommentOutlined, UserOutlined } from '@ant-design/icons';
-import { publicCommentApi, CommentResponse } from '../../api/endpoints/comment';
+import { publicCommentApi, CommentResponse } from '@/shared/api/endpoints/comment';
 import './CommentSection.css';
 
 const { TextArea } = Input;

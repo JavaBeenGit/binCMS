@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import type { MemberResponse } from '../api/endpoints/auth';
+import type { MemberResponse } from '@/shared/api/endpoints/auth';
 
 interface AuthState {
   token: string | null;

@@ -3,7 +3,7 @@ import { Button } from 'antd';
 import { MailOutlined } from '@ant-design/icons';
 import { useNavigate, Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
-import { getKakaoConfig, buildKakaoAuthUrl, getNaverConfig, buildNaverAuthUrl, getGoogleConfig, buildGoogleAuthUrl } from '../../api/endpoints/oauth';
+import { getKakaoConfig, buildKakaoAuthUrl, getNaverConfig, buildNaverAuthUrl, getGoogleConfig, buildGoogleAuthUrl } from '@/shared/api/endpoints/oauth';
 import './UserSignup.css';
 
 /**

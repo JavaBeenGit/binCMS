@@ -23,9 +23,9 @@ import {
 } from '@ant-design/icons';
 import { Outlet, useNavigate, useLocation } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
-import { useAdminAuthStore } from '../stores/adminAuthStore';
-import { menuApi, MenuType, MenuResponse } from '../api/endpoints/menu';
-import { hasPermission } from '../shared/constants/permissions';
+import { useAdminAuthStore } from '@/shared/stores/adminAuthStore';
+import { menuApi, MenuType, MenuResponse } from '@/shared/api/endpoints/menu';
+import { hasPermission } from '@/shared/constants/permissions';
 import type { MenuProps } from 'antd';
 import './AdminLayout.css';
 

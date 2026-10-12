@@ -23,12 +23,7 @@
     /* Path Mapping */
     "baseUrl": ".",
     "paths": {
-      "@/*": ["./src/*"],
-      "@admin/*": ["./src/admin/*"],
-      "@user/*": ["./src/user/*"],
-      "@shared/*": ["./src/shared/*"],
-      "@api/*": ["./src/api/*"],
-      "@types/*": ["./src/types/*"]
+      "@/*": ["./src/*"]
     }
   },
   "include": ["src"],

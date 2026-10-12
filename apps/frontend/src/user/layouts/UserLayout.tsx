@@ -2,8 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { Dropdown, message } from 'antd';
 import { UserOutlined, LogoutOutlined, LoginOutlined } from '@ant-design/icons';
-import { useAuthStore } from '../../stores/authStore';
-import PopupLayer from '../components/PopupLayer';
+import { useAuthStore } from '@/shared/stores/authStore';
+import PopupLayer from '@/user/components/PopupLayer';
 import './UserLayout.css';
 
 const UserLayout: React.FC = () => {

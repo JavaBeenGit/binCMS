@@ -1,8 +1,8 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { Spin, Result, Button } from 'antd';
-import { kakaoLogin, naverLogin, googleLogin } from '../../api/endpoints/oauth';
-import { useAuthStore } from '../../stores/authStore';
+import { kakaoLogin, naverLogin, googleLogin } from '@/shared/api/endpoints/oauth';
+import { useAuthStore } from '@/shared/stores/authStore';
 
 interface OAuthCallbackProps {
   provider: 'kakao' | 'naver' | 'google';

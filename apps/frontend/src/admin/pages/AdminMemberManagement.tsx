@@ -15,7 +15,7 @@ import {
   AdminMemberCreateRequest,
   AdminMemberUpdateRequest,
   AdminMemberResponse,
-} from '../../api/endpoints/adminMember';
+} from '@/shared/api/endpoints/adminMember';
 import type { ColumnsType } from 'antd/es/table';
 
 const AdminMemberManagement: React.FC = () => {

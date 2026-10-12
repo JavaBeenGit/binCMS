@@ -1,5 +1,5 @@
-import client from '../client';
-import { ApiResponse, PageResponse } from '../types';
+import client from '@/shared/api/client';
+import { ApiResponse, PageResponse } from '@/shared/api/types';
 
 export type InteriorCategory = 'ONSITE' | 'SELF_TIP' | 'STORY';
 

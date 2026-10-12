@@ -3,7 +3,7 @@ import { Form, Input, Button, Card, message } from 'antd';
 import { UserOutlined, LockOutlined, MailOutlined, PhoneOutlined } from '@ant-design/icons';
 import { useMutation } from '@tanstack/react-query';
 import { useNavigate, Link } from 'react-router-dom';
-import { signup, type SignupRequest } from '../../api/endpoints/auth';
+import { signup, type SignupRequest } from '@/shared/api/endpoints/auth';
 import './Signup.css';
 
 /**

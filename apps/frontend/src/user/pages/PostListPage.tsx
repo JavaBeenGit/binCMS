@@ -2,8 +2,8 @@ import React, { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { Spin, Empty, Pagination, Tag } from 'antd';
 import { EyeOutlined, CalendarOutlined } from '@ant-design/icons';
-import { publicPostApi } from '../../api/endpoints/public';
-import { PostResponse } from '../../api/endpoints/post';
+import { publicPostApi } from '@/shared/api/endpoints/public';
+import { PostResponse } from '@/shared/api/endpoints/post';
 import 'ckeditor5/ckeditor5.css';
 import './PostListPage.css';
 

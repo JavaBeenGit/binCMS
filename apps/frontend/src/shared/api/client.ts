@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { message } from 'antd';
-import { useAdminAuthStore } from '../stores/adminAuthStore';
-import { useAuthStore } from '../stores/authStore';
+import { useAdminAuthStore } from '@/shared/stores/adminAuthStore';
+import { useAuthStore } from '@/shared/stores/authStore';
 
 const apiClient = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL || '/api/v1',

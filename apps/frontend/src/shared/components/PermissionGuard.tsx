@@ -1,8 +1,8 @@
 import React, { useEffect } from 'react';
 import { useNavigate, useLocation, Outlet } from 'react-router-dom';
 import { message } from 'antd';
-import { useAdminAuthStore } from '../../stores/adminAuthStore';
-import { hasPermission } from '../constants/permissions';
+import { useAdminAuthStore } from '@/shared/stores/adminAuthStore';
+import { hasPermission } from '@/shared/constants/permissions';
 
 /**
  * 권한 기반 라우트 가드

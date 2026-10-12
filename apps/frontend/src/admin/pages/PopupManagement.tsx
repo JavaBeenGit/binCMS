@@ -20,14 +20,14 @@ import {
   SpecialCharacters, SpecialCharactersEssentials,
   GeneralHtmlSupport,
 } from 'ckeditor5';
-import { CKEditorUploadAdapterPlugin } from '../../shared/utils/ckEditorUploadAdapter';
+import { CKEditorUploadAdapterPlugin } from '@/shared/utils/ckEditorUploadAdapter';
 import dayjs from 'dayjs';
 import {
   popupApi,
   PopupResponse,
   PopupCreateRequest,
   PopupUpdateRequest,
-} from '../../api/endpoints/popup';
+} from '@/shared/api/endpoints/popup';
 import type { ColumnsType } from 'antd/es/table';
 
 const { RangePicker } = DatePicker;

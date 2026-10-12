@@ -3,8 +3,8 @@ import { Form, Input, Button, Card, message } from 'antd';
 import { UserOutlined, LockOutlined } from '@ant-design/icons';
 import { useMutation } from '@tanstack/react-query';
 import { useNavigate, Link } from 'react-router-dom';
-import { login, type LoginRequest } from '../../api/endpoints/auth';
-import { useAdminAuthStore } from '../../stores/adminAuthStore';
+import { login, type LoginRequest } from '@/shared/api/endpoints/auth';
+import { useAdminAuthStore } from '@/shared/stores/adminAuthStore';
 import './Login.css';
 
 /**

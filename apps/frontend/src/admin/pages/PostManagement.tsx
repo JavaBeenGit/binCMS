@@ -13,10 +13,10 @@ import {
   SpecialCharacters, SpecialCharactersEssentials,
   GeneralHtmlSupport,
 } from 'ckeditor5';
-import { CKEditorUploadAdapterPlugin } from '../../shared/utils/ckEditorUploadAdapter';
-import { postApi, PostCreateRequest, PostUpdateRequest, PostResponse } from '../../api/endpoints/post';
+import { CKEditorUploadAdapterPlugin } from '@/shared/utils/ckEditorUploadAdapter';
+import { postApi, PostCreateRequest, PostUpdateRequest, PostResponse } from '@/shared/api/endpoints/post';
 import { Descriptions } from 'antd';
-import { boardApi, BoardResponse } from '../../api/endpoints/board';
+import { boardApi, BoardResponse } from '@/shared/api/endpoints/board';
 import type { ColumnsType } from 'antd/es/table';
 
 interface PostFormValues {

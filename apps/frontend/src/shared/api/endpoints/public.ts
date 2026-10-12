@@ -1,5 +1,5 @@
-import client from '../client';
-import { ApiResponse, PageResponse } from '../types';
+import client from '@/shared/api/client';
+import { ApiResponse, PageResponse } from '@/shared/api/types';
 import { PostResponse } from './post';
 import { InteriorResponse } from './interior';
 import { PopupResponse } from './popup';

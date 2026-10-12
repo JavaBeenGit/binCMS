@@ -14,7 +14,7 @@ import {
   type UserMemberResponse,
   type UserMemberUpdateRequest,
   type UserPasswordResetRequest
-} from '../../api/endpoints/userMember';
+} from '@/shared/api/endpoints/userMember';
 
 const { Option } = Select;
 

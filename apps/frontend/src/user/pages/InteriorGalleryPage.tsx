@@ -2,8 +2,8 @@ import React, { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { Spin, Empty, Pagination, Modal } from 'antd';
 import { EyeOutlined, CalendarOutlined } from '@ant-design/icons';
-import { publicInteriorApi } from '../../api/endpoints/public';
-import { InteriorResponse, InteriorCategory } from '../../api/endpoints/interior';
+import { publicInteriorApi } from '@/shared/api/endpoints/public';
+import { InteriorResponse, InteriorCategory } from '@/shared/api/endpoints/interior';
 import 'ckeditor5/ckeditor5.css';
 import './InteriorGalleryPage.css';
 

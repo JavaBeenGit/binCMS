@@ -11,12 +11,12 @@ import {
   ImageStyle, ImageResize, ImageUpload, PasteFromOffice,
   GeneralHtmlSupport,
 } from 'ckeditor5';
-import { CKEditorUploadAdapterPlugin } from '../../shared/utils/ckEditorUploadAdapter';
-import { publicPostApi } from '../../api/endpoints/public';
-import { userPostApi, PostResponse } from '../../api/endpoints/post';
-import { publicCommentApi } from '../../api/endpoints/comment';
-import { useAuthStore } from '../../stores/authStore';
-import CommentSection from '../components/CommentSection';
+import { CKEditorUploadAdapterPlugin } from '@/shared/utils/ckEditorUploadAdapter';
+import { publicPostApi } from '@/shared/api/endpoints/public';
+import { userPostApi, PostResponse } from '@/shared/api/endpoints/post';
+import { publicCommentApi } from '@/shared/api/endpoints/comment';
+import { useAuthStore } from '@/shared/stores/authStore';
+import CommentSection from '@/user/components/CommentSection';
 import 'ckeditor5/ckeditor5.css';
 import './FreeBoardPage.css';
 

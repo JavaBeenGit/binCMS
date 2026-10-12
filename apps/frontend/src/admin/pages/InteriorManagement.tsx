@@ -20,16 +20,16 @@ import {
   SpecialCharacters, SpecialCharactersEssentials,
   GeneralHtmlSupport,
 } from 'ckeditor5';
-import { CKEditorUploadAdapterPlugin } from '../../shared/utils/ckEditorUploadAdapter';
+import { CKEditorUploadAdapterPlugin } from '@/shared/utils/ckEditorUploadAdapter';
 import {
   interiorApi,
   InteriorResponse,
   InteriorCreateRequest,
   InteriorUpdateRequest,
   InteriorCategory,
-} from '../../api/endpoints/interior';
+} from '@/shared/api/endpoints/interior';
 import type { ColumnsType } from 'antd/es/table';
-import { fileApi } from '../../api/endpoints/file';
+import { fileApi } from '@/shared/api/endpoints/file';
 
 const CATEGORY_MAP: Record<InteriorCategory, string> = {
   ONSITE: '현장시공',

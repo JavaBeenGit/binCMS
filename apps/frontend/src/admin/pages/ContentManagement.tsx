@@ -19,13 +19,13 @@ import {
   SpecialCharacters, SpecialCharactersEssentials,
   GeneralHtmlSupport,
 } from 'ckeditor5';
-import { CKEditorUploadAdapterPlugin } from '../../shared/utils/ckEditorUploadAdapter';
+import { CKEditorUploadAdapterPlugin } from '@/shared/utils/ckEditorUploadAdapter';
 import {
   contentApi,
   ContentResponse,
   ContentCreateRequest,
   ContentUpdateRequest,
-} from '../../api/endpoints/content';
+} from '@/shared/api/endpoints/content';
 import type { ColumnsType } from 'antd/es/table';
 
 const ContentManagement: React.FC = () => {

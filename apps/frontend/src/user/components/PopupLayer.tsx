@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { publicPopupApi } from '../../api/endpoints/public';
-import { PopupResponse } from '../../api/endpoints/popup';
+import { publicPopupApi } from '@/shared/api/endpoints/public';
+import { PopupResponse } from '@/shared/api/endpoints/popup';
 import { CloseOutlined } from '@ant-design/icons';
 import './PopupLayer.css';
 

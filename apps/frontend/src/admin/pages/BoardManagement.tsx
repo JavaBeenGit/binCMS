@@ -11,7 +11,7 @@ import {
   activateBoard,
   type BoardResponse,
   type BoardUpdateRequest,
-} from '../../api/endpoints/board';
+} from '@/shared/api/endpoints/board';
 
 /**
  * 게시판 관리 페이지

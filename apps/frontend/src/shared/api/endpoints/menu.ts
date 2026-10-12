@@ -1,5 +1,5 @@
-import client from '../client';
-import { ApiResponse } from '../types';
+import client from '@/shared/api/client';
+import { ApiResponse } from '@/shared/api/types';
 
 export enum MenuType {
   ADMIN = 'ADMIN',

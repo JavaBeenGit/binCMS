@@ -3,7 +3,7 @@
  * - 파일 서버(/api/v1/user/files/upload)로 이미지를 업로드하고
  * - 업로드된 URL을 CKEditor에 반환합니다.
  */
-import { useAdminAuthStore } from '../../stores/adminAuthStore';
+import { useAdminAuthStore } from '@/shared/stores/adminAuthStore';
 
 const API_BASE = import.meta.env.VITE_API_BASE_URL || '/api/v1';
 

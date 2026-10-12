@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Form, Input, Select, Button, Result, message } from 'antd';
 import { SendOutlined, PhoneOutlined, MailOutlined, EnvironmentOutlined } from '@ant-design/icons';
-import { publicInquiryApi } from '../../api/endpoints/public';
+import { publicInquiryApi } from '@/shared/api/endpoints/public';
 import './InquiryPage.css';
 
 const { TextArea } = Input;

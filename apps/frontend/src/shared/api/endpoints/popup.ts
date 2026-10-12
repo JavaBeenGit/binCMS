@@ -1,5 +1,5 @@
-import { apiClient } from '../client';
-import type { ApiResponse } from '../types';
+import { apiClient } from '@/shared/api/client';
+import type { ApiResponse } from '@/shared/api/types';
 
 // ── Types ──
 

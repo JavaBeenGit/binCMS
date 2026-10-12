@@ -8,11 +8,6 @@ export default defineConfig({
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),
-      '@admin': path.resolve(__dirname, './src/admin'),
-      '@user': path.resolve(__dirname, './src/user'),
-      '@shared': path.resolve(__dirname, './src/shared'),
-      '@api': path.resolve(__dirname, './src/api'),
-      '@types': path.resolve(__dirname, './src/types'),
     },
   },
   server: {

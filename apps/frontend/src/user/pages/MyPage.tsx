@@ -3,8 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import { Button, Input, Form, Modal, Tag, message } from 'antd';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 import { useMutation } from '@tanstack/react-query';
-import { useAuthStore } from '../../stores/authStore';
-import { withdrawMember } from '../../api/endpoints/auth';
+import { useAuthStore } from '@/shared/stores/authStore';
+import { withdrawMember } from '@/shared/api/endpoints/auth';
 import './MyPage.css';
 
 /**

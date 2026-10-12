@@ -1,5 +1,5 @@
-import client from '../client';
-import type { ApiResponse } from '../types';
+import client from '@/shared/api/client';
+import type { ApiResponse } from '@/shared/api/types';
 
 export interface UserMemberResponse {
   id: number;

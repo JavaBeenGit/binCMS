@@ -10,8 +10,8 @@ import {
 } from '@ant-design/icons';
 import { useMutation } from '@tanstack/react-query';
 import { useNavigate, Link } from 'react-router-dom';
-import { signup, type SignupRequest } from '../../api/endpoints/auth';
-import { sendVerificationCode, verifyEmailCode } from '../../api/endpoints/email';
+import { signup, type SignupRequest } from '@/shared/api/endpoints/auth';
+import { sendVerificationCode, verifyEmailCode } from '@/shared/api/endpoints/email';
 import './EmailSignup.css';
 
 /**

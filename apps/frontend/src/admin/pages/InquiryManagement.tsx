@@ -9,7 +9,7 @@ import {
   ClockCircleOutlined, SyncOutlined, CloseCircleOutlined,
 } from '@ant-design/icons';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { inquiryApi, InquiryResponse } from '../../api/endpoints/inquiry';
+import { inquiryApi, InquiryResponse } from '@/shared/api/endpoints/inquiry';
 import type { ColumnsType } from 'antd/es/table';
 import dayjs from 'dayjs';
 
