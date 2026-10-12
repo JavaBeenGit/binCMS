@@ -15,6 +15,7 @@ import MyPage from '@/user/pages/MyPage';
 import ContentPage from '@/user/pages/ContentPage';
 import { useAdminAuthStore } from '@/shared/stores/adminAuthStore';
 import PermissionGuard from '@/shared/components/PermissionGuard';
+import ErrorBoundary from '@/shared/components/ErrorBoundary';
 
 // 관리자 화면과 CKEditor 를 쓰는 화면은 지연 로딩 — 사용자 첫 화면 번들에서 분리한다 (6단계).
 const FreeBoardPage = lazy(() => import('@/user/pages/FreeBoardPage'));
@@ -50,6 +51,7 @@ function App() {
   return (
     <ConfigProvider locale={koKR}>
       <BrowserRouter>
+        <ErrorBoundary>
         <Suspense fallback={<PageLoading />}>
           <Routes>
             {/* 관리자 로그인 (관리자 계정은 시스템 관리 > 관리자 계정에서만 만든다) */}
@@ -133,6 +135,7 @@ function App() {
             <Route path="*" element={<Navigate to="/user" replace />} />
           </Routes>
         </Suspense>
+        </ErrorBoundary>
       </BrowserRouter>
     </ConfigProvider>
   );

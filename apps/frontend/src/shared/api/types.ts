@@ -4,31 +4,16 @@ export interface ApiResponse<T> {
   message?: string;
 }
 
+/**
+ * 백엔드 com.bincms.common.dto.PageResponse 와 같은 모양. (Spring Page 원형이 아니다 — pageable/number 없음)
+ * page 는 0부터.
+ */
 export interface PageResponse<T> {
   content: T[];
-  pageable: {
-    pageNumber: number;
-    pageSize: number;
-    sort: {
-      empty: boolean;
-      sorted: boolean;
-      unsorted: boolean;
-    };
-    offset: number;
-    paged: boolean;
-    unpaged: boolean;
-  };
-  last: boolean;
-  totalPages: number;
+  pageNumber: number;
+  pageSize: number;
   totalElements: number;
-  size: number;
-  number: number;
-  sort: {
-    empty: boolean;
-    sorted: boolean;
-    unsorted: boolean;
-  };
+  totalPages: number;
   first: boolean;
-  numberOfElements: number;
-  empty: boolean;
+  last: boolean;
 }
