@@ -15,20 +15,25 @@ spring:
       max-file-size: 10MB
       max-request-size: 20MB
   
+  # 스키마는 Flyway 가 소유한다(ADR-0004). JPA 는 검증만.
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+
   jpa:
     open-in-view: false
     hibernate:
-      ddl-auto: none
+      ddl-auto: validate
     properties:
       hibernate:
         format_sql: true
         use_sql_comments: true
         highlight_sql: false
   
-  security:
-    user:
-      name: admin
-      password: admin
+app:
+  admin:
+    # 최초 기동 시 SYSTEM_ADMIN 'admin' 계정을 만들 비밀번호. 비어 있고 관리자도 없으면 기동 실패(AdminAccountInitializer).
+    initial-password: ${ADMIN_INITIAL_PASSWORD:}
 
 server:
   port: 8080
@@ -67,8 +72,6 @@ spring:
     password: bincms1234
   
   jpa:
-    hibernate:
-      ddl-auto: update
     show-sql: true
     properties:
       hibernate:
@@ -94,6 +97,8 @@ spring:
           writetimeout: 5000
 
 app:
+  admin:
+    initial-password: ${ADMIN_INITIAL_PASSWORD:1234}
   mail:
     from: ${GMAIL_USERNAME:}
     from-name: BIN INTERIOR
