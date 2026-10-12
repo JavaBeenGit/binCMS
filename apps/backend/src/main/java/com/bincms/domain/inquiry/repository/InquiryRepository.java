@@ -12,4 +12,6 @@ public interface InquiryRepository extends JpaRepository<Inquiry, Long> {
     Page<Inquiry> findAllByOrderByIdDesc(Pageable pageable);
 
     Page<Inquiry> findByStatusOrderByIdDesc(String status, Pageable pageable);
+
+    long countByStatus(String status);
 }
