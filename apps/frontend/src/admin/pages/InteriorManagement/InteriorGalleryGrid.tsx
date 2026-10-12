@@ -77,7 +77,7 @@ const InteriorGalleryGrid: React.FC<InteriorGalleryGridProps> = ({ items, showCa
     })}
     {items.length === 0 && !isLoading && (
       <Col span={24}>
-        <div style={{ textAlign: 'center', padding: 60, color: '#999' }}>등록된 인테리어가 없습니다.</div>
+        <div style={{ textAlign: 'center', padding: 60, color: '#999' }}>등록된 시공사례가 없습니다.</div>
       </Col>
     )}
   </Row>

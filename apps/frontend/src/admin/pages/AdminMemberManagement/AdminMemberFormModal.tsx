@@ -28,7 +28,7 @@ interface AdminMemberFormModalProps {
 }
 
 /**
- * 관리자 회원 추가/수정 모달. 로그인 ID·비밀번호는 추가할 때만 입력받고, 수정할 때는 로그인 ID 를 보여 주기만 한다.
+ * 관리자 계정 추가/수정 모달. 로그인 ID·비밀번호는 추가할 때만 입력받고, 수정할 때는 로그인 ID 를 보여 주기만 한다.
  */
 const AdminMemberFormModal: React.FC<AdminMemberFormModalProps> = ({ open, mode, editing, roles, loading, onSubmit, onCancel }) => {
   const [form] = Form.useForm();
@@ -60,7 +60,7 @@ const AdminMemberFormModal: React.FC<AdminMemberFormModalProps> = ({ open, mode,
 
   return (
     <Modal
-      title={isEdit ? '관리자 회원 수정' : '관리자 회원 추가'}
+      title={isEdit ? '관리자 계정 수정' : '관리자 계정 추가'}
       open={open}
       onOk={handleOk}
       onCancel={onCancel}

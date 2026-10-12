@@ -63,7 +63,7 @@ const InteriorManagement: React.FC<InteriorManagementProps> = ({ category }) => 
   const createMutation = useMutation({
     mutationFn: (data: InteriorCreateRequest) => interiorApi.create(data),
     onSuccess: () => {
-      message.success('인테리어가 등록되었습니다.');
+      message.success('시공사례가 등록되었습니다.');
       queryClient.invalidateQueries({ queryKey: ['interiors'] });
       closeForm();
     },
@@ -74,7 +74,7 @@ const InteriorManagement: React.FC<InteriorManagementProps> = ({ category }) => 
   const updateMutation = useMutation({
     mutationFn: ({ id, data }: { id: number; data: InteriorUpdateRequest }) => interiorApi.update(id, data),
     onSuccess: () => {
-      message.success('인테리어가 수정되었습니다.');
+      message.success('시공사례가 수정되었습니다.');
       queryClient.invalidateQueries({ queryKey: ['interiors'] });
       closeForm();
     },

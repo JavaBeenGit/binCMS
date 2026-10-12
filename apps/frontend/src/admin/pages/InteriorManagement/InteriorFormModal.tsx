@@ -71,7 +71,7 @@ const InteriorFormModal: React.FC<InteriorFormModalProps> = ({ open, editing, ca
 
   return (
     <Modal
-      title={editing ? '인테리어 수정' : '인테리어 등록'}
+      title={editing ? '시공사례 수정' : '시공사례 등록'}
       open={open}
       onOk={handleOk}
       onCancel={onCancel}

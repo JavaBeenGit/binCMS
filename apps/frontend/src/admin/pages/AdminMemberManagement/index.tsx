@@ -19,7 +19,7 @@ import AdminMemberPasswordModal from './AdminMemberPasswordModal';
 const PAGE_SIZE = 10;
 
 /**
- * 관리자 회원 관리 — 관리자 계정 추가/수정, 비밀번호 초기화, 활성화/비활성화
+ * 관리자 계정 관리 — 관리자 계정 추가/수정, 비밀번호 초기화, 활성화/비활성화
  */
 const AdminMemberManagement: React.FC = () => {
   const [page, setPage] = useState(0);
@@ -30,7 +30,7 @@ const AdminMemberManagement: React.FC = () => {
   const [editingMember, setEditingMember] = useState<AdminMemberResponse | null>(null);
   const queryClient = useQueryClient();
 
-  // 관리자 회원 목록 조회
+  // 관리자 계정 목록 조회
   const { data: membersData, isLoading } = useQuery({
     queryKey: ['adminMembers', page, PAGE_SIZE, keyword],
     queryFn: async () => (await adminMemberApi.getAdminMembers(page, PAGE_SIZE, keyword || undefined)).data,
@@ -52,30 +52,30 @@ const AdminMemberManagement: React.FC = () => {
     setEditingMember(null);
   };
 
-  // 관리자 회원 생성
+  // 관리자 계정 생성
   const createMutation = useMutation({
     mutationFn: (data: AdminMemberCreateRequest) => adminMemberApi.createAdminMember(data),
     onSuccess: () => {
-      message.success('관리자 회원이 생성되었습니다.');
+      message.success('관리자 계정이 생성되었습니다.');
       queryClient.invalidateQueries({ queryKey: ['adminMembers'] });
       closeForm();
     },
     onError: (error: any) => {
-      message.error(error.response?.data?.error || '관리자 회원 생성에 실패했습니다.');
+      message.error(error.response?.data?.error || '관리자 계정 생성에 실패했습니다.');
     },
   });
 
-  // 관리자 회원 수정
+  // 관리자 계정 수정
   const updateMutation = useMutation({
     mutationFn: ({ id, data }: { id: number; data: AdminMemberUpdateRequest }) =>
       adminMemberApi.updateAdminMember(id, data),
     onSuccess: () => {
-      message.success('관리자 회원 정보가 수정되었습니다.');
+      message.success('관리자 계정 정보가 수정되었습니다.');
       queryClient.invalidateQueries({ queryKey: ['adminMembers'] });
       closeForm();
     },
     onError: () => {
-      message.error('관리자 회원 수정에 실패했습니다.');
+      message.error('관리자 계정 수정에 실패했습니다.');
     },
   });
 
@@ -96,7 +96,7 @@ const AdminMemberManagement: React.FC = () => {
   const deactivateMutation = useMutation({
     mutationFn: (id: number) => adminMemberApi.deactivateAdminMember(id),
     onSuccess: () => {
-      message.success('관리자 회원이 비활성화되었습니다.');
+      message.success('관리자 계정이 비활성화되었습니다.');
       queryClient.invalidateQueries({ queryKey: ['adminMembers'] });
     },
     onError: () => {
@@ -108,7 +108,7 @@ const AdminMemberManagement: React.FC = () => {
   const activateMutation = useMutation({
     mutationFn: (id: number) => adminMemberApi.activateAdminMember(id),
     onSuccess: () => {
-      message.success('관리자 회원이 활성화되었습니다.');
+      message.success('관리자 계정이 활성화되었습니다.');
       queryClient.invalidateQueries({ queryKey: ['adminMembers'] });
     },
     onError: () => {
@@ -162,7 +162,7 @@ const AdminMemberManagement: React.FC = () => {
   return (
     <div style={{ padding: 24 }}>
       <PageHeader
-        title="관리자 회원 관리"
+        title="관리자 계정"
         extra={
           <Button type="primary" icon={<PlusOutlined />} onClick={openCreate}>
             관리자 추가

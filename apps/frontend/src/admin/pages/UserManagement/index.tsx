@@ -122,7 +122,7 @@ const UserManagement: React.FC = () => {
 
   return (
     <div style={{ padding: 24 }}>
-      <PageHeader title="사용자 관리" />
+      <PageHeader title="회원 관리" description="홈페이지에 가입한 회원입니다. 문제가 있는 회원은 차단할 수 있습니다." />
 
       <SearchBar
         placeholder="이름, 아이디, 이메일 검색"
