@@ -120,3 +120,6 @@ backend/db-backup/
 
 # Docs drafts
 docs/drafts/
+
+# Playwright MCP 스크린샷·스냅샷 (검증 산출물, 커밋 금지)
+.playwright-mcp/
