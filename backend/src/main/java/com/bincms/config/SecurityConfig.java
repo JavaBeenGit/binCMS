@@ -54,14 +54,10 @@ public class SecurityConfig {
                 // 익명 허용
                 .requestMatchers("/api/v1/public/**", "/uploads/**", "/api/v1/health").permitAll()
                 .requestMatchers("/api/v1/auth/login", "/api/v1/auth/signup").permitAll()
-                .requestMatchers("/api/v1/contents/**").permitAll()   // Task 3에서 /public/contents 로 이동 후 삭제
                 // 로그인 회원
                 .requestMatchers("/api/v1/user/**", "/api/v1/auth/withdraw").authenticated()
                 // 관리자
                 .requestMatchers("/api/v1/admin/**").hasAnyRole(ADMIN_ROLES)
-                .requestMatchers("/api/v1/boards/**", "/api/v1/posts/**", "/api/v1/comments/**",
-                                 "/api/v1/menus/**", "/api/v1/files/**", "/api/v1/inquiries/**")
-                    .hasAnyRole(ADMIN_ROLES)                            // Task 3에서 /admin 으로 이동 후 삭제
                 .anyRequest().authenticated()
             )
             .headers(headers -> headers

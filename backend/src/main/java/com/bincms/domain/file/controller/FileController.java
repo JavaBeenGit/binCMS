@@ -15,7 +15,7 @@ import java.util.List;
  * 파일 업로드 API 컨트롤러
  */
 @RestController
-@RequestMapping("/api/v1/files")
+@RequestMapping("/api/v1/user/files")
 @RequiredArgsConstructor
 public class FileController {
     

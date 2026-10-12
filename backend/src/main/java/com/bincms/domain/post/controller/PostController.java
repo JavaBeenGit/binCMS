@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.*;
  * 게시글 API 컨트롤러
  */
 @RestController
-@RequestMapping("/api/v1/posts")
+@RequestMapping("/api/v1/admin/posts")
 @RequiredArgsConstructor
 public class PostController {
     

@@ -13,7 +13,7 @@ import java.util.List;
  * 관리자용 댓글 API
  */
 @RestController
-@RequestMapping("/api/v1/comments")
+@RequestMapping("/api/v1/admin/comments")
 @RequiredArgsConstructor
 public class CommentController {
 

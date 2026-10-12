@@ -57,4 +57,31 @@ class SecurityRulesTest extends AbstractIntegrationTest {
                 .andExpect(status().isOk());
         mockMvc.perform(get("/api/v1/health")).andExpect(status().isOk());
     }
+
+    @Test
+    @DisplayName("경로 통일: 옛 미접두 경로는 로그인 필요, 새 경로는 접두어 규칙 적용")
+    void unifiedPaths() throws Exception {
+        String admin = adminBearer();
+        mockMvc.perform(get("/api/v1/admin/boards").header("Authorization", admin)).andExpect(status().isOk());
+        mockMvc.perform(get("/api/v1/admin/menus").header("Authorization", admin)).andExpect(status().isOk());
+        mockMvc.perform(get("/api/v1/public/contents").param("page", "0").param("size", "1")).andExpect(status().isOk());
+        mockMvc.perform(get("/api/v1/user/files/ref").param("refType", "X").param("refId", "1")
+                        .header("Authorization", admin)).andExpect(status().isOk());
+        mockMvc.perform(get("/api/v1/boards")).andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    @DisplayName("USER 토큰으로 관리자 API는 403, 회원 API는 200")
+    void adminApi_withUserToken_403() throws Exception {
+        String loginId = "user_" + (System.nanoTime() % 1_000_000);
+        mockMvc.perform(post("/api/v1/auth/signup").contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"loginId\":\"" + loginId + "\",\"password\":\"Passw0rd!\",\"name\":\"회원\"}"))
+                .andExpect(status().is2xxSuccessful());
+        String user = bearerFor(loginId, "Passw0rd!");
+        mockMvc.perform(get("/api/v1/admin/boards").header("Authorization", user))
+                .andExpect(status().isForbidden())
+                .andExpect(jsonPath("$.error").value("C005"));
+        mockMvc.perform(get("/api/v1/user/files/ref").param("refType", "X").param("refId", "1")
+                        .header("Authorization", user)).andExpect(status().isOk());
+    }
 }

@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
  * 컨텐츠 공개 API (사용자용)
  */
 @RestController
-@RequestMapping("/api/v1/contents")
+@RequestMapping("/api/v1/public/contents")
 @RequiredArgsConstructor
 public class ContentController {
 

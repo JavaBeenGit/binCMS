@@ -16,7 +16,7 @@ import java.util.List;
  * 게시판 API 컨트롤러
  */
 @RestController
-@RequestMapping("/api/v1/boards")
+@RequestMapping("/api/v1/admin/boards")
 @RequiredArgsConstructor
 public class BoardController {
     
