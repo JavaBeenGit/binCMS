@@ -7,6 +7,9 @@ plugins {
 group = 'com.bincms'
 version = '0.0.1-SNAPSHOT'
 
+// Spring Boot 3.3 BOM의 Testcontainers 1.19.x는 Docker Engine 29 API에 400을 받는다 → 상향
+ext['testcontainers.version'] = '1.21.3'
+
 java {
     toolchain {
         languageVersion = JavaLanguageVersion.of(21)
@@ -59,11 +62,16 @@ dependencies {
     // Test
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.security:spring-security-test'
+    testImplementation 'org.springframework.boot:spring-boot-testcontainers'
+    testImplementation 'org.testcontainers:junit-jupiter'
+    testImplementation 'org.testcontainers:mysql'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
 
 tasks.named('test') {
     useJUnitPlatform()
+    // docker-java 기본 API 1.32는 Docker Engine 29(MinAPIVersion 1.40)에서 400 → 명시
+    systemProperty 'api.version', '1.44'
 }
 
 // QueryDSL 설정

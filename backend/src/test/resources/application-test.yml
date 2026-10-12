@@ -1,0 +1,45 @@
+spring:
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: false
+  mail:
+    host: localhost
+    port: 2525
+jwt:
+  secret: test-secret-key-for-integration-tests-only-32bytes-min
+  expiration: 3600000
+file:
+  upload-dir: ./build/test-uploads
+  base-url: /uploads
+cors:
+  allowed-origins:
+    - http://localhost:3000
+app:
+  mail:
+    from: test@example.com
+    from-name: test
+    verification-code-expiry: 300
+  oauth:
+    kakao:
+      client-id: test-kakao-id
+      client-secret: test-kakao-secret
+      redirect-uri: http://localhost:3000/user/oauth/callback/kakao
+      token-url: http://localhost:1/oauth/token
+      user-info-url: http://localhost:1/v2/user/me
+    naver:
+      client-id: test-naver-id
+      client-secret: test-naver-secret
+      redirect-uri: http://localhost:3000/user/oauth/callback/naver
+      token-url: http://localhost:1/oauth2.0/token
+      user-info-url: http://localhost:1/v1/nid/me
+    google:
+      client-id: test-google-id
+      client-secret: test-google-secret
+      redirect-uri: http://localhost:3000/user/oauth/callback/google
+      token-url: http://localhost:1/token
+      user-info-url: http://localhost:1/oauth2/v3/userinfo
+logging:
+  level:
+    root: WARN
+    com.bincms: INFO
