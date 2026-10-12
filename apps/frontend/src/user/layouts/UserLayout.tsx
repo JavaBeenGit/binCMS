@@ -6,6 +6,7 @@ import { useAuthStore } from '@/shared/stores/authStore';
 import PopupLayer from '@/user/components/PopupLayer';
 import './UserLayout.css';
 
+import { BUSINESS } from '@/shared/constants/business';
 const UserLayout: React.FC = () => {
   const location = useLocation();
   const navigate = useNavigate();
@@ -60,7 +61,7 @@ const UserLayout: React.FC = () => {
         <div className="header-inner">
           {/* 로고 */}
           <Link to="/user" className="header-logo">
-            <img src="/uploads/etc/su_design_logo.png" alt="수디자인" className="header-logo-img" />
+            <img src="/logo.png" alt="수디자인" className="header-logo-img" />
             <span className="logo-text">수디자인</span>
           </Link>
 
@@ -191,19 +192,23 @@ const UserLayout: React.FC = () => {
         <div className="footer-inner">
           <div className="footer-brand-section">
             <div className="footer-brand">
-              <img src="/uploads/etc/su_design_logo_footer.png" alt="수디자인" className="footer-logo-img" />
+              <img src="/logo.png" alt={BUSINESS.name} className="footer-logo-img" />
               <div className="footer-brand-text">
-                <span className="footer-brand-name">수디자인</span>
-                <span className="footer-brand-slogan">감각적인 디자인, 체계적인 시공</span>
+                <span className="footer-brand-name">{BUSINESS.name}</span>
+                <span className="footer-brand-slogan">{BUSINESS.tagline}</span>
               </div>
             </div>
             <p className="footer-desc">
               고객의 꿈꾸는 공간을 현실로 만들어 드립니다.
             </p>
             <div className="footer-info">
-              <p>대표: 홍길동 | 사업자등록번호: 000-00-00000</p>
-              <p>주소: 서울특별시 강남구 테헤란로 000, 0층</p>
-              <p>전화: 02-000-0000 | 이메일: info@sudesign.co.kr</p>
+              <p>주소: {BUSINESS.address}</p>
+              <p>전화: <a href={BUSINESS.phoneHref}>{BUSINESS.phone}</a> ({BUSINESS.hours})</p>
+              <p>
+                <a href={BUSINESS.blogUrl} target="_blank" rel="noopener noreferrer">네이버 블로그</a>
+                {' | '}
+                <a href={BUSINESS.bookingUrl} target="_blank" rel="noopener noreferrer">네이버 예약</a>
+              </p>
             </div>
           </div>
           <div>

@@ -20,6 +20,7 @@ import CommentSection from '@/user/components/CommentSection';
 import 'ckeditor5/ckeditor5.css';
 import './FreeBoardPage.css';
 
+import { usePageMeta } from '@/shared/utils/usePageMeta';
 interface FreeBoardPageProps {
   boardCode: string;
   title: string;
@@ -27,6 +28,7 @@ interface FreeBoardPageProps {
 }
 
 const FreeBoardPage: React.FC<FreeBoardPageProps> = ({ boardCode, title, subtitle }) => {
+  usePageMeta(title, subtitle);
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedPost, setSelectedPost] = useState<PostResponse | null>(null);
   const [mode, setMode] = useState<'list' | 'detail' | 'write' | 'edit'>('list');

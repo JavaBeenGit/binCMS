@@ -7,6 +7,7 @@ import { InteriorResponse, InteriorCategory } from '@/shared/api/endpoints/inter
 import 'ckeditor5/ckeditor5.css';
 import './InteriorGalleryPage.css';
 
+import { usePageMeta } from '@/shared/utils/usePageMeta';
 interface InteriorGalleryPageProps {
   category: InteriorCategory;
   title: string;
@@ -14,6 +15,7 @@ interface InteriorGalleryPageProps {
 }
 
 const InteriorGalleryPage: React.FC<InteriorGalleryPageProps> = ({ category, title, subtitle }) => {
+  usePageMeta(title, subtitle);
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedItem, setSelectedItem] = useState<InteriorResponse | null>(null);
   const pageSize = 12;

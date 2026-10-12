@@ -4,9 +4,12 @@ import { SendOutlined, PhoneOutlined, MailOutlined, EnvironmentOutlined } from '
 import { publicInquiryApi } from '@/shared/api/endpoints/public';
 import './InquiryPage.css';
 
+import { BUSINESS } from '@/shared/constants/business';
+import { usePageMeta } from '@/shared/utils/usePageMeta';
 const { TextArea } = Input;
 
 const InquiryPage: React.FC = () => {
+  usePageMeta('견적문의', '무료 견적 상담을 신청하세요. 시공 유형·예산·장소를 남기면 담당자가 연락드립니다.');
   const [form] = Form.useForm();
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -141,22 +144,23 @@ const InquiryPage: React.FC = () => {
                 <PhoneOutlined className="info-icon" />
                 <div>
                   <strong>전화 상담</strong>
-                  <p>02-000-0000</p>
-                  <p className="info-sub">평일 09:00 ~ 18:00</p>
+                  <p><a href={BUSINESS.phoneHref}>{BUSINESS.phone}</a></p>
+                  <p className="info-sub">{BUSINESS.hours}</p>
                 </div>
               </div>
               <div className="info-card">
                 <MailOutlined className="info-icon" />
                 <div>
-                  <strong>이메일</strong>
-                  <p>info@sudesign.co.kr</p>
+                  <strong>네이버 블로그 · 예약</strong>
+                  <p><a href={BUSINESS.blogUrl} target="_blank" rel="noopener noreferrer">시공 이야기 보기</a></p>
+                  <p className="info-sub"><a href={BUSINESS.bookingUrl} target="_blank" rel="noopener noreferrer">네이버 예약으로 상담 예약</a></p>
                 </div>
               </div>
               <div className="info-card">
                 <EnvironmentOutlined className="info-icon" />
                 <div>
                   <strong>오시는 길</strong>
-                  <p>서울특별시 강남구<br />테헤란로 000, 0층</p>
+                  <p>{BUSINESS.address}</p>
                 </div>
               </div>
             </div>

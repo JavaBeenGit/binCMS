@@ -2,7 +2,9 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import './HomePage.css';
 
+import { usePageMeta } from '@/shared/utils/usePageMeta';
 const HomePage: React.FC = () => {
+  usePageMeta();
   return (
     <div className="home-page">
       {/* ── Hero Section ── */}

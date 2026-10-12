@@ -7,6 +7,7 @@ import { PostResponse } from '@/shared/api/endpoints/post';
 import 'ckeditor5/ckeditor5.css';
 import './PostListPage.css';
 
+import { usePageMeta } from '@/shared/utils/usePageMeta';
 interface PostListPageProps {
   boardCode: string;
   title: string;
@@ -14,6 +15,7 @@ interface PostListPageProps {
 }
 
 const PostListPage: React.FC<PostListPageProps> = ({ boardCode, title, subtitle }) => {
+  usePageMeta(title, subtitle);
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedPost, setSelectedPost] = useState<PostResponse | null>(null);
   const pageSize = 10;
