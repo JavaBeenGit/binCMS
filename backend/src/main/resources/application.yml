@@ -1,6 +1,10 @@
 spring:
   application:
     name: binCMS
+
+  config:
+    # 로컬 비밀값(git 제외). 없으면 무시 — 운영은 환경변수로 같은 키를 준다.
+    import: optional:file:./application-secret.yml
   
   profiles:
     active: local
@@ -57,7 +61,7 @@ spring:
       on-profile: local
   
   datasource:
-    url: jdbc:mysql://localhost:3306/bincms?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=Asia/Seoul&characterEncoding=UTF-8&useUnicode=true
+    url: jdbc:mysql://localhost:${DB_PORT:3306}/bincms?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=Asia/Seoul&characterEncoding=UTF-8&useUnicode=true
     driver-class-name: com.mysql.cj.jdbc.Driver
     username: bincms
     password: bincms1234
@@ -76,8 +80,8 @@ spring:
   mail:
     host: smtp.gmail.com
     port: 587
-    username: ${GMAIL_USERNAME:been8046@gmail.com}
-    password: ${GMAIL_APP_PASSWORD:tbly qxkg rrtg yhoi}
+    username: ${GMAIL_USERNAME:}
+    password: ${GMAIL_APP_PASSWORD:}
     properties:
       mail:
         smtp:
@@ -91,25 +95,25 @@ spring:
 
 app:
   mail:
-    from: ${GMAIL_USERNAME:been8046@gmail.com}
+    from: ${GMAIL_USERNAME:}
     from-name: BIN INTERIOR
     verification-code-expiry: 300  # 5분 (초)
   oauth:
     kakao:
-      client-id: b7dd2f517dfa726d8000490128ef5ce1
-      client-secret: daMDkSRYIcA3NMx5OmnIebzHdm6VVuY5
+      client-id: ${KAKAO_CLIENT_ID:}
+      client-secret: ${KAKAO_CLIENT_SECRET:}
       redirect-uri: http://localhost:3000/user/oauth/callback/kakao
       token-url: https://kauth.kakao.com/oauth/token
       user-info-url: https://kapi.kakao.com/v2/user/me
     naver:
-      client-id: pMWcBQ1dB5HRJcHNYSBq
-      client-secret: a69djZDMZq
+      client-id: ${NAVER_CLIENT_ID:}
+      client-secret: ${NAVER_CLIENT_SECRET:}
       redirect-uri: http://localhost:3000/user/oauth/callback/naver
       token-url: https://nid.naver.com/oauth2.0/token
       user-info-url: https://openapi.naver.com/v1/nid/me
     google:
-      client-id: 25963082295-5aa9vul6db54ifnmr4r7mvtdb9pvjkrh.apps.googleusercontent.com
-      client-secret: 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
+      client-id: ${GOOGLE_CLIENT_ID:}
+      client-secret: ${GOOGLE_CLIENT_SECRET:}
       redirect-uri: http://localhost:3000/user/oauth/callback/google
       token-url: https://oauth2.googleapis.com/token
       user-info-url: https://www.googleapis.com/oauth2/v3/userinfo
