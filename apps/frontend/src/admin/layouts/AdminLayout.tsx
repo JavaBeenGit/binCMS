@@ -128,6 +128,9 @@ const AdminLayout: React.FC = () => {
     }
     // DB 메뉴 로딩 전 기본 폴백
     return [];
+    // convertToMenuItems 는 매 렌더 새로 만들어지는 함수라 의존성에 넣으면 메모가 무의미해진다.
+    // 7단계(관리자 화면 분할)에서 useCallback 으로 정리 — 그때 이 주석도 지운다.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [menusData, user]);
 
   // 로그아웃

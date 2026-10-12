@@ -71,7 +71,6 @@ npm run dev
 
 ## 5. 알려진 문제 (2026-10-12 기준)
 
-- `npm run lint`는 ESLint 설정 파일이 없어 실패한다(`ESLint couldn't find a configuration file`). 5단계에서 도입.
 - OAuth(카카오·네이버·구글)·Gmail 비밀값은 `application.yml`에 없다. `apps/backend/application-secret.example.yml`을 복사해 `apps/backend/application-secret.yml`(git 제외)을 만들고 값을 채워야 소셜 로그인·메일 인증이 동작한다. 값은 저장소 소유자에게 받는다. 키 재발급은 3단계.
 - 업로드 경로는 `FILE_UPLOAD_DIR` 환경변수, 기본값 `apps/backend/uploads`(git 제외)다. 헤더·푸터 로고는 `/uploads/etc/su_design_logo.png`·`su_design_logo_footer.png`를 읽는데 이 파일이 저장소에 없어 새 PC에서는 로고가 깨져 보인다(6단계에서 로고를 `apps/frontend/public/`으로 이전).
 - 백엔드 테스트는 Testcontainers(MySQL 8.4)를 쓰므로 **Docker Desktop이 떠 있어야** `gradlew.bat build`·`gradlew.bat test`가 통과한다. 첫 실행은 이미지 다운로드로 수 분. `~/.testcontainers.properties`에 `docker.host=tcp://localhost:2375`가 있으면 Docker Desktop의 "Expose daemon on tcp://localhost:2375" 옵션이 켜져 있어야 한다(검증 PC는 켜져 있음). docker-java 기본 API 1.32를 Docker 29가 거부해 `build.gradle`에서 `api.version=1.44`를 준다.

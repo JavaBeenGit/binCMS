@@ -33,6 +33,8 @@ jobs:
           cache-dependency-path: apps/frontend/package-lock.json
       - run: npm ci
         working-directory: apps/frontend
+      - run: npm run lint
+        working-directory: apps/frontend
       - run: npm run build
         working-directory: apps/frontend
 
