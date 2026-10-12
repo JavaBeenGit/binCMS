@@ -15,6 +15,7 @@ export const menuPermissionMap: Record<string, string> = {
   '/admin/system/roles': 'MENU_SYSTEM_ROLE',
   '/admin/contents': 'MENU_CONTENT',
   '/admin/popups': 'MENU_POPUP',
+  '/admin/site-menus': 'MENU_SITE_MENU',
   '/admin/interiors/onsite': 'MENU_INTERIOR',
   '/admin/interiors/self-tip': 'MENU_INTERIOR',
   '/admin/interiors/story': 'MENU_INTERIOR',

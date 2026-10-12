@@ -75,6 +75,24 @@ export const menuApi = {
     return response.data;
   },
 
+  /** 홈페이지 헤더용 — 켜진 사용자 메뉴 트리 (비로그인 허용) */
+  getPublicMenus: async (): Promise<ApiResponse<MenuResponse[]>> => {
+    const response = await client.get('/public/menus');
+    return response.data;
+  },
+
+  /** 끄기 — 홈페이지·사이드메뉴에서 숨긴다 (삭제 대신) */
+  deactivateMenu: async (id: number): Promise<ApiResponse<void>> => {
+    const response = await client.patch(`/admin/menus/${id}/deactivate`);
+    return response.data;
+  },
+
+  /** 순서 이동 — 같은 부모 아래 형제와 교환 */
+  moveMenu: async (id: number, direction: 'up' | 'down'): Promise<ApiResponse<void>> => {
+    const response = await client.patch(`/admin/menus/${id}/move`, { direction });
+    return response.data;
+  },
+
   activateMenu: async (id: number): Promise<ApiResponse<void>> => {
     const response = await client.patch(`/admin/menus/${id}/activate`);
     return response.data;

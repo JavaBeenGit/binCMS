@@ -29,4 +29,10 @@ public interface MenuRepository extends JpaRepository<Menu, Long> {
      * 부모 메뉴 ID로 전체 자식 메뉴 조회
      */
     List<Menu> findByParentIdOrderBySortOrderAscIdAsc(Long parentId);
+
+    /** 순서 이동용 — 최상위 형제(부모 없음), 켜짐/꺼짐 모두 */
+    List<Menu> findByMenuTypeAndParentIdIsNullOrderBySortOrderAscIdAsc(MenuType menuType);
+
+    /** 순서 이동용 — 같은 부모의 형제, 켜짐/꺼짐 모두 */
+    List<Menu> findByMenuTypeAndParentIdOrderBySortOrderAscIdAsc(MenuType menuType, Long parentId);
 }

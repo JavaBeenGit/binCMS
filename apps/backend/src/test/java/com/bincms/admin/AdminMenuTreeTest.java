@@ -34,12 +34,12 @@ class AdminMenuTreeTest extends AbstractIntegrationTest {
         JsonNode data = objectMapper.readTree(body).get("data");
 
         assertThat(names(data)).containsExactly(
-                "대시보드", "시공사례", "공지사항", "자주묻는질문", "견적문의", "팝업 관리", "커뮤니티·회원", "시스템 관리");
+                "대시보드", "시공사례", "공지사항", "자주묻는질문", "견적문의", "팝업 관리", "홈페이지 메뉴", "커뮤니티·회원", "시스템 관리");
         assertThat(names(data.get(1).get("children"))).containsExactly("현장시공", "셀프시공 팁", "인테리어스토리");
-        assertThat(names(data.get(6).get("children"))).containsExactly("자유게시판", "회원 관리");
-        assertThat(names(data.get(7).get("children"))).containsExactly(
+        assertThat(names(data.get(7).get("children"))).containsExactly("자유게시판", "회원 관리");
+        assertThat(names(data.get(8).get("children"))).containsExactly(
                 "컨텐츠 관리", "메뉴 관리", "게시판 설정", "권한 관리", "관리자 계정");
-        JsonNode groupUrl = data.get(6).get("menuUrl");
+        JsonNode groupUrl = data.get(7).get("menuUrl");
         assertThat(groupUrl == null || groupUrl.isNull()).as("그룹 메뉴는 URL 없음").isTrue();
 
         List<String> urls = jdbc.queryForList(
@@ -51,7 +51,7 @@ class AdminMenuTreeTest extends AbstractIntegrationTest {
     @DisplayName("역할 권한: 모든 관리자 역할이 운영 5메뉴를 갖고, 컨텐츠·시스템은 SYSTEM_ADMIN만")
     void rolePermissions() {
         assertThat(perms("GENERAL_ADMIN"))
-                .contains("MENU_DASHBOARD", "MENU_POST", "MENU_INTERIOR", "MENU_POPUP")
+                .contains("MENU_DASHBOARD", "MENU_POST", "MENU_INTERIOR", "MENU_POPUP", "MENU_SITE_MENU")
                 .doesNotContain("MENU_CONTENT", "MENU_SYSTEM_MENU", "MENU_USER");
         assertThat(perms("OPERATION_ADMIN"))
                 .contains("MENU_DASHBOARD", "MENU_POST", "MENU_INTERIOR", "MENU_POPUP", "MENU_USER")

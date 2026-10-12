@@ -132,6 +132,11 @@ public class Menu extends BaseEntity {
     /**
      * 활성화
      */
+    /** 순서 이동용 — 형제 간 정렬 순서 교환 (MenuService.moveMenu) */
+    public void changeSortOrder(Integer sortOrder) {
+        this.sortOrder = sortOrder;
+    }
+
     public void activate() {
         this.useYn = "Y";
     }

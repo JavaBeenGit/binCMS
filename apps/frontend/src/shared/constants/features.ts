@@ -5,6 +5,4 @@
 export const FEATURES = {
   /** 회원가입 버튼·링크 (헤더·모바일 메뉴·로그인 화면). 라우트 /user/signup 은 살아 있다. */
   signup: false,
-  /** 자유게시판 메뉴 (헤더·모바일 메뉴·푸터). 메뉴 관리 연동 전까지 임시. 라우트 /user/free 는 살아 있다. */
-  freeBoard: false,
 } as const;

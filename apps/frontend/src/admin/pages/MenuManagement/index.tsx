@@ -53,6 +53,7 @@ const MenuManagement: React.FC = () => {
     onSuccess: () => {
       message.success('메뉴가 생성되었습니다.');
       queryClient.invalidateQueries({ queryKey: ['menus'] });
+      queryClient.invalidateQueries({ queryKey: ['site-menus'] }); // 홈페이지 헤더도 다시 읽게
       closeForm();
     },
     onError: () => message.error('메뉴 생성에 실패했습니다.'),
@@ -64,6 +65,7 @@ const MenuManagement: React.FC = () => {
     onSuccess: () => {
       message.success('메뉴가 수정되었습니다.');
       queryClient.invalidateQueries({ queryKey: ['menus'] });
+      queryClient.invalidateQueries({ queryKey: ['site-menus'] }); // 홈페이지 헤더도 다시 읽게
       closeForm();
     },
     onError: () => message.error('메뉴 수정에 실패했습니다.'),
@@ -75,6 +77,7 @@ const MenuManagement: React.FC = () => {
     onSuccess: () => {
       message.success('메뉴가 삭제되었습니다.');
       queryClient.invalidateQueries({ queryKey: ['menus'] });
+      queryClient.invalidateQueries({ queryKey: ['site-menus'] }); // 홈페이지 헤더도 다시 읽게
     },
     onError: (error: any) => {
       if (error.response?.data?.message) {
@@ -91,8 +94,20 @@ const MenuManagement: React.FC = () => {
     onSuccess: () => {
       message.success('메뉴가 활성화되었습니다.');
       queryClient.invalidateQueries({ queryKey: ['menus'] });
+      queryClient.invalidateQueries({ queryKey: ['site-menus'] }); // 홈페이지 헤더도 다시 읽게
     },
     onError: () => message.error('메뉴 활성화에 실패했습니다.'),
+  });
+
+  // 메뉴 끄기 — 사용자(홈페이지) 메뉴 탭은 삭제 대신 끄기만 (2026-10-13 결정)
+  const deactivateMutation = useMutation({
+    mutationFn: (id: number) => menuApi.deactivateMenu(id),
+    onSuccess: () => {
+      message.success('메뉴를 껐습니다. 홈페이지에서 숨겨집니다.');
+      queryClient.invalidateQueries({ queryKey: ['menus'] });
+      queryClient.invalidateQueries({ queryKey: ['site-menus'] }); // 홈페이지 헤더도 다시 읽게
+    },
+    onError: () => message.error('메뉴 끄기에 실패했습니다.'),
   });
 
   const openCreate = () => {
@@ -114,11 +129,15 @@ const MenuManagement: React.FC = () => {
     }
   };
 
-  const columns = buildMenuColumns({
-    onEdit: openEdit,
-    onActivate: (id) => activateMutation.mutate(id),
-    onDelete: (id) => deleteMutation.mutate(id),
-  });
+  // 사용자 메뉴 탭(siteMenu)은 삭제 버튼 대신 끄기 버튼
+  const columnsFor = (siteMenu: boolean) =>
+    buildMenuColumns({
+      onEdit: openEdit,
+      onActivate: (id) => activateMutation.mutate(id),
+      onDelete: (id) => deleteMutation.mutate(id),
+      onDeactivate: (id) => deactivateMutation.mutate(id),
+      siteMenu,
+    });
 
   const tabs = [
     { type: MenuType.ADMIN, label: '관리자 메뉴', rows: adminMenusData ? flattenForTable(adminMenusData) : [], loading: isAdminLoading },
@@ -160,13 +179,13 @@ const MenuManagement: React.FC = () => {
                   type="info"
                   showIcon
                   style={{ marginBottom: 12 }}
-                  message="홈페이지 상단 메뉴는 아직 이 설정과 연결돼 있지 않습니다. 여기서 바꿔도 홈페이지에는 반영되지 않습니다(연동 작업 예정)."
+                  message="사용자 메뉴 = 홈페이지 상단 메뉴입니다. 바꾸면 홈페이지에 바로 반영됩니다. 켜고 끄기·순서는 운영 메뉴 '홈페이지 메뉴'에서도 할 수 있고, 삭제는 없이 끄기만 됩니다."
                 />
               )}
               <ListSummary total={tab.rows.length} page={currentPage - 1} pageSize={PAGE_SIZE} />
               <Table
                 bordered
-                columns={columns}
+                columns={columnsFor(tab.type === MenuType.USER)}
                 dataSource={tab.rows}
                 rowKey="id"
                 loading={tab.loading}

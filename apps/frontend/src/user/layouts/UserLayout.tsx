@@ -3,11 +3,16 @@ import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { Dropdown, message } from 'antd';
 import { UserOutlined, LogoutOutlined, LoginOutlined } from '@ant-design/icons';
 import { useAuthStore } from '@/shared/stores/authStore';
+import { useSiteMenus, type SiteMenu } from '@/shared/hooks/useSiteMenus';
 import PopupLayer from '@/user/components/PopupLayer';
 import './UserLayout.css';
 
 import { BUSINESS } from '@/shared/constants/business';
 import { FEATURES } from '@/shared/constants/features';
+
+/**
+ * 사용자(홈페이지) 레이아웃 — 헤더 메뉴는 DB 사용자 메뉴(관리자 "홈페이지 메뉴" 화면)를 따른다. 푸터는 코드에 고정.
+ */
 const UserLayout: React.FC = () => {
   const location = useLocation();
   const navigate = useNavigate();
@@ -15,6 +20,7 @@ const UserLayout: React.FC = () => {
   const [scrolled, setScrolled] = useState(false);
   const { user, token, clearAuth } = useAuthStore();
   const isLoggedIn = !!token;
+  const { menus } = useSiteMenus();
 
   // 스크롤 시 헤더 그림자
   useEffect(() => {
@@ -29,9 +35,11 @@ const UserLayout: React.FC = () => {
     window.scrollTo(0, 0);
   }, [location.pathname]);
 
-  const isActive = (path: string) => location.pathname === path;
-  const isInteriorActive = () => location.pathname.startsWith('/user/interior');
-  const isCommunityActive = () => location.pathname === '/user/free';
+  // HOME 은 정확히 일치, 나머지는 하위 경로(상세 등)까지 활성
+  const isActive = (path?: string) =>
+    !!path && (path === '/user' ? location.pathname === '/user' : location.pathname.startsWith(path));
+  const isGroupActive = (menu: SiteMenu) => (menu.children ?? []).some((c) => isActive(c.menuUrl));
+  const hasChildren = (menu: SiteMenu) => !!menu.children && menu.children.length > 0;
 
   const handleLogout = () => {
     clearAuth();
@@ -66,38 +74,26 @@ const UserLayout: React.FC = () => {
             <span className="logo-text">수디자인</span>
           </Link>
 
-          {/* Desktop Navigation */}
+          {/* Desktop Navigation — DB 메뉴 */}
           <nav className="header-nav">
-            <Link to="/user" className={`nav-item ${isActive('/user') ? 'active' : ''}`}>
-              HOME
-            </Link>
-            <Link to="/user/notice" className={`nav-item ${isActive('/user/notice') ? 'active' : ''}`}>
-              공지사항
-            </Link>
-            {FEATURES.freeBoard && (
-              <Link to="/user/free" className={`nav-item ${isCommunityActive() ? 'active' : ''}`}>
-                자유게시판
-              </Link>
+            {menus.map((menu) =>
+              hasChildren(menu) ? (
+                <div className="nav-item-group" key={menu.id}>
+                  <span className={`nav-item ${isGroupActive(menu) ? 'active' : ''}`}>{menu.menuName}</span>
+                  <div className="nav-dropdown">
+                    {menu.children!.map((child) => (
+                      <Link key={child.id} to={child.menuUrl ?? '/user'}>
+                        {child.menuName}
+                      </Link>
+                    ))}
+                  </div>
+                </div>
+              ) : (
+                <Link key={menu.id} to={menu.menuUrl ?? '/user'} className={`nav-item ${isActive(menu.menuUrl) ? 'active' : ''}`}>
+                  {menu.menuName}
+                </Link>
+              ),
             )}
-
-            {/* 인테리어 (드롭다운) */}
-            <div className="nav-item-group">
-              <span className={`nav-item ${isInteriorActive() ? 'active' : ''}`}>
-                인테리어
-              </span>
-              <div className="nav-dropdown">
-                <Link to="/user/interior/onsite">현장시공</Link>
-                <Link to="/user/interior/self-tip">셀프시공</Link>
-                <Link to="/user/interior/story">인테리어스토리</Link>
-              </div>
-            </div>
-
-            <Link to="/user/faq" className={`nav-item ${isActive('/user/faq') ? 'active' : ''}`}>
-              자주묻는질문
-            </Link>
-            <Link to="/user/inquiry" className={`nav-item ${isActive('/user/inquiry') ? 'active' : ''}`}>
-              견적문의
-            </Link>
           </nav>
 
           {/* User Auth Area (Desktop) */}
@@ -133,37 +129,28 @@ const UserLayout: React.FC = () => {
         </div>
       </header>
 
-      {/* ── Mobile Navigation ── */}
+      {/* ── Mobile Navigation — DB 메뉴 ── */}
       <nav className={`mobile-nav ${mobileOpen ? 'open' : ''}`}>
-        <Link to="/user" className={`mobile-nav-item ${isActive('/user') ? 'active' : ''}`}>
-          HOME
-        </Link>
-        <Link to="/user/notice" className={`mobile-nav-item ${isActive('/user/notice') ? 'active' : ''}`}>
-          공지사항
-        </Link>
-        {FEATURES.freeBoard && (
-          <Link to="/user/free" className={`mobile-nav-item ${isActive('/user/free') ? 'active' : ''}`}>
-            자유게시판
-          </Link>
+        {menus.map((menu) =>
+          hasChildren(menu) ? (
+            <React.Fragment key={menu.id}>
+              <span className="mobile-nav-group-title">{menu.menuName}</span>
+              {menu.children!.map((child) => (
+                <Link
+                  key={child.id}
+                  to={child.menuUrl ?? '/user'}
+                  className={`mobile-nav-sub-item ${isActive(child.menuUrl) ? 'active' : ''}`}
+                >
+                  {child.menuName}
+                </Link>
+              ))}
+            </React.Fragment>
+          ) : (
+            <Link key={menu.id} to={menu.menuUrl ?? '/user'} className={`mobile-nav-item ${isActive(menu.menuUrl) ? 'active' : ''}`}>
+              {menu.menuName}
+            </Link>
+          ),
         )}
-
-        <span className="mobile-nav-group-title">인테리어</span>
-        <Link to="/user/interior/onsite" className={`mobile-nav-sub-item ${isActive('/user/interior/onsite') ? 'active' : ''}`}>
-          현장시공
-        </Link>
-        <Link to="/user/interior/self-tip" className={`mobile-nav-sub-item ${isActive('/user/interior/self-tip') ? 'active' : ''}`}>
-          셀프시공
-        </Link>
-        <Link to="/user/interior/story" className={`mobile-nav-sub-item ${isActive('/user/interior/story') ? 'active' : ''}`}>
-          인테리어스토리
-        </Link>
-
-        <Link to="/user/faq" className={`mobile-nav-item ${isActive('/user/faq') ? 'active' : ''}`}>
-          자주묻는질문
-        </Link>
-        <Link to="/user/inquiry" className={`mobile-nav-item ${isActive('/user/inquiry') ? 'active' : ''}`}>
-          견적문의
-        </Link>
 
         <div className="mobile-nav-auth">
           {isLoggedIn ? (
@@ -198,7 +185,7 @@ const UserLayout: React.FC = () => {
         <Outlet />
       </main>
 
-      {/* ── FOOTER ── */}
+      {/* ── FOOTER (코드 고정 — 2026-10-13 결정) ── */}
       <footer className="user-footer">
         <div className="footer-inner">
           <div className="footer-brand-section">
@@ -234,7 +221,6 @@ const UserLayout: React.FC = () => {
             <div className="footer-title">고객지원</div>
             <ul className="footer-links">
               <li><Link to="/user/notice">공지사항</Link></li>
-              {FEATURES.freeBoard && <li><Link to="/user/free">자유게시판</Link></li>}
               <li><Link to="/user/faq">자주묻는질문</Link></li>
               <li><Link to="/user/inquiry">견적문의</Link></li>
             </ul>

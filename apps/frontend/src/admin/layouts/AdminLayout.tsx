@@ -18,6 +18,7 @@ import {
   PictureOutlined,
   SoundOutlined,
   FormOutlined,
+  BarsOutlined,
 } from '@ant-design/icons';
 import { Outlet, useNavigate, useLocation } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
@@ -45,6 +46,7 @@ const iconMap: Record<string, React.ReactNode> = {
   PictureOutlined: <PictureOutlined />,
   SoundOutlined: <SoundOutlined />,
   FormOutlined: <FormOutlined />,
+  BarsOutlined: <BarsOutlined />,
 };
 
 const getIcon = (iconName?: string): React.ReactNode => {

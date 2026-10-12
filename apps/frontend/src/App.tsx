@@ -25,6 +25,7 @@ const Dashboard = lazy(() => import('@/admin/pages/Dashboard'));
 const BoardManagement = lazy(() => import('@/admin/pages/BoardManagement'));
 const PostManagement = lazy(() => import('@/admin/pages/PostManagement'));
 const MenuManagement = lazy(() => import('@/admin/pages/MenuManagement'));
+const SiteMenuManagement = lazy(() => import('@/admin/pages/SiteMenuManagement'));
 const AdminMemberManagement = lazy(() => import('@/admin/pages/AdminMemberManagement'));
 const RoleManagement = lazy(() => import('@/admin/pages/RoleManagement'));
 const ContentManagement = lazy(() => import('@/admin/pages/ContentManagement'));
@@ -94,6 +95,7 @@ function App() {
 
                 {/* 팝업 관리 */}
                 <Route path="popups" element={<PopupManagement />} />
+                <Route path="site-menus" element={<SiteMenuManagement />} />
 
                 {/* 인테리어 관리 */}
                 <Route path="interiors/onsite" element={<InteriorManagement category="ONSITE" />} />

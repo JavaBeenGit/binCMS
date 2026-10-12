@@ -138,6 +138,50 @@ public class MenuService {
     }
     
     /**
+     * 메뉴 끄기 — 홈페이지(사용자 메뉴)·관리자 사이드메뉴에서 빠진다. 부모를 끄면 자식도 트리에서 함께 빠진다.
+     * 삭제 대신 쓴다(홈페이지 메뉴 화면에는 삭제가 없다 — 2026-10-13 결정).
+     */
+    @Transactional
+    public void deactivateMenu(Long id) {
+        Menu menu = menuRepository.findById(id)
+            .orElseThrow(() -> new BusinessException(ErrorCode.MENU_NOT_FOUND));
+        menu.deactivate();
+    }
+
+    /**
+     * 순서 이동 — 같은 부모 아래 형제와 자리를 바꾼다. 끝에서 더 가면 그대로 둔다.
+     * 형제의 정렬 순서를 1..n 으로 다시 매긴 뒤 교환하므로 같은 값이 섞여 있어도 안전하다.
+     */
+    @Transactional
+    public void moveMenu(Long id, String direction) {
+        boolean up = "up".equalsIgnoreCase(direction);
+        if (!up && !"down".equalsIgnoreCase(direction)) {
+            throw new BusinessException(ErrorCode.INVALID_INPUT_VALUE);
+        }
+        Menu menu = menuRepository.findById(id)
+            .orElseThrow(() -> new BusinessException(ErrorCode.MENU_NOT_FOUND));
+        List<Menu> siblings = menu.getParentId() == null
+            ? menuRepository.findByMenuTypeAndParentIdIsNullOrderBySortOrderAscIdAsc(menu.getMenuType())
+            : menuRepository.findByMenuTypeAndParentIdOrderBySortOrderAscIdAsc(menu.getMenuType(), menu.getParentId());
+
+        for (int i = 0; i < siblings.size(); i++) {
+            siblings.get(i).changeSortOrder(i + 1);
+        }
+        int idx = -1;
+        for (int i = 0; i < siblings.size(); i++) {
+            if (siblings.get(i).getId().equals(id)) idx = i;
+        }
+        int target = up ? idx - 1 : idx + 1;
+        if (idx < 0 || target < 0 || target >= siblings.size()) {
+            return;
+        }
+        Menu other = siblings.get(target);
+        Integer tmp = siblings.get(idx).getSortOrder();
+        siblings.get(idx).changeSortOrder(other.getSortOrder());
+        other.changeSortOrder(tmp);
+    }
+
+    /**
      * 메뉴 트리 구조 생성
      */
     private List<MenuResponse> buildMenuTree(List<Menu> menus) {

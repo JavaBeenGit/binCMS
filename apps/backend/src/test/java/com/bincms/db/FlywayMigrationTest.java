@@ -21,23 +21,23 @@ class FlywayMigrationTest extends AbstractIntegrationTest {
     JdbcTemplate jdbc;
 
     @Test
-    @DisplayName("Flyway 이력: V1·V2·V3가 성공 상태로 적용돼 있다")
+    @DisplayName("Flyway 이력: V1~V4가 성공 상태로 적용돼 있다")
     void migrationsApplied() {
         List<Map<String, Object>> rows = jdbc.queryForList(
                 "SELECT version, success FROM flyway_schema_history WHERE version IS NOT NULL ORDER BY installed_rank");
-        assertThat(rows).extracting(r -> r.get("version").toString()).containsExactly("1", "2", "3");
+        assertThat(rows).extracting(r -> r.get("version").toString()).containsExactly("1", "2", "3", "4");
         assertThat(rows).allMatch(r -> Boolean.TRUE.equals(r.get("success")) || Integer.valueOf(1).equals(r.get("success")));
     }
 
     @Test
-    @DisplayName("기준 시드(V2+V3): 역할 4·권한 13·역할권한 27·게시판 3·메뉴 27(ADMIN 18, USER 9)")
+    @DisplayName("기준 시드(V2~V4): 역할 4·권한 14·역할권한 30·게시판 3·메뉴 28(ADMIN 19, USER 9)")
     void coreSeedPresent() {
         assertThat(count("tb_roles")).isEqualTo(4);
-        assertThat(count("tb_permissions")).isEqualTo(13);
-        assertThat(count("tb_role_permissions")).isEqualTo(27);
+        assertThat(count("tb_permissions")).isEqualTo(14);
+        assertThat(count("tb_role_permissions")).isEqualTo(30);
         assertThat(count("tb_boards")).isEqualTo(3);
-        assertThat(count("tb_menus")).isEqualTo(27);
-        assertThat(jdbc.queryForObject("SELECT COUNT(*) FROM tb_menus WHERE menu_type = 'ADMIN'", Long.class)).isEqualTo(18);
+        assertThat(count("tb_menus")).isEqualTo(28);
+        assertThat(jdbc.queryForObject("SELECT COUNT(*) FROM tb_menus WHERE menu_type = 'ADMIN'", Long.class)).isEqualTo(19);
         assertThat(jdbc.queryForObject("SELECT COUNT(*) FROM tb_menus WHERE menu_type = 'USER'", Long.class)).isEqualTo(9);
         assertThat(jdbc.queryForList("SELECT board_code FROM tb_boards ORDER BY sort_order", String.class))
                 .containsExactly("notice", "faq", "free");
