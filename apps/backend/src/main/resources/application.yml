@@ -34,6 +34,12 @@ app:
   admin:
     # 최초 기동 시 SYSTEM_ADMIN 'admin' 계정을 만들 비밀번호. 비어 있고 관리자도 없으면 기동 실패(AdminAccountInitializer).
     initial-password: ${ADMIN_INITIAL_PASSWORD:}
+  site:
+    # 사이트맵·알림 메일 링크의 베이스 URL (운영: https://도메인)
+    base-url: ${SITE_BASE_URL:http://localhost:3000}
+  inquiry:
+    # 새 견적문의 알림을 받을 메일 주소. 비어 있으면 알림 없음
+    notify-to: ${INQUIRY_NOTIFY_TO:}
 
 server:
   port: 8080

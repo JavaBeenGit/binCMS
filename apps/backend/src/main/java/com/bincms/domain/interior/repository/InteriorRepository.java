@@ -19,6 +19,11 @@ public interface InteriorRepository extends JpaRepository<Interior, Long> {
             InteriorCategory category, String useYn, Pageable pageable);
     
     Page<Interior> findByUseYnOrderBySortOrderAscIdDesc(String useYn, Pageable pageable);
+
+    /** 사이트맵용 — 사용 중인 글 전체 */
+    java.util.List<Interior> findByUseYn(String useYn);
+
+    long countByUseYn(String useYn);
     
     @Query("SELECT i FROM Interior i WHERE i.category = :category AND i.useYn = :useYn " +
            "AND (i.title LIKE %:keyword% OR i.content LIKE %:keyword%) " +

@@ -52,7 +52,7 @@ public class SecurityConfig {
             )
             .authorizeHttpRequests(auth -> auth
                 // 익명 허용
-                .requestMatchers("/api/v1/public/**", "/uploads/**", "/api/v1/health").permitAll()
+                .requestMatchers("/api/v1/public/**", "/uploads/**", "/api/v1/health", "/sitemap.xml").permitAll()
                 .requestMatchers("/api/v1/auth/login", "/api/v1/auth/signup").permitAll()
                 // 로그인 회원
                 .requestMatchers("/api/v1/user/**", "/api/v1/auth/withdraw").authenticated()

@@ -23,6 +23,12 @@ export default defineConfig({
         changeOrigin: true,
         secure: false,
       },
+      // 사이트맵은 백엔드가 만든다 (운영 nginx 도 같은 규칙)
+      '/sitemap.xml': {
+        target: 'http://localhost:8080',
+        changeOrigin: true,
+        secure: false,
+      },
     },
   },
   build: {
