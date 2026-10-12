@@ -1,6 +1,6 @@
 # 사이트맵 (현재 코드 기준)
 
-> 출처: `apps/frontend/src/App.tsx` 라우트, 권한은 `apps/frontend/src/shared/constants/permissions.ts`. 2026-10-12. 라우트를 바꾸면 이 표도 같은 브랜치에서 고친다(5단계에서 `features/` 가이드로 승격).
+> 출처: `apps/frontend/src/App.tsx` 라우트, 권한은 `apps/frontend/src/shared/constants/permissions.ts`. 2026-10-12. 라우트를 바꾸면 이 표도 같은 브랜치에서 고친다. **화면별 동작·API·체크포인트의 정본은 [기능 가이드](../30-dev/guides/features/README.md)**이고, 이 표는 URL 색인이다.
 
 ## 사용자 (`/user`, 레이아웃 `UserLayout`)
 
