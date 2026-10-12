@@ -18,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class InquiryService {
 
     private final InquiryRepository inquiryRepository;
+    private final InquiryNotifier inquiryNotifier;
 
     /**
      * 견적문의 등록 (공개 API)
@@ -37,6 +38,7 @@ public class InquiryService {
 
         Inquiry saved = inquiryRepository.save(inquiry);
         log.info("새 견적문의 등록 - ID: {}, 이름: {}, 연락처: {}", saved.getId(), saved.getName(), saved.getPhone());
+        inquiryNotifier.notifyNewInquiry(saved);   // 비동기 메일 알림(설정 없으면 무시)
         return InquiryResponse.from(saved);
     }
 
