@@ -1,6 +1,6 @@
 # 설계서 — binCms 재정비 (수디자인 인테리어 홈페이지)
 
-> 작성 2026-10-12. 상태: **검토 대기**.
+> 작성 2026-10-12. 상태: **승인됨** (2026-10-12, 사용자).
 > 목적: "AI를 모를 때 만든" 현재 저장소를 the-empty-map 수준의 지침·문서·Git 규율을 갖춘 납품용 프로젝트로 제자리에서 재정비한다.
 
 ## 1. 배경과 목표
@@ -140,7 +140,7 @@ apps/frontend/src/
   - `/api/v1/admin/**` → `ROLE_ADMIN` 필수. 세부 권한은 기존 `Permission` 기반 메서드 보안(`@PreAuthorize`)으로.
   - `/api/v1/user/**`, `/api/v1/auth/withdraw`, 마이페이지 수정 → 인증 필수.
   - `/api/v1/public/**`, `/api/v1/auth/{login,signup}`, 파일 조회, `/uploads/**` → `permitAll`.
-  - 현재 `permitAll`인 `/api/v1/{boards,posts,comments,contents,menus,files,inquiries}/**`는 관리자 전용 엔드포인트이므로 `/api/v1/admin/...`으로 **경로 통일**하거나 `ROLE_ADMIN`을 건다. 프론트 호출부 동시 수정.
+  - 현재 `permitAll`인 `/api/v1/{boards,posts,comments,contents,menus,files,inquiries}/**`는 관리자 전용 엔드포인트이므로 `/api/v1/admin/...`으로 **경로 통일**한다(사용자 결정 2026-10-12). 결과적으로 API 접두어는 `admin`(관리자)·`user`(로그인 회원)·`public`(비로그인)·`auth`(로그인·가입) 네 가지만 남는다. 프론트 호출부 동시 수정.
   - `h2-console` 규칙 제거(H2 미사용).
 - **비밀값**: 카카오·네이버·구글·Gmail·JWT 전부 **재발급** 후 환경변수(`${KAKAO_CLIENT_SECRET}` 등)로. `application.yml`에서 평문 제거. `.env.example` 제공. 로컬 실행은 `application-local.yml`(git 제외)로.
 - 업로드 경로 `file.upload-dir`를 환경변수 기본값 `./uploads`로.
@@ -153,7 +153,7 @@ apps/frontend/src/
 
 - Flyway 도입. `V1__init.sql`은 현재 엔티티가 만든 MySQL 스키마를 덤프해 정리한 것. `ddl-auto: validate`.
 - `V2__seed_core.sql`: 역할·권한·관리자 메뉴·게시판 정의·초기 관리자 계정(비밀번호는 환경변수로 주입해 최초 기동 시 설정). 운영에도 필요한 데이터만.
-- 샘플 콘텐츠(인테리어 예시·게시글·팝업)는 `V900__sample_data.sql`로 분리하고 **local 프로파일에서만** 적용(`spring.flyway.locations` 분기).
+- `DataInitializer`가 심던 가짜 샘플 콘텐츠(인테리어 예시·게시글·팝업)는 **폐기**한다. 실제 샘플은 형이 운영하던 블로그 글을 사용자가 나중에 제공하며, 관리자 화면으로 등록하거나 `V900__sample_data.sql`(local 전용, `spring.flyway.locations` 분기)로 넣는다. 그 시점에 형식을 정한다(사용자 결정 2026-10-12).
 - `DataInitializer`·`RoleMigrationConfig` 삭제.
 - `docs/30-dev/db-naming.md`(`TB_`·`IDX_`·`UK_`·`FK_`, 대문자 물리명, `_YN`·`_DT` 접미사 등 현행 규칙 명문화). ADR `0004-flyway-migration`.
 - **완료 기준**: 빈 DB에서 기동 시 Flyway만으로 스키마·시드가 생성되고 관리자 로그인 가능.
@@ -228,6 +228,8 @@ apps/frontend/src/
 | docs 영역 | 00 / 10 / 30 | 20-design·90-internal은 당장 불필요 |
 | 테스트 | 백엔드 중심, 프론트는 린트+실기동 | 1인 프로젝트, 핵심 흐름 우선 |
 | 비밀값 | 3단계에서 재발급+환경변수화 | 사용자 결정: 당장은 보류 |
+| 관리자 API 경로 | `/api/v1/admin/**`로 통일 | 접두어로 권한이 드러나야 SecurityConfig가 단순 |
+| 샘플 데이터 | 형의 블로그 글을 사용자가 제공 | 코드 내 가짜 샘플 폐기 |
 
 ## 9. 다음 단계
 
