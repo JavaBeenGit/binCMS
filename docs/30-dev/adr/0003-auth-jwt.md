@@ -1,6 +1,6 @@
 # 0003. 인증은 JWT Bearer, 역할은 SYSTEM/OPERATION/GENERAL_ADMIN + USER
 
-- **Status**: accepted (3단계에서 권한 강제 규칙을 이 문서에 개정 예정)
+- **Status**: accepted (2026-10-12 3단계 구현 완료 — 아래 규칙이 `SecurityConfig`에 적용되고 `SecurityRulesTest`로 고정됨)
 - **Date**: 2026-10-12
 - **Deciders**: 사용자
 
@@ -16,7 +16,7 @@
 
 - 인증 방식은 **JWT Bearer를 유지**한다(세션 전환은 프론트 전체 수정 대비 이득 없음).
 - 역할 모델은 **두 축**이다: 관리자 축(`SYSTEM_ADMIN`·`OPERATION_ADMIN`·`GENERAL_ADMIN` 3코드, 모두 `isAdmin()`, 시스템 메뉴는 `SYSTEM_ADMIN`만)과 회원 축(`USER`). 설계서 §4 3단계의 "ADMIN과 USER 두 축"은 이 뜻이며, 관리자 3코드를 하나로 합치지 않는다. 세부 메뉴 권한은 기존 `Permission` 기반으로 유지.
-- **서버 권한 강제(3단계 목표)**: URL 접두어로 요구 권한이 결정된다.
+- **서버 권한 강제**: URL 접두어로 요구 권한이 결정된다. 인증 없음은 401(`C004`), 역할 부족은 403(`C005`)을 `ApiResponse` JSON으로 돌려준다(`ApiAuthenticationEntryPoint`, `ApiAccessDeniedHandler`).
 
   | 접두어 | 요구 |
   |---|---|
@@ -24,7 +24,7 @@
   | `/api/v1/user/**` | 인증(아무 역할) |
   | `/api/v1/public/**`, `/api/v1/auth/login`, `/api/v1/auth/signup`, `/uploads/**`, `/api/v1/health` | 익명 허용 |
 
-  현재 `/api/v1/{boards,posts,comments,menus,files,inquiries}/**`처럼 접두어 없는 관리자 엔드포인트는 3단계에서 `/api/v1/admin/...`으로 **경로 통일**한다(설계서 §4 3단계, 사용자 결정 2026-10-12). **예외**: `/api/v1/contents/**`(`ContentController`의 GET 목록·카테고리·`key/{contentKey}`)는 사용자 화면 `/user/page/:contentKey`(`ContentPage.tsx`, `publicContentApi`)가 비로그인으로 호출하는 공개 API이므로 `/api/v1/public/contents/...`로 옮긴다. 관리자용은 이미 `/api/v1/admin/contents`(`AdminContentController`)에 있다.
+  경로 통일(2026-10-12 완료): `boards`·`posts`·`comments`·`menus`·`inquiries`는 `/api/v1/admin/...`으로, 공개 콘텐츠 조회(`ContentController`)는 `/api/v1/public/contents/...`로, 파일 업로드·조회(`FileController`)는 관리자와 회원이 함께 쓰므로 `/api/v1/user/files/...`로 옮겼다. 접두어는 `admin`·`user`·`public`·`auth` 4종만 남았다(예외: `/uploads/**`, `/api/v1/health`).
 
 ## Consequences
 
@@ -36,7 +36,8 @@
 - CSRF 비활성은 Bearer 헤더 방식이라 허용. 쿠키로 바꾸면 재검토.
 
 ### 후속 작업
-- 3단계: `SecurityConfig` 재작성, 경로 통일, 보안 규칙 MockMvc 테스트, 비밀값 환경변수화.
+- (완료) `SecurityConfig` 재작성, 경로 통일, `SecurityRulesTest`(Testcontainers MySQL) 7건, 비밀값 `application-secret.yml`/환경변수화.
+- 남은 것: 유출됐던 OAuth·Gmail 키 재발급(사용자), 차단(`ACTIVE=false`) 회원의 기존 토큰 즉시 무효화(현재는 만료까지 유효 — 필터에서 회원 상태 조회 추가 검토).
 
 ## Considered Alternatives
 

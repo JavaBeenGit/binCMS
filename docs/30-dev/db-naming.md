@@ -34,6 +34,10 @@
 
 - Java enum은 `@Enumerated(EnumType.STRING)`, 컬럼은 `VARCHAR(20~30)`. 예: `CATEGORY` ← `InteriorCategory.ONSITE`.
 
+## 실제 DB의 물리명은 소문자다 (4단계에서 결정 필요)
+
+2026-10-12 Testcontainers(Linux MySQL)에서 확인: Spring Boot 기본 `CamelCaseToUnderscoresNamingStrategy`가 `@Table(name = "TB_MEMBERS")`를 **`tb_members`로 소문자화**해서 생성한다. 즉 위 규칙의 대문자 이름은 코드상 선언이고, 실제 테이블·컬럼은 모두 소문자다(`RoleMigrationConfig`가 `tb_members`를 쓰는 이유). 4단계 Flyway `V1__init.sql`을 쓸 때 (a) 소문자를 정본으로 인정하고 이 문서를 고치거나, (b) `PhysicalNamingStrategyStandardImpl`로 바꿔 대문자를 쓰되 기존 운영 데이터가 없으니 가능 — 둘 중 하나를 ADR로 결정한다.
+
 ## 현재 예외 (고칠 것, 4단계)
 
 2026-10-12 엔티티 grep 결과. Hibernate가 선언된 이름을 그대로 일관되게 쓰므로 지금은 동작하지만, Linux MySQL(권장 Docker 경로 포함)은 테이블명 대소문자를 구분하므로 수기 SQL·Flyway에서 섞어 쓰면 깨진다. 4단계 `V1__init.sql`에서 통일한다.

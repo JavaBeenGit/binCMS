@@ -61,13 +61,15 @@ Type(소문자): `feat` `fix` `docs` `style` `design` `refactor` `test` `build` 
 ## 6. 기동·검증
 
 - 로컬 기동: [`docs/30-dev/guides/dev-setup.md`](docs/30-dev/guides/dev-setup.md). 백엔드 8080, 프론트 3000, MySQL 3307(Docker compose, 권장) 또는 3306(네이티브).
-- 회귀 기준: `backend/gradlew.bat build`, `frontend`에서 `npm run build` 통과 + `curl localhost:8080/api/v1/health` 200.
+- 회귀 기준: `backend/gradlew.bat build`(통합 테스트 포함, Docker 필요), `frontend`에서 `npm run build` 통과 + `curl localhost:8080/api/v1/health` 200. CI(`.github/workflows/ci.yml`)가 PR마다 같은 것을 돌린다.
+- API 접두어 규칙: `admin`(관리자 3역할)·`user`(로그인)·`public`·`auth` 4종만. 새 컨트롤러는 이 중 하나로 시작한다([ADR-0003](docs/30-dev/adr/0003-auth-jwt.md)).
 - 문서 링크: `node scripts/check-doc-links.mjs` 깨진 링크 0.
 
 ## 7. 현재 단계
 
-- 2026-10-12: 재정비 설계서 승인. 0단계(기준선)·1단계(지침 뼈대) 완료.
-- 다음: 2단계 `apps/` 구조 정리 → 3단계 보안·비밀값 → 4단계 Flyway → 5단계 기능 가이드·verify 스킬 → 6단계 사용자 화면 → 7단계 관리자 화면·운영 매뉴얼 → 8단계 배포.
+- 2026-10-12: 재정비 설계서 승인. 0단계(기준선)·1단계(지침 뼈대)·3단계(보안·CI) 완료. 실행 순서는 설계서 §8-1 개정을 따른다.
+- 다음: 2단계 `apps/` 구조 정리 → 4단계 Flyway → 4-1단계 블로그 이관 → 5단계 기능 가이드·verify 스킬 → 6단계 사용자 화면(SEO·알림) → 7단계 관리자 축소·운영 매뉴얼 → 8단계 배포.
+- 사용자가 할 일: 카카오·네이버·구글·Gmail 키 재발급 후 `backend/application-secret.yml` 교체.
 
 ## 8. 팀 컨벤션 / 피드백
 

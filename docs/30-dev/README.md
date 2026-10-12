@@ -19,7 +19,7 @@
 |-----|------|--------|
 | [0001](adr/0001-tech-stack.md) | 기술 스택: React SPA + Spring Boot 3 + MySQL, Gradle | accepted |
 | [0002](adr/0002-admin-react-spa.md) | 관리자 UI는 React + Ant Design SPA 유지 | accepted |
-| [0003](adr/0003-auth-jwt.md) | 인증: JWT Bearer + 역할(SYSTEM/OPERATION/GENERAL_ADMIN, USER) | accepted |
+| [0003](adr/0003-auth-jwt.md) | 인증: JWT Bearer + 역할(SYSTEM/OPERATION/GENERAL_ADMIN, USER), 접두어 기반 서버 권한 강제 | accepted (구현 완료) |
 
 예정: `0004-flyway-migration`(4단계), `0005-hosting`(8단계).
 
