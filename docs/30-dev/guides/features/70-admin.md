@@ -4,7 +4,7 @@
 
 | 메뉴 | URL | 화면 파일 | 프론트 권한 | 주요 API |
 |---|---|---|---|---|
-| 대시보드 | `/admin` | `Dashboard.tsx` | 로그인만 | (통계 숫자는 더미 0 — 미구현) |
+| 대시보드 | `/admin` | `Dashboard.tsx` | 로그인만 | `GET /admin/dashboard/summary` → 대기 문의(빨간 배지, 클릭 시 문의 관리)·시공사례·게시글·회원 수, 60초마다 갱신 |
 | 게시글 관리 › 공지/FAQ/자유 | `/admin/posts/{notice,faq,free}` | `PostManagement.tsx` | `MENU_POST`(free는 매핑 없음) | `GET/POST /admin/posts`, `PUT/DELETE /admin/posts/{id}`, `GET /admin/posts/search`, 댓글 `GET/DELETE /admin/comments/...` |
 | 게시글 관리 › 견적문의 | `/admin/posts/qna` | `InquiryManagement.tsx` | `MENU_POST` | [50-견적문의](50-견적문의.md) |
 | 컨텐츠 관리 | `/admin/contents` | `ContentManagement.tsx` | `MENU_CONTENT` | `GET/POST/PUT/DELETE /admin/contents`, `PATCH .../activate|deactivate` |
@@ -37,7 +37,7 @@
 
 ## 의도적 미구현 / 알려진 문제
 
-- 대시보드 통계(전체 회원·게시판·오늘 방문자)는 0 고정 더미.
+- 방문자 통계는 없다(애널리틱스 미연동).
 - 통계·IP·공통코드·내 정보 메뉴는 플레이스홀더 → 7단계에서 삭제(설계서 §8-1).
 - 사용자 메뉴(USER) 관리가 사용자 헤더에 반영되지 않는다.
 - 관리자 화면 파일이 400~650줄로 큼 → 7단계 분할.

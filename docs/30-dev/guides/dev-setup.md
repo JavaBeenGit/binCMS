@@ -72,7 +72,8 @@ npm run dev
 ## 5. 알려진 문제 (2026-10-12 기준)
 
 - OAuth(카카오·네이버·구글)·Gmail 비밀값은 `application.yml`에 없다. `apps/backend/application-secret.example.yml`을 복사해 `apps/backend/application-secret.yml`(git 제외)을 만들고 값을 채워야 소셜 로그인·메일 인증이 동작한다. 값은 저장소 소유자에게 받는다. 키 재발급은 3단계.
-- 업로드 경로는 `FILE_UPLOAD_DIR` 환경변수, 기본값 `apps/backend/uploads`(git 제외)다. 헤더·푸터 로고는 `/uploads/etc/su_design_logo.png`·`su_design_logo_footer.png`를 읽는데 이 파일이 저장소에 없어 새 PC에서는 로고가 깨져 보인다(6단계에서 로고를 `apps/frontend/public/`으로 이전).
+- 업로드 경로는 `FILE_UPLOAD_DIR` 환경변수, 기본값 `apps/backend/uploads`(git 제외)다. 로고·파비콘은 `apps/frontend/public/`에 있어 업로드 폴더와 무관하다.
+- 선택 환경변수: `SITE_BASE_URL`(sitemap.xml의 절대 URL, 기본 `http://localhost:3000` — 운영에서는 실제 도메인), `INQUIRY_NOTIFY_TO`(새 견적문의 알림 메일 받는 주소, 비우면 알림 없음 — 메일 발송에는 `application-secret.yml`의 Gmail 설정이 필요). 둘 다 `application.yml`의 `app.site.base-url`·`app.inquiry.notify-to`에 매핑.
 - 백엔드 테스트는 Testcontainers(MySQL 8.4)를 쓰므로 **Docker Desktop이 떠 있어야** `gradlew.bat build`·`gradlew.bat test`가 통과한다. 첫 실행은 이미지 다운로드로 수 분. `~/.testcontainers.properties`에 `docker.host=tcp://localhost:2375`가 있으면 Docker Desktop의 "Expose daemon on tcp://localhost:2375" 옵션이 켜져 있어야 한다(검증 PC는 켜져 있음). docker-java 기본 API 1.32를 Docker 29가 거부해 `build.gradle`에서 `api.version=1.44`를 준다.
 - 프론트 단위 테스트는 없다(설계서 §6: 린트 + 실기동 검증).
 - `ckeditor5`는 `47.4.0`에 고정돼 있다. `^` 범위로 올리면 47.7.x(LTS)에서 GPL 키가 거부돼(`license-key-lts-not-allowed`) 에디터가 비활성이 된다. `package-lock.json`을 커밋하므로 `npm ci`를 쓰면 안전하다.

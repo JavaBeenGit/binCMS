@@ -58,6 +58,8 @@
 
 ### Task 5: 마이페이지 가드 · 모바일 확인 · 문서
 
+> 2026-10-12 실측: `/user/mypage` 비로그인 → `/user/login`. 360px 홈·딥링크 가로 스크롤 없음, 홈 로드 시 CKEditor JS·관리자 모듈 미요청(ckeditor5.css 는 본문 렌더용으로 유지). 없는 id(`/onsite/999999`) → 목록으로(콘솔에는 API 404 1건만). 추가 발견: 769~1024px 헤더 로고 글자 세로 쪼개짐·회원가입 잘림 → CSS 중간 폭 규칙으로 수정(780·900px 확인).
+
 - [ ] `MyPage.tsx`: 토큰 없으면 `/user/login`으로. 가이드 60 갱신.
 - [ ] Playwright 360px: 홈·갤러리·상세 딥링크·견적문의 스크린샷, 가로 스크롤 없음.
 - [ ] 가이드 10·40·50·60·70, `business.md`, `dev-setup.md`(환경변수 `INQUIRY_NOTIFY_TO`·`SITE_BASE_URL`), `CLAUDE.md` §7, 설계서 §8-1 6행에 "프리렌더는 후속" 기록. 링크 검사 → 커밋 → push.
@@ -66,5 +68,7 @@
 
 | 시점 | 사용자 첫 화면 JS | 비고 |
 |---|---|---|
-| 전 | (기록) | |
-| 후 | (기록) | |
+| 전 | index 1,421KB + ui(antd) 1,149KB + vendor 159KB ≈ 2.7MB | 관리자·CKEditor 가 index 에 포함 |
+| 후 | index 177KB + ui(antd) 1,149KB + vendor 159KB ≈ 1.5MB | editor 1,112KB·관리자 화면 9~19KB 청크는 필요할 때만 |
+
+남은 큰 덩어리는 antd(1.1MB) — 사용자 화면이 `message`·`Pagination`·`Modal`·`Tag` 등을 쓴다. 사용자 화면을 antd 없이 다시 쓰면 1MB 더 줄지만 7단계 이후 과제.
