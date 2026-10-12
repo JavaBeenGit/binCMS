@@ -26,6 +26,9 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
      * 로그인 ID 존재 여부 확인
      */
     boolean existsByLoginId(String loginId);
+
+    /** 주어진 역할 중 하나라도 가진 회원이 있는지 (AdminAccountInitializer 가 관리자 존재 여부 확인에 사용) */
+    boolean existsByRoleIn(java.util.List<com.bincms.domain.role.entity.Role> roles);
     
     /**
      * 이메일 존재 여부 확인
