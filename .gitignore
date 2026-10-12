@@ -9,13 +9,13 @@
 # Gradle
 backend/.gradle/
 backend/build/
-backend/!gradle/wrapper/gradle-wrapper.jar
 backend/!**/src/main/**/build/
 backend/!**/src/test/**/build/
 
 # Java
 backend/**/*.class
 backend/**/*.jar
+!backend/gradle/wrapper/gradle-wrapper.jar
 backend/**/*.war
 backend/**/*.ear
 

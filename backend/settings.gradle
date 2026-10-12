@@ -5,4 +5,9 @@ pluginManagement {
     }
 }
 
+plugins {
+    // JDK가 없으면 자동 다운로드 (Gradle toolchain)
+    id 'org.gradle.toolchains.foojay-resolver-convention' version '0.8.0'
+}
+
 rootProject.name = 'bincms'
