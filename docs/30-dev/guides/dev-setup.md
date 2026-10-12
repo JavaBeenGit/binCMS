@@ -48,6 +48,7 @@ PowerShell에서 Docker 경로: `$env:DB_PORT=3307; .\gradlew.bat bootRun`
 
 - 첫 실행은 JDK 21 + Gradle 8.7 + 의존성 다운로드로 수 분(검증 PC: 약 3분).
 - `local` 프로파일이 기본. `ddl-auto: update`라 테이블이 자동 생성되고, `DataInitializer`가 역할·권한·메뉴·관리자 계정·샘플 데이터를 심는다.
+- 비밀값: `backend/application-secret.yml`(git 제외)이 있으면 `spring.config.import`로 읽는다. 없어도 기동은 되지만 소셜 로그인·메일이 비활성(§5).
 - 준비 판정: `curl http://localhost:8080/api/v1/health` → `{"success":true,...}` (검증 PC: 기동 후 약 10초).
 - 로컬 관리자 계정: `admin` / `1234` (DataInitializer가 생성). 확인: `curl -X POST localhost:8080/api/v1/auth/login -H "Content-Type: application/json" -d '{"loginId":"admin","password":"1234"}'` → `accessToken` 포함 응답.
 
@@ -66,7 +67,7 @@ npm run dev
 ## 5. 알려진 문제 (2026-10-12 기준)
 
 - `npm run lint`는 ESLint 설정 파일이 없어 실패한다(`ESLint couldn't find a configuration file`). 5단계에서 도입.
-- `application.yml` local 프로파일에 OAuth·메일 비밀값이 평문으로 있다. 3단계에서 환경변수화. 그 전까지는 소셜 로그인·메일 인증이 그 키로 동작한다.
+- OAuth(카카오·네이버·구글)·Gmail 비밀값은 `application.yml`에 없다. `backend/application-secret.example.yml`을 복사해 `backend/application-secret.yml`(git 제외)을 만들고 값을 채워야 소셜 로그인·메일 인증이 동작한다. 값은 저장소 소유자에게 받는다. 키 재발급은 3단계.
 - 업로드 경로 `file.upload-dir`가 특정 PC 절대경로(`C:/Users/Administrator/...`)다. 다른 PC에서는 `application.yml`의 값을 바꿔야 파일 업로드가 된다(3단계에서 환경변수화). 헤더·푸터 로고도 `/uploads/etc/`에서 읽으므로 그 폴더가 없으면 로고가 깨져 보인다.
 - 테스트가 없다. `gradlew build`는 테스트 0개로 통과한다.
 - 빌드 시 "Some chunks are larger than 500 kB" 경고가 난다(antd·CKEditor). 6단계 번들 분리에서 다룬다.

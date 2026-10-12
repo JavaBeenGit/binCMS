@@ -21,7 +21,7 @@
 ## 3. 절대 규칙
 
 - **문서는 현재 코드가 하는 것만 서술**한다. 바라는 상태는 "목표(N단계)"로 표시.
-- **비밀값 하드코딩·커밋 금지** (현재 `application.yml`에 남은 것은 3단계에서 제거 — 그 전까지 새로 추가하지 않는다).
+- **비밀값 하드코딩·커밋 금지.** 로컬 비밀값은 `backend/application-secret.yml`(git 제외, 예시는 `application-secret.example.yml`)에, 운영은 환경변수에. GitHub 푸시 보호가 켜져 있어 평문 키가 든 커밋은 push가 거부된다. 키 재발급은 3단계.
 - **동작 변경과 구조 변경을 한 커밋에 섞지 않는다.**
 - 화면·API의 사용자 가시 동작을 바꾸면 해당 기능 가이드도 같은 브랜치에서 고친다(가이드는 5단계에서 생성 — 그 전까지는 `docs/10-product/sitemap.md`).
 - DB 테이블·컬럼 이름은 [`docs/30-dev/db-naming.md`](docs/30-dev/db-naming.md)를 따른다.
