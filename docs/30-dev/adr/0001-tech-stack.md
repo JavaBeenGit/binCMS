@@ -20,7 +20,7 @@
 | 백엔드 | Spring Boot 3.3, Java 21 (Gradle toolchain 자동 다운로드), Gradle 8.7, Lombok |
 | 데이터 접근 | Spring Data JPA + QueryDSL 5 |
 | DB | MySQL 8 (local). PostgreSQL 드라이버도 의존성에 있으나 사용 안 함 |
-| 스키마 | 현재 `ddl-auto: update` + `DataInitializer` 시드 → **목표(4단계)**: Flyway + `validate` |
+| 스키마 | Flyway(`db/migration`) + `ddl-auto: validate`, 물리명 소문자 (→ ADR-0004, 2026-10-12) |
 | 인증 | JWT Bearer (→ ADR-0003) |
 | 소셜 로그인 | 카카오·네이버·구글 OAuth code 교환을 서버가 수행 |
 | 메일 | Spring Mail (Gmail SMTP) — 이메일 인증 코드 |

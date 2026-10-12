@@ -17,7 +17,7 @@
 - **API 접두어 4종만**: `/api/v1/admin/**`(관리자 3역할) · `/api/v1/user/**`(로그인 회원) · `/api/v1/public/**`(익명) · `/api/v1/auth/**`. 새 컨트롤러는 이 중 하나로 시작한다. 서버가 역할을 강제하고 401/403을 `ApiResponse` JSON으로 돌려준다 ([ADR-0003](../docs/30-dev/adr/0003-auth-jwt.md)). 프론트 `PermissionGuard`는 메뉴 노출용일 뿐 보안 장치가 아니다.
 - **비밀값 하드코딩·커밋 금지.** 로컬은 `backend/application-secret.yml`(git 제외, 예시 `application-secret.example.yml`), 운영은 환경변수. GitHub 푸시 보호가 평문 키 커밋을 거부한다.
 - **동작 변경과 구조 변경(이동·리네임)을 한 커밋에 섞지 않는다.**
-- **DB 오브젝트 이름**은 [db-naming.md](../docs/30-dev/db-naming.md). 새 테이블·컬럼 전에 읽는다. 실제 물리명이 소문자로 생성되는 사실과 4단계 결정 사항이 거기 있다.
+- **DB 오브젝트 이름은 소문자 스네이크** — [db-naming.md](../docs/30-dev/db-naming.md). 새 테이블·컬럼은 Flyway SQL이 정본이고 엔티티의 `@Index` 선언은 문서용이다([ADR-0004](../docs/30-dev/adr/0004-flyway-migration.md)).
 - **테스트는 공유 DB에 붙지 않는다.** 통합 테스트는 Testcontainers(MySQL) — `AbstractIntegrationTest`를 상속.
 - **절대 주소 금지**: 프론트는 상대경로 `/api/...`만. `localhost:8080` 하드코딩 금지.
 
@@ -44,7 +44,7 @@
 - 백엔드만: `cd apps/backend && DB_PORT=3307 ./gradlew.bat bootRun` (PowerShell: `$env:DB_PORT=3307`).
 - 프론트만: `cd apps/frontend && npm ci && npm run dev`.
 - **테스트**: `apps/backend/gradlew.bat test` (Docker 필요). 회귀 기준은 `gradlew.bat build` + `npm run build` + `node scripts/check-doc-links.mjs` — CI([`.github/workflows/ci.yml`](../.github/workflows/ci.yml))가 PR마다 같은 것을 돌린다.
-- 로컬 관리자 `admin/1234`(`DataInitializer` 시드). 4단계 Flyway 전환 시 바뀐다.
+- 로컬 관리자 `admin/1234`(`AdminAccountInitializer`, local 기본값). 스키마·시드는 Flyway `db/migration/`이 소유 — 테이블을 바꾸려면 새 `V{n}__*.sql`을 추가하고 `gradlew.bat test`로 validate를 확인한다.
 
 ## 6. 커밋 / 협업
 

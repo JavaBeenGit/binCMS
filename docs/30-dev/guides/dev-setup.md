@@ -51,10 +51,11 @@ DB_PORT=3307 ./gradlew.bat bootRun     # Docker (Git Bash)
 PowerShell에서 Docker 경로: `$env:DB_PORT=3307; .\gradlew.bat bootRun`
 
 - 첫 실행은 JDK 21 + Gradle 8.7 + 의존성 다운로드로 수 분(검증 PC: 약 3분).
-- `local` 프로파일이 기본. `ddl-auto: update`라 테이블이 자동 생성되고, `DataInitializer`가 역할·권한·메뉴·관리자 계정·샘플 데이터를 심는다.
+- `local` 프로파일이 기본. 기동 시 **Flyway**가 `db/migration/V1__init.sql`(스키마)·`V2__seed_core.sql`(역할·권한·메뉴·게시판)을 적용하고, `AdminAccountInitializer`가 관리자 계정이 없으면 `admin`을 만든다. JPA는 `validate`만 한다([ADR-0004](../adr/0004-flyway-migration.md)).
+- Flyway 도입(2026-10-12) 전에 만든 로컬 DB는 이력 테이블이 없어 기동이 `Found non-empty schema ... without schema history table`로 멈춘다. Docker면 `docker compose -f apps/backend/docker-compose.yml down -v` 후 다시 올린다(데이터 삭제됨).
 - 비밀값: `apps/backend/application-secret.yml`(git 제외)이 있으면 `spring.config.import`로 읽는다. 없어도 기동은 되지만 소셜 로그인·메일이 비활성(§5).
 - 준비 판정: `curl http://localhost:8080/api/v1/health` → `{"success":true,...}` (검증 PC: 기동 후 약 10초).
-- 로컬 관리자 계정: `admin` / `1234` (DataInitializer가 생성). 확인: `curl -X POST localhost:8080/api/v1/auth/login -H "Content-Type: application/json" -d '{"loginId":"admin","password":"1234"}'` → `accessToken` 포함 응답.
+- 로컬 관리자 계정: `admin` / `1234` (`app.admin.initial-password`의 local 기본값 — 환경변수 `ADMIN_INITIAL_PASSWORD`로 바꿀 수 있다. 관리자가 하나도 없고 이 값도 비어 있으면 기동 실패). 확인: `curl -X POST localhost:8080/api/v1/auth/login -H "Content-Type: application/json" -d '{"loginId":"admin","password":"1234"}'` → `accessToken` 포함 응답.
 
 ## 4. 프론트엔드 (3000)
 

@@ -21,7 +21,7 @@
 - 엔티티 상태 변경은 의미 있는 메서드(`activate()`, `deactivate()`, `update(...)`, `increaseViewCount()`)로. setter 없음.
 - 공통 감사 컬럼은 `BaseEntity`(`regDt`, `modDt`, `regNo`, `modNo`; `AuditConfig`의 `AuditorAware`가 JWT principal(loginId)을 넣음).
 - 로그는 `@Slf4j`. 사용자 입력·토큰을 로그에 남기지 않는다.
-- **목표(4단계)**: 스키마는 Flyway. 지금은 `ddl-auto: update` + `DataInitializer`.
+- 스키마·기준 시드는 Flyway(`db/migration/V{n}__*.sql`), JPA는 `validate`. 물리명은 소문자 스네이크([db-naming.md](db-naming.md), [ADR-0004](adr/0004-flyway-migration.md)). 공유된 마이그레이션은 수정하지 않는다.
 - **목표(5단계)**: 핵심 서비스 단위·통합 테스트. 지금은 `SecurityRulesTest`뿐.
 
 ### 보안

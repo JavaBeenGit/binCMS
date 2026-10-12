@@ -1,50 +1,47 @@
 # DB 오브젝트 명명 규칙
 
-> 정본. JPA `@Table`/`@Column`·네이티브 SQL·Flyway SQL(4단계) 모두 이 규칙을 따른다. 2026-02-05 ADR-0007(삭제됨)에서 이관, 2026-10-12 현재 코드로 검증.
+> 정본. Flyway SQL(`apps/backend/src/main/resources/db/migration/`)·네이티브 SQL·새 엔티티 선언 모두 이 규칙을 따른다. 2026-10-12 ADR-0004로 **소문자 스네이크**를 물리명으로 확정(그 전 문서는 대문자였으나 실제 DB는 처음부터 소문자였다).
+
+## 왜 소문자인가
+
+Spring Boot 기본 명명 전략(`CamelCaseToUnderscoresNamingStrategy`)이 `@Table(name = "TB_MEMBERS")`를 `tb_members`로 바꿔 생성한다. Linux MySQL은 테이블명 대소문자를 구분하므로 수기 SQL은 반드시 소문자로 쓴다. 기존 엔티티의 대문자 선언은 동작에 영향이 없어 그대로 두되, **새 선언은 소문자로** 한다.
 
 ## 테이블
 
-- 접두어 `TB_` + **대문자 스네이크** + **복수형**. 예: `TB_MEMBERS`, `TB_BOARDS`, `TB_POSTS`, `TB_INTERIORS`, `TB_ROLE_PERMISSIONS`.
-- 엔티티 클래스는 단수(`Member`) ↔ 테이블은 복수(`TB_MEMBERS`).
+- 접두어 `tb_` + 소문자 스네이크 + **복수형**. 예: `tb_members`, `tb_boards`, `tb_posts`, `tb_interiors`, `tb_role_permissions`.
+- 엔티티 클래스는 단수(`Member`) ↔ 테이블은 복수(`tb_members`).
+- 테이블 `COMMENT`에 한국어 이름을 적는다(V1 참고).
 
 ## 컬럼
 
-- 대문자 스네이크. 예: `EMAIL`, `PHONE_NUMBER`, `THUMBNAIL_URL`.
-- PK는 `ID`(BIGINT, IDENTITY).
-- FK는 `참조테이블단수_ID`. 예: `ROLE_ID`, `BOARD_ID`.
-- 접미사 규칙:
-  - 여부 `_YN` (`USE_YN`, `DEL_YN`; 값 `'Y'`/`'N'`, `CHAR(1)`)
-  - 일시 `_DT` (`REG_DT`, `MOD_DT`)
-  - 코드 `_CODE` (`ROLE_CODE`, `PERM_CODE`, `BOARD_CODE`)
-  - 순서 `SORT_ORDER`, 카운트 `_COUNT` (`VIEW_COUNT`)
-- 공통 감사 컬럼(`BaseEntity` 상속 테이블): `REG_DT`(등록일시, not null), `MOD_DT`(수정일시, not null), `REG_NO`(등록자 loginId, varchar 100), `MOD_NO`(수정자). 현재 `EmailVerification`·`RolePermission`은 `BaseEntity`를 상속하지 않아 감사 컬럼이 없다.
-- 약어는 기존 것만 쓴다: `LGN_ID`(로그인 ID), `REG`/`MOD`(등록/수정), `PERM`(권한). 새 약어를 만들지 않는다.
+- 소문자 스네이크. 예: `email`, `phone_number`, `thumbnail_url`.
+- PK는 `id`(bigint, AUTO_INCREMENT). 예외: `tb_email_verifications.verification_id`(기존 — 바꾸지 않는다).
+- FK는 `참조테이블단수_id`. 예: `role_id`, `board_id`, `post_id`, `parent_id`(자기참조).
+- 접미사:
+  - 여부 `_yn` (`use_yn`, `notice_yn`; `varchar(1)` `'Y'`/`'N'`). 불리언 컬럼(`active`, `email_verified`, `verified`)은 `bit(1)` — 새 컬럼은 둘 중 `_yn`을 쓴다.
+  - 일시 `_dt` (`reg_dt`, `mod_dt`, `start_dt`, `end_dt`), 시각 `_at`은 기존 `tb_email_verifications`에만 있다(새로 쓰지 않는다).
+  - 코드 `_code` (`role_code`, `perm_code`, `board_code`), 순서 `sort_order`, 카운트 `_count` (`view_count`).
+- 공통 감사 컬럼(`BaseEntity` 상속 테이블): `reg_dt`·`mod_dt`(not null), `reg_no`·`mod_no`(등록·수정자 loginId, varchar 100). `tb_email_verifications`·`tb_role_permissions`는 상속하지 않는다.
+- 약어는 기존 것만: `lgn_id`(로그인 ID), `reg`/`mod`, `perm`. 새 약어를 만들지 않는다.
+- enum 컬럼은 MySQL `enum('A','B')` 타입(Hibernate 6가 `@Enumerated(STRING)`를 그렇게 만든다). 값 추가는 `ALTER TABLE ... MODIFY` 마이그레이션.
 
-## 인덱스·제약
+## 인덱스·제약 (V1에 적용된 규칙)
 
 | 종류 | 형식 | 예 |
 |---|---|---|
-| 인덱스 | `IDX_테이블명(접두어 제외)_컬럼` | `IDX_INTERIORS_CATEGORY` |
-| 유니크 | `UK_테이블명_컬럼` | `UK_MEMBERS_LGN_ID` |
-| FK | `FK_자식테이블_부모테이블` | `FK_MEMBERS_ROLES` |
+| 유니크 | `uk_<table>_<col>[_<col>]` | `uk_members_lgn_id`, `uk_role_permissions_role_id_perm_id` |
+| 인덱스 | `idx_<table>_<col>[_<col>]` | `idx_posts_board_id`, `idx_files_ref_type_ref_id` |
+| FK | `fk_<child>_<parent>`(자기참조는 `fk_<table>_parent`) | `fk_posts_boards`, `fk_comments_parent` |
 
-(현재 코드는 유니크를 `@Column(unique = true)`로, FK를 JPA 기본 이름으로 생성한다. `Role`·`Permission`은 여기에 `@Index(unique = true)`까지 겹쳐 유니크가 이중 정의돼 있다. 4단계 Flyway `V1__init.sql`에서 위 이름으로 정리하는 것이 목표.)
+`<table>`은 `tb_` 접두어를 뺀 이름. 유니크가 있는 컬럼에 같은 컬럼의 일반 인덱스를 또 두지 않는다.
 
-## enum
+## 엔티티 선언과의 관계
 
-- Java enum은 `@Enumerated(EnumType.STRING)`, 컬럼은 `VARCHAR(20~30)`. 예: `CATEGORY` ← `InteriorCategory.ONSITE`.
+- `ddl-auto: validate`는 **테이블·컬럼·타입만** 검사한다. 엔티티의 `@Index`·`indexes = {...}`·`unique = true`는 아무것도 만들지 않는 문서용이다. **인덱스·제약의 정본은 Flyway SQL**이다.
+- 새 테이블을 만들 때: (1) `V{n}__*.sql`에 위 규칙으로 DDL, (2) 엔티티는 소문자 `@Table`/`@Column`, (3) `gradlew.bat test`로 validate 통과 확인.
 
-## 실제 DB의 물리명은 소문자다 (4단계에서 결정 필요)
+## 마이그레이션 파일
 
-2026-10-12 Testcontainers(Linux MySQL)에서 확인: Spring Boot 기본 `CamelCaseToUnderscoresNamingStrategy`가 `@Table(name = "TB_MEMBERS")`를 **`tb_members`로 소문자화**해서 생성한다. 즉 위 규칙의 대문자 이름은 코드상 선언이고, 실제 테이블·컬럼은 모두 소문자다(`RoleMigrationConfig`가 `tb_members`를 쓰는 이유). 4단계 Flyway `V1__init.sql`을 쓸 때 (a) 소문자를 정본으로 인정하고 이 문서를 고치거나, (b) `PhysicalNamingStrategyStandardImpl`로 바꿔 대문자를 쓰되 기존 운영 데이터가 없으니 가능 — 둘 중 하나를 ADR로 결정한다.
-
-## 현재 예외 (고칠 것, 4단계)
-
-2026-10-12 엔티티 grep 결과. Hibernate가 선언된 이름을 그대로 일관되게 쓰므로 지금은 동작하지만, Linux MySQL(권장 Docker 경로 포함)은 테이블명 대소문자를 구분하므로 수기 SQL·Flyway에서 섞어 쓰면 깨진다. 4단계 `V1__init.sql`에서 통일한다.
-
-- `Inquiry` — `@Table(name = "tb_inquiries")` **소문자**. → `TB_INQUIRIES`.
-- `EmailVerification` — 인덱스 `idx_email_verifications_email`, `idx_email_verifications_email_code` **소문자**. → `IDX_EMAIL_VERIFICATIONS_EMAIL`, `IDX_EMAIL_VERIFICATIONS_EMAIL_CODE`.
-- `RolePermission` — 인덱스 `IDX_RP_ROLE_ID`, `IDX_RP_PERM_ID`가 테이블명을 `RP`로 축약. → `IDX_ROLE_PERMISSIONS_ROLE_ID`, `IDX_ROLE_PERMISSIONS_PERM_ID`.
-- `Member` — 인덱스 `IDX_MEMBERS_LOGIN_ID`인데 컬럼은 `LGN_ID`. → `IDX_MEMBERS_LGN_ID`.
-- `Board` — 인덱스 `IDX_BOARDS_CODE`인데 컬럼은 `BOARD_CODE`. → `IDX_BOARDS_BOARD_CODE`.
-- `Permission` — 인덱스 `IDX_PERMISSIONS_CODE`인데 컬럼은 `PERM_CODE`. → `IDX_PERMISSIONS_PERM_CODE`.
+- `V{n}__{설명}.sql` (언더스코어 2개, 설명은 영문 소문자 스네이크). 현재 `V1__init`, `V2__seed_core`.
+- 공유된 파일은 수정하지 않는다. 데이터 보정도 새 버전으로.
+- local 전용(샘플 등)은 `db/local/`에 두고 `spring.flyway.locations`에 프로파일별로 추가한다(아직 사용 안 함).
