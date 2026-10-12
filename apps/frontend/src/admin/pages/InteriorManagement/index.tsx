@@ -180,6 +180,7 @@ const InteriorManagement: React.FC<InteriorManagementProps> = ({ category }) => 
         </>
       ) : (
         <Table
+        scroll={{ x: 'max-content' }}
           bordered
           columns={columns}
           dataSource={items}

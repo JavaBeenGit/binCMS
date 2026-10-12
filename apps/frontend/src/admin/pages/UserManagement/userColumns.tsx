@@ -80,6 +80,7 @@ export function buildUserColumns(h: UserColumnHandlers): ColumnsType<UserMemberR
     },
     {
       title: '관리',
+      fixed: 'right', // 휴대폰에서 가로 스크롤해도 버튼이 보이게
       key: 'actions',
       width: 200,
       align: 'center',

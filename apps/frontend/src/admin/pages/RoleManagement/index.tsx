@@ -171,6 +171,7 @@ const RoleManagement: React.FC = () => {
       {/* 페이지네이션 없는 목록이라 ListSummary(페이지 표기) 대신 건수만 보인다 */}
       <div style={{ marginBottom: 8, color: '#666', fontSize: 14 }}>총 {total}건</div>
       <Table
+        scroll={{ x: 'max-content' }}
         bordered
         columns={columns}
         dataSource={rolesData || []}

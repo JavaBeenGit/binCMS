@@ -141,6 +141,7 @@ const PopupManagement: React.FC = () => {
 
       <ListSummary total={total} page={currentPage - 1} pageSize={PAGE_SIZE} />
       <Table
+        scroll={{ x: 'max-content' }}
         bordered
         columns={columns}
         dataSource={data?.content}

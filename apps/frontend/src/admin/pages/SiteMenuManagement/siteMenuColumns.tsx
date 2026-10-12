@@ -21,6 +21,7 @@ export function buildSiteMenuColumns(h: SiteMenuColumnHandlers): ColumnsType<Men
       title: '메뉴',
       dataIndex: 'menuName',
       key: 'menuName',
+      width: 180,
       onHeaderCell: centerHeader,
       render: (text: string, record) => (
         <span style={{ marginLeft: `${(record.depth - 1) * 20}px`, fontWeight: record.depth === 1 ? 600 : 400 }}>
@@ -35,6 +36,7 @@ export function buildSiteMenuColumns(h: SiteMenuColumnHandlers): ColumnsType<Men
       dataIndex: 'menuUrl',
       key: 'menuUrl',
       ellipsis: true,
+      responsive: ['md'], // 휴대폰에서는 주소 열 숨김
       onHeaderCell: centerHeader,
       render: (url?: string) => url || <span style={{ color: '#999' }}>하위 메뉴를 펼치는 묶음</span>,
     },
@@ -42,7 +44,7 @@ export function buildSiteMenuColumns(h: SiteMenuColumnHandlers): ColumnsType<Men
       title: '홈페이지에 표시',
       dataIndex: 'useYn',
       key: 'useYn',
-      width: 150,
+      width: 120,
       align: 'center',
       render: (useYn: string, record) => (
         <Switch
@@ -56,8 +58,9 @@ export function buildSiteMenuColumns(h: SiteMenuColumnHandlers): ColumnsType<Men
     },
     {
       title: '순서',
+      fixed: 'right',
       key: 'order',
-      width: 120,
+      width: 100,
       align: 'center',
       render: (_, record) => {
         const siblings = siblingsOf(record);

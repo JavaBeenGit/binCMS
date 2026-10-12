@@ -166,6 +166,7 @@ const PostManagement: React.FC<PostManagementProps> = ({ boardCode }) => {
 
       <ListSummary total={total} page={page} pageSize={PAGE_SIZE} />
       <Table
+        scroll={{ x: 'max-content' }}
         bordered
         columns={columns}
         dataSource={posts?.content || []}

@@ -127,7 +127,7 @@ const InquiryManagement: React.FC = () => {
 
       {/* 상단 통계 카드 */}
       <Row gutter={16} style={{ marginBottom: 24 }}>
-        <Col span={6}>
+        <Col xs={12} md={6}>
           <Card size="small">
             <Statistic
               title="전체 문의"
@@ -136,7 +136,7 @@ const InquiryManagement: React.FC = () => {
             />
           </Card>
         </Col>
-        <Col span={6}>
+        <Col xs={12} md={6}>
           <Card size="small">
             <Statistic
               title="대기중"
@@ -146,7 +146,7 @@ const InquiryManagement: React.FC = () => {
             />
           </Card>
         </Col>
-        <Col span={6}>
+        <Col xs={12} md={6}>
           <Card size="small">
             <Statistic
               title="처리중"
@@ -156,7 +156,7 @@ const InquiryManagement: React.FC = () => {
             />
           </Card>
         </Col>
-        <Col span={6}>
+        <Col xs={12} md={6}>
           <Card size="small">
             <Statistic
               title="완료"
@@ -170,6 +170,7 @@ const InquiryManagement: React.FC = () => {
 
       <ListSummary total={totalElements} page={currentPage - 1} pageSize={PAGE_SIZE} />
       <Table
+        scroll={{ x: 'max-content' }}
         columns={columns}
         dataSource={inquiries}
         rowKey="id"

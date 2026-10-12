@@ -184,6 +184,7 @@ const BoardManagement: React.FC = () => {
     },
     {
       title: '관리',
+      fixed: 'right', // 휴대폰에서 가로 스크롤해도 버튼이 보이게
       key: 'action',
       width: 100,
       align: 'center',
@@ -233,6 +234,7 @@ const BoardManagement: React.FC = () => {
         총 {boardsData?.data?.length || 0}건
       </div>
       <Table
+        scroll={{ x: 'max-content' }}
         bordered
         columns={columns}
         dataSource={boardsData?.data || []}

@@ -184,6 +184,7 @@ const MenuManagement: React.FC = () => {
               )}
               <ListSummary total={tab.rows.length} page={currentPage - 1} pageSize={PAGE_SIZE} />
               <Table
+        scroll={{ x: 'max-content' }}
                 bordered
                 columns={columnsFor(tab.type === MenuType.USER)}
                 dataSource={tab.rows}

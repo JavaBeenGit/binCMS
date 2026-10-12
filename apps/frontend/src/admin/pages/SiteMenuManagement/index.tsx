@@ -5,8 +5,9 @@ import { menuApi, MenuType, type MenuResponse } from '@/shared/api/endpoints/men
 import PageHeader from '@/admin/components/PageHeader';
 import { buildSiteMenuColumns } from './siteMenuColumns';
 
-/** 트리를 표시 순서 그대로 펼친다 (부모 바로 아래 자식) */
-const flatten = (menus: MenuResponse[]): MenuResponse[] => menus.flatMap((m) => [m, ...flatten(m.children ?? [])]);
+/** 트리를 표시 순서 그대로 펼친다 (부모 바로 아래 자식). children 은 떼어 낸다 — 두면 antd Table 이 트리 확장 아이콘을 그린다. */
+const flatten = (menus: MenuResponse[]): MenuResponse[] =>
+  menus.flatMap((m) => [{ ...m, children: undefined }, ...flatten(m.children ?? [])]);
 
 /**
  * 홈페이지 메뉴 — 운영자(형)용. 켜기/끄기와 순서만 다룬다.
@@ -56,7 +57,8 @@ const SiteMenuManagement: React.FC = () => {
         title="홈페이지 메뉴"
         description="홈페이지 위쪽 메뉴를 켜고 끄거나 순서를 바꿉니다. 바꾸면 홈페이지에 바로 반영됩니다. 새 메뉴 추가나 주소 변경은 개발자에게 요청하세요."
       />
-      <Table bordered rowKey="id" columns={columns} dataSource={rows} loading={isLoading} pagination={false} />
+      <Table
+        scroll={{ x: 'max-content' }} bordered rowKey="id" columns={columns} dataSource={rows} loading={isLoading} pagination={false} />
     </div>
   );
 };

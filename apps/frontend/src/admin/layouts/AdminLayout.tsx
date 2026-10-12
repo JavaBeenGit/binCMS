@@ -1,5 +1,5 @@
 import React, { useState, useMemo, useCallback, useEffect } from 'react';
-import { Layout, Menu, Avatar, Dropdown, Button, Space } from 'antd';
+import { Layout, Menu, Avatar, Dropdown, Button, Space, Drawer } from 'antd';
 import {
   MenuFoldOutlined,
   MenuUnfoldOutlined,
@@ -25,12 +25,13 @@ import { useQuery } from '@tanstack/react-query';
 import { useAdminAuthStore } from '@/shared/stores/adminAuthStore';
 import { menuApi, MenuType, MenuResponse } from '@/shared/api/endpoints/menu';
 import { hasPermission } from '@/shared/constants/permissions';
+import { useMediaQuery } from '@/shared/hooks/useMediaQuery';
 import type { MenuProps } from 'antd';
 import './AdminLayout.css';
 
 const { Header, Sider, Content } = Layout;
 
-// 아이콘 이름(tb_menus.icon) → 컴포넌트. V3 시드가 쓰는 이름만 둔다.
+// 아이콘 이름(tb_menus.icon) → 컴포넌트. 시드가 쓰는 이름만 둔다.
 const iconMap: Record<string, React.ReactNode> = {
   DashboardOutlined: <DashboardOutlined />,
   UserOutlined: <UserOutlined />,
@@ -58,9 +59,12 @@ const EMPTY_PERMISSIONS: string[] = [];
 
 /**
  * 관리자 레이아웃 — 사이드메뉴는 DB 메뉴(ADMIN)를 보유 권한으로 걸러 그린다.
+ * 992px 미만(휴대폰·세로 태블릿)에서는 사이드바 대신 왼쪽 서랍(Drawer)으로 연다 — 형이 휴대폰으로도 쓴다.
  */
 const AdminLayout: React.FC = () => {
   const [collapsed, setCollapsed] = useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const isMobile = useMediaQuery('(max-width: 991px)');
   const navigate = useNavigate();
   const location = useLocation();
   const { user, clearAuth } = useAdminAuthStore();
@@ -69,6 +73,11 @@ const AdminLayout: React.FC = () => {
   useEffect(() => {
     document.title = '수디자인 관리자';
   }, []);
+
+  // 화면 이동 시 모바일 서랍 닫기
+  useEffect(() => {
+    setMobileOpen(false);
+  }, [location.pathname]);
 
   const { data: menusData } = useQuery({
     queryKey: ['menus', MenuType.ADMIN, false],
@@ -149,24 +158,38 @@ const AdminLayout: React.FC = () => {
     return keys;
   }, [menusData, location.pathname]);
 
+  const sideMenu = (
+    <Menu theme="dark" mode="inline" selectedKeys={[location.pathname]} defaultOpenKeys={openKeys} items={menuItems} />
+  );
+
   return (
     <Layout className="admin-layout">
-      <Sider trigger={null} collapsible collapsed={collapsed} theme="dark">
-        <div className="logo">{collapsed ? '수' : '수디자인 관리자'}</div>
-        <Menu
-          theme="dark"
-          mode="inline"
-          selectedKeys={[location.pathname]}
-          defaultOpenKeys={openKeys}
-          items={menuItems}
-        />
-      </Sider>
+      {isMobile ? (
+        <Drawer
+          placement="left"
+          open={mobileOpen}
+          onClose={() => setMobileOpen(false)}
+          width={240}
+          closable={false}
+          className="admin-drawer"
+          styles={{ body: { padding: 0, background: '#001529' } }}
+        >
+          <div className="logo">수디자인 관리자</div>
+          {sideMenu}
+        </Drawer>
+      ) : (
+        <Sider trigger={null} collapsible collapsed={collapsed} theme="dark">
+          <div className="logo">{collapsed ? '수' : '수디자인 관리자'}</div>
+          {sideMenu}
+        </Sider>
+      )}
       <Layout>
         <Header className="admin-header">
           <Button
             type="text"
-            icon={collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
-            onClick={() => setCollapsed(!collapsed)}
+            aria-label="메뉴 열기"
+            icon={isMobile ? <MenuOutlined /> : collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
+            onClick={() => (isMobile ? setMobileOpen(true) : setCollapsed(!collapsed))}
             className="trigger"
           />
           <Space className="user-info">
