@@ -13,7 +13,7 @@ function* walk(dir) {
   for (const name of readdirSync(dir)) {
     if (SKIP_DIRS.has(name)) continue;
     const p = join(dir, name);
-    if (SKIP_PATHS.includes(relative(root, p).replace(/\/g, '/'))) continue;
+    if (SKIP_PATHS.includes(relative(root, p).replace(/\\/g, '/'))) continue;
     if (statSync(p).isDirectory()) yield* walk(p);
     else if (name.endsWith('.md')) yield p;
   }
