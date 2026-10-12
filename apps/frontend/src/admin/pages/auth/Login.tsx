@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Form, Input, Button, Card, message } from 'antd';
 import { UserOutlined, LockOutlined } from '@ant-design/icons';
 import { useMutation } from '@tanstack/react-query';
@@ -12,6 +12,10 @@ import './Login.css';
  */
 const Login: React.FC = () => {
   const navigate = useNavigate();
+
+  useEffect(() => {
+    document.title = '관리자 로그인 | 수디자인';
+  }, []);
   const setAuth = useAdminAuthStore((state) => state.setAuth);
 
   const loginMutation = useMutation({

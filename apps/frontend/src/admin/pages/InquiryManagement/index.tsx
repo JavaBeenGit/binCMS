@@ -105,7 +105,7 @@ const InquiryManagement: React.FC = () => {
   return (
     <div>
       <PageHeader
-        title="견적문의 관리"
+        title="견적문의"
         extra={
           <Space>
             <span>상태 필터:</span>

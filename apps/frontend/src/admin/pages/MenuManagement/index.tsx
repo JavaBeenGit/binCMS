@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Button, Space, Table, Tabs, message } from 'antd';
+import { Button, Space, Table, Tabs, message, Alert } from 'antd';
 import { CheckCircleOutlined, PlusOutlined, StopOutlined } from '@ant-design/icons';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { menuApi, MenuCreateRequest, MenuResponse, MenuType, MenuUpdateRequest } from '@/shared/api/endpoints/menu';
@@ -155,6 +155,14 @@ const MenuManagement: React.FC = () => {
           label: tab.label,
           children: (
             <>
+              {tab.type === MenuType.USER && (
+                <Alert
+                  type="info"
+                  showIcon
+                  style={{ marginBottom: 12 }}
+                  message="홈페이지 상단 메뉴는 아직 이 설정과 연결돼 있지 않습니다. 여기서 바꿔도 홈페이지에는 반영되지 않습니다(연동 작업 예정)."
+                />
+              )}
               <ListSummary total={tab.rows.length} page={currentPage - 1} pageSize={PAGE_SIZE} />
               <Table
                 bordered

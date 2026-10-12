@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useCallback } from 'react';
+import React, { useState, useMemo, useCallback, useEffect } from 'react';
 import { Layout, Menu, Avatar, Dropdown, Button, Space } from 'antd';
 import {
   MenuFoldOutlined,
@@ -62,6 +62,11 @@ const AdminLayout: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { user, clearAuth } = useAdminAuthStore();
+
+  // 브라우저 탭 제목 — 홈페이지 제목과 구분한다
+  useEffect(() => {
+    document.title = '수디자인 관리자';
+  }, []);
 
   const { data: menusData } = useQuery({
     queryKey: ['menus', MenuType.ADMIN, false],

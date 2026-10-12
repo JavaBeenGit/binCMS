@@ -3,6 +3,7 @@ import { Form, Input, Button, message, Divider } from 'antd';
 import { UserOutlined, LockOutlined } from '@ant-design/icons';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { useNavigate, Link } from 'react-router-dom';
+import { FEATURES } from '@/shared/constants/features';
 import { login, type LoginRequest } from '@/shared/api/endpoints/auth';
 import { getKakaoConfig, buildKakaoAuthUrl, getNaverConfig, buildNaverAuthUrl, getGoogleConfig, buildGoogleAuthUrl } from '@/shared/api/endpoints/oauth';
 import { useAuthStore } from '@/shared/stores/authStore';
@@ -167,10 +168,12 @@ const UserLogin: React.FC = () => {
             </button>
           </div>
 
-          <div className="user-login-links">
-            <span>아직 회원이 아니신가요?</span>
-            <Link to="/user/signup">회원가입</Link>
-          </div>
+          {FEATURES.signup && (
+            <div className="user-login-links">
+              <span>아직 회원이 아니신가요?</span>
+              <Link to="/user/signup">회원가입</Link>
+            </div>
+          )}
         </div>
       </div>
     </div>

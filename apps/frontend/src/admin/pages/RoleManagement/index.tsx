@@ -158,7 +158,7 @@ const RoleManagement: React.FC = () => {
         title={
           <>
             <SafetyCertificateOutlined style={{ marginRight: 8 }} />
-            권한관리
+            권한 관리
           </>
         }
         extra={

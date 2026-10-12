@@ -29,7 +29,7 @@ const HomePage: React.FC = () => {
       {/* ── Service Section ── */}
       <section className="section services-section">
         <div className="section-inner">
-          <h2 className="section-title">Our Services</h2>
+          <h2 className="section-title">서비스 안내</h2>
           <p className="section-subtitle">고객의 라이프스타일에 맞는 최적의 인테리어를 제안합니다</p>
           <div className="services-grid">
             <Link to="/user/interior/onsite" className="service-card">

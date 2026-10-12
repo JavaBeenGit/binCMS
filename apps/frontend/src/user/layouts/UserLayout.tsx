@@ -7,6 +7,7 @@ import PopupLayer from '@/user/components/PopupLayer';
 import './UserLayout.css';
 
 import { BUSINESS } from '@/shared/constants/business';
+import { FEATURES } from '@/shared/constants/features';
 const UserLayout: React.FC = () => {
   const location = useLocation();
   const navigate = useNavigate();
@@ -73,9 +74,11 @@ const UserLayout: React.FC = () => {
             <Link to="/user/notice" className={`nav-item ${isActive('/user/notice') ? 'active' : ''}`}>
               공지사항
             </Link>
-            <Link to="/user/free" className={`nav-item ${isCommunityActive() ? 'active' : ''}`}>
-              자유게시판
-            </Link>
+            {FEATURES.freeBoard && (
+              <Link to="/user/free" className={`nav-item ${isCommunityActive() ? 'active' : ''}`}>
+                자유게시판
+              </Link>
+            )}
 
             {/* 인테리어 (드롭다운) */}
             <div className="nav-item-group">
@@ -109,8 +112,12 @@ const UserLayout: React.FC = () => {
             ) : (
               <div className="auth-links">
                 <Link to="/user/login" className="auth-link">로그인</Link>
-                <span className="auth-divider">|</span>
-                <Link to="/user/signup" className="auth-link">회원가입</Link>
+                {FEATURES.signup && (
+                  <>
+                    <span className="auth-divider">|</span>
+                    <Link to="/user/signup" className="auth-link">회원가입</Link>
+                  </>
+                )}
               </div>
             )}
           </div>
@@ -134,9 +141,11 @@ const UserLayout: React.FC = () => {
         <Link to="/user/notice" className={`mobile-nav-item ${isActive('/user/notice') ? 'active' : ''}`}>
           공지사항
         </Link>
-        <Link to="/user/free" className={`mobile-nav-item ${isActive('/user/free') ? 'active' : ''}`}>
-          자유게시판
-        </Link>
+        {FEATURES.freeBoard && (
+          <Link to="/user/free" className={`mobile-nav-item ${isActive('/user/free') ? 'active' : ''}`}>
+            자유게시판
+          </Link>
+        )}
 
         <span className="mobile-nav-group-title">인테리어</span>
         <Link to="/user/interior/onsite" className={`mobile-nav-sub-item ${isActive('/user/interior/onsite') ? 'active' : ''}`}>
@@ -171,9 +180,11 @@ const UserLayout: React.FC = () => {
               <Link to="/user/login" className="mobile-nav-auth-link">
                 <LoginOutlined /> 로그인
               </Link>
-              <Link to="/user/signup" className="mobile-nav-auth-link signup">
-                회원가입
-              </Link>
+              {FEATURES.signup && (
+                <Link to="/user/signup" className="mobile-nav-auth-link signup">
+                  회원가입
+                </Link>
+              )}
             </>
           )}
         </div>
@@ -223,7 +234,7 @@ const UserLayout: React.FC = () => {
             <div className="footer-title">고객지원</div>
             <ul className="footer-links">
               <li><Link to="/user/notice">공지사항</Link></li>
-              <li><Link to="/user/free">자유게시판</Link></li>
+              {FEATURES.freeBoard && <li><Link to="/user/free">자유게시판</Link></li>}
               <li><Link to="/user/faq">자주묻는질문</Link></li>
               <li><Link to="/user/inquiry">견적문의</Link></li>
             </ul>

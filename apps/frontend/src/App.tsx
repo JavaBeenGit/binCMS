@@ -110,7 +110,7 @@ function App() {
             {/* User Routes */}
             <Route path="/user" element={<UserLayout />}>
               <Route index element={<HomePage />} />
-              <Route path="notice" element={<PostListPage boardCode="notice" title="공지사항" subtitle="BIN INTERIOR의 소식을 전해드립니다" />} />
+              <Route path="notice" element={<PostListPage boardCode="notice" title="공지사항" subtitle="수디자인의 소식을 전해드립니다" />} />
               <Route path="free" element={<FreeBoardPage boardCode="free" title="자유게시판" subtitle="자유롭게 소통하는 공간입니다" />} />
               <Route path="faq" element={<PostListPage boardCode="faq" title="자주묻는질문" subtitle="궁금한 점을 확인해 보세요" />} />
               <Route path="inquiry" element={<InquiryPage />} />
