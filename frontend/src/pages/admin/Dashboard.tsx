@@ -48,7 +48,7 @@ const Dashboard: React.FC = () => {
       </Row>
 
       <Card style={{ marginTop: 24 }} title="시스템 정보">
-        <p><strong>역할:</strong> {user?.role === 'ADMIN' ? '관리자' : '일반 사용자'}</p>
+        <p><strong>역할:</strong> {user?.roleCode?.endsWith('ADMIN') ? '관리자' : '일반 사용자'}</p>
         <p><strong>이메일:</strong> {user?.email}</p>
         <p><strong>가입일:</strong> {user?.regDt ? new Date(user.regDt).toLocaleDateString('ko-KR') : '-'}</p>
       </Card>

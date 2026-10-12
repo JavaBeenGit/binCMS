@@ -47,7 +47,6 @@ const MenuManagement: React.FC = () => {
   });
 
   const menusData = activeTab === MenuType.ADMIN ? adminMenusData : userMenusData;
-  const isLoading = activeTab === MenuType.ADMIN ? isAdminLoading : isUserLoading;
 
   // 부모 메뉴 선택용 (플랫 리스트)
   const flattenMenus = (menus: MenuResponse[]): MenuResponse[] => {

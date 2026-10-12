@@ -32,7 +32,7 @@ const UserManagement: React.FC = () => {
   const [providerFilter, setProviderFilter] = useState<string | undefined>(undefined);
   const [activeFilter, setActiveFilter] = useState<boolean | undefined>(undefined);
   const [currentPage, setCurrentPage] = useState(0);
-  const [pageSize, setPageSize] = useState(10);
+  const [pageSize] = useState(10);
 
   // 모달 상태
   const [detailModalOpen, setDetailModalOpen] = useState(false);

@@ -27,7 +27,6 @@ import UserSignup from './user/pages/UserSignup';
 import EmailSignup from './user/pages/EmailSignup';
 import OAuthCallback from './user/pages/OAuthCallback';
 import MyPage from './user/pages/MyPage';
-import { useAuthStore } from './stores/authStore';
 import { useAdminAuthStore } from './stores/adminAuthStore';
 import PermissionGuard from './shared/components/PermissionGuard';
 

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Table, Button, Space, Tag, Popconfirm, message, Modal, Form, Input, InputNumber, Tooltip } from 'antd';
-import { PlusOutlined, EditOutlined, DeleteOutlined, CheckCircleOutlined, StopOutlined } from '@ant-design/icons';
+import { PlusOutlined, EditOutlined, CheckCircleOutlined, StopOutlined } from '@ant-design/icons';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import type { ColumnsType } from 'antd/es/table';
 import {
@@ -10,7 +10,6 @@ import {
   deleteBoard,
   activateBoard,
   type BoardResponse,
-  type BoardCreateRequest,
   type BoardUpdateRequest,
 } from '../../api/endpoints/board';
 
