@@ -36,6 +36,11 @@ export default defineConfig({
     sourcemap: true,
     rollupOptions: {
       output: {
+        // 관리자 페이지는 폴더/index.tsx 라 청크 이름이 전부 index-*.js 가 되므로 폴더 이름을 쓴다
+        chunkFileNames: (chunk) => {
+          const m = (chunk.facadeModuleId ?? '').replace(/\\/g, '/').match(/\/pages\/([^/]+)\/index\.tsx$/);
+          return m ? `assets/${m[1]}-[hash].js` : 'assets/[name]-[hash].js';
+        },
         manualChunks: {
           vendor: ['react', 'react-dom', 'react-router-dom'],
           ui: ['antd'],
