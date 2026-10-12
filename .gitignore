@@ -108,5 +108,15 @@ logs/
 secrets.yml
 application-secret.yml
 
+# Claude 개인 규칙 (사람마다 다름 — 커밋 금지)
+CLAUDE.local.md
+
+# superpowers 작업 스크래치 (장부·브리프)
+.superpowers/
+
+# 로컬 업로드·DB 백업
+uploads/
+backend/db-backup/
+
 # Docs drafts
 docs/drafts/
