@@ -67,8 +67,8 @@ Type(소문자): `feat` `fix` `docs` `style` `design` `refactor` `test` `build` 
 
 ## 7. 현재 단계
 
-- 2026-10-12: 재정비 설계서 승인. 0단계(기준선)·1단계(지침 뼈대)·3단계(보안·CI)·2단계(apps/)·4단계(Flyway)·4-1단계(블로그 이관 도구, 로컬 63건 이관)·5단계(기능 가이드·verify 스킬·ESLint)·6단계(로고·업체 정보·메타·robots·sitemap.xml·인테리어 딥링크·문의 메일 알림·대시보드 집계·지연 로딩, 통합 테스트 22건) 완료. 실행 순서는 설계서 §8-1 개정을 따른다.
-- 다음: 7단계 관리자 축소·운영 매뉴얼 → 8단계 배포(배포 후 [블로그 이관](docs/30-dev/guides/blog-import.md)을 운영 API에 한 번 더 실행; 운영 nginx는 `/sitemap.xml`도 백엔드로 프록시).
+- 2026-10-12: 재정비 설계서 승인. 0단계(기준선)·1단계(지침 뼈대)·3단계(보안·CI)·2단계(apps/)·4단계(Flyway)·4-1단계(블로그 이관 도구, 로컬 63건 이관)·5단계(기능 가이드·verify 스킬·ESLint)·6단계(로고·업체 정보·메타·robots·sitemap.xml·인테리어 딥링크·문의 메일 알림·대시보드 집계·지연 로딩)·7단계(관리자: V3 메뉴 정리, 플레이스홀더·`/admin/signup` 삭제, 화면 9개 폴더 분할 ≤300줄, 공통 컴포넌트, 운영 매뉴얼 [admin-manual](docs/30-dev/guides/admin-manual.md), 통합 테스트 25건) 완료. 실행 순서는 설계서 §8-1 개정을 따른다.
+- 다음: 8단계 배포(배포 후 [블로그 이관](docs/30-dev/guides/blog-import.md)을 운영 API에 한 번 더 실행; 운영 nginx는 `/sitemap.xml`도 백엔드로 프록시).
 - 사용자가 할 일: 카카오·네이버·구글·Gmail 키 재발급 후 `apps/backend/application-secret.yml` 교체.
 
 ## 8. 팀 컨벤션 / 피드백

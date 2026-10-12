@@ -51,7 +51,7 @@ DB_PORT=3307 ./gradlew.bat bootRun     # Docker (Git Bash)
 PowerShell에서 Docker 경로: `$env:DB_PORT=3307; .\gradlew.bat bootRun`
 
 - 첫 실행은 JDK 21 + Gradle 8.7 + 의존성 다운로드로 수 분(검증 PC: 약 3분).
-- `local` 프로파일이 기본. 기동 시 **Flyway**가 `db/migration/V1__init.sql`(스키마)·`V2__seed_core.sql`(역할·권한·메뉴·게시판)을 적용하고, `AdminAccountInitializer`가 관리자 계정이 없으면 `admin`을 만든다. JPA는 `validate`만 한다([ADR-0004](../adr/0004-flyway-migration.md)).
+- `local` 프로파일이 기본. 기동 시 **Flyway**가 `db/migration/V1__init.sql`(스키마)·`V2__seed_core.sql`(역할·권한·메뉴·게시판)·`V3__admin_menu_simplify.sql`(7단계 관리자 메뉴 정리)을 적용하고, `AdminAccountInitializer`가 관리자 계정이 없으면 `admin`을 만든다. JPA는 `validate`만 한다([ADR-0004](../adr/0004-flyway-migration.md)).
 - Flyway 도입(2026-10-12) 전에 만든 로컬 DB는 이력 테이블이 없어 기동이 `Found non-empty schema ... without schema history table`로 멈춘다. Docker면 `docker compose -f apps/backend/docker-compose.yml down -v` 후 다시 올린다(데이터 삭제됨).
 - 비밀값: `apps/backend/application-secret.yml`(git 제외)이 있으면 `spring.config.import`로 읽는다. 없어도 기동은 되지만 소셜 로그인·메일이 비활성(§5).
 - 준비 판정: `curl http://localhost:8080/api/v1/health` → `{"success":true,...}` (검증 PC: 기동 후 약 10초).

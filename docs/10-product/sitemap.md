@@ -27,22 +27,23 @@
 
 | URL | 화면 | 권한(프론트 가드) | 코드 |
 |---|---|---|---|
-| `/admin/login`, `/admin/signup` | 관리자 로그인·가입 | 비로그인 | `admin/pages/auth/Login`, `Signup` |
-| `/login`, `/signup` | → `/admin/...` 리다이렉트 | | |
+| `/admin/login` | 관리자 로그인 | 비로그인 | `admin/pages/auth/Login` |
+| `/login`, `/signup` | → `/admin/login`, `/user/signup` 리다이렉트 | | |
 | `/admin` | 대시보드 | `MENU_DASHBOARD` (가드 밖, 로그인만) | `admin/pages/Dashboard` |
-| `/admin/posts`, `/admin/posts/{notice,faq}` | 게시글 관리 | `MENU_POST` | `PostManagement` |
-| `/admin/posts/free` | 자유게시판 게시글 관리 | **매핑 없음 → 로그인만** (`menuPermissionMap` 누락, 매핑 없는 경로는 허용. 3단계에서 보강) | `PostManagement` |
-| `/admin/posts/qna` | 견적문의 관리 | `MENU_POST` | `InquiryManagement` |
-| `/admin/contents` | 콘텐츠(고정 페이지) 관리 | `MENU_CONTENT` | `ContentManagement` |
-| `/admin/popups` | 팝업 관리 | `MENU_POPUP` | `PopupManagement` |
-| `/admin/interiors/{onsite,self-tip,story}` | 인테리어 관리 | `MENU_INTERIOR` | `InteriorManagement` |
-| `/admin/users` | 회원 관리(차단 포함) | `MENU_USER` | `UserManagement` |
-| `/admin/system/menus` | 메뉴 관리 | `MENU_SYSTEM_MENU` | `MenuManagement` |
-| `/admin/system/admins` | 관리자 회원 관리 | `MENU_SYSTEM_ADMIN` | `AdminMemberManagement` |
+| `/admin/posts/{notice,faq}` | 공지사항·자주묻는질문 관리 | `MENU_POST` | `PostManagement/` |
+| `/admin/posts/free` | 자유게시판 관리 | `MENU_POST` | `PostManagement/` |
+| `/admin/posts/qna` | 견적문의 관리 | `MENU_POST` | `InquiryManagement/` |
+| `/admin/interiors/{onsite,self-tip,story}` | 시공사례 관리 | `MENU_INTERIOR` | `InteriorManagement/` |
+| `/admin/popups` | 팝업 관리 | `MENU_POPUP` | `PopupManagement/` |
+| `/admin/users` | 회원 관리(차단 포함) | `MENU_USER` | `UserManagement/` |
+| `/admin/contents` | 컨텐츠(고정 페이지) 관리 — 시스템 메뉴 | `MENU_CONTENT` | `ContentManagement/` |
+| `/admin/system/menus` | 메뉴 관리 | `MENU_SYSTEM_MENU` | `MenuManagement/` |
 | `/admin/system/boards` | 게시판 설정 | `MENU_SYSTEM_BOARD` | `BoardManagement` |
-| `/admin/system/roles` | 권한 관리 | `MENU_SYSTEM_ROLE` | `RoleManagement` |
-| `/admin/profile` | "개발 예정" 플레이스홀더 | 로그인 | `App.tsx` 인라인 |
-| `/admin/statistics`, `/admin/system/ips`, `/admin/system/codes` | "개발 예정" 플레이스홀더 | `MENU_STATISTICS`, `MENU_SYSTEM_IP`, `MENU_SYSTEM_CODE` | `App.tsx` 인라인 |
+| `/admin/system/roles` | 권한 관리 | `MENU_SYSTEM_ROLE` | `RoleManagement/` |
+| `/admin/system/admins` | 관리자 계정 | `MENU_SYSTEM_ADMIN` | `AdminMemberManagement/` |
+| 그 외 `/admin/**` | → `/admin` 리다이렉트 | | `App.tsx` catch-all |
+
+사이드메뉴 트리(V3, DB `tb_menus`): 대시보드 · 시공사례(현장시공/셀프시공 팁/인테리어스토리) · 공지사항 · 자주묻는질문 · 견적문의 · 팝업 관리 · [커뮤니티·회원: 자유게시판·회원 관리] · [시스템 관리: 컨텐츠·메뉴·게시판 설정·권한·관리자 계정 — SYSTEM_ADMIN만].
 
 권한 코드 ↔ 라우트 매핑의 정본은 `apps/frontend/src/shared/constants/permissions.ts`(`menuPermissionMap`). 위 표의 권한 열이 그 파일과 다르면 파일이 맞다 — 표를 고친다.
 
@@ -50,4 +51,4 @@
 
 ## 의도적 미구현
 
-- 통계·IP 관리·공통코드·관리자 프로필: 라우트만 있고 "개발 예정" 텍스트. 운영에 필요하면 기획 후 구현, 아니면 메뉴에서 제거(7단계에서 결정).
+- 통계·IP 관리·공통코드·관리자 프로필 플레이스홀더와 `/admin/signup`은 7단계(2026-10-12)에서 삭제했다. 방문자 통계가 필요하면 별도 기획.
