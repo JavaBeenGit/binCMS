@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button, Input, Form, Modal, Tag, message } from 'antd';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
@@ -12,7 +12,12 @@ import './MyPage.css';
  */
 const MyPage: React.FC = () => {
   const navigate = useNavigate();
-  const { user, clearAuth } = useAuthStore();
+  const { user, token, clearAuth } = useAuthStore();
+
+  // 비로그인 접근은 로그인 화면으로 (6단계)
+  useEffect(() => {
+    if (!token) navigate('/user/login', { replace: true });
+  }, [token, navigate]);
   const [withdrawModalOpen, setWithdrawModalOpen] = useState(false);
   const [form] = Form.useForm();
 

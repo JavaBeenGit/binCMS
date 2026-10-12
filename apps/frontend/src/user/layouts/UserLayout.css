@@ -49,6 +49,7 @@
   display: flex;
   align-items: center;
   gap: 10px;
+  flex-shrink: 0;
   text-decoration: none;
   color: #222;
   font-size: 22px;
@@ -67,6 +68,7 @@
   font-size: 20px;
   font-weight: 700;
   letter-spacing: -0.5px;
+  white-space: nowrap; /* 800px 안팎에서 글자가 세로로 쪼개지던 문제 */
 }
 
 /* ── Desktop Navigation ── */
@@ -383,6 +385,33 @@
   text-align: center;
   font-size: 12px;
   color: #666;
+}
+
+/* ================================================================
+   RESPONSIVE (769~1024px: 태블릿·좁은 데스크톱)
+   메뉴 6개 + 로그인/회원가입이 한 줄에 들어가도록 여백을 줄이고 로고 글자는 숨긴다.
+================================================================ */
+@media (min-width: 769px) and (max-width: 1024px) {
+  .header-inner {
+    padding: 0 16px;
+  }
+
+  .header-logo-img {
+    height: 56px;
+  }
+
+  .header-logo .logo-text {
+    display: none;
+  }
+
+  .nav-item {
+    padding: 24px 12px;
+    font-size: 14px;
+  }
+
+  .header-auth {
+    margin-left: 8px;
+  }
 }
 
 /* ================================================================
