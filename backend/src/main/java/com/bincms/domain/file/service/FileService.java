@@ -75,7 +75,8 @@ public class FileService {
             
             // 원본 파일 저장
             String filePath = datePath + "/" + storedName;
-            Path targetPath = Paths.get(uploadDir, datePath, storedName);
+            // transferTo 에 상대 경로를 주면 Tomcat 임시 작업 디렉터리 기준으로 풀리므로 절대 경로로 넘긴다
+            Path targetPath = Paths.get(uploadDir, datePath, storedName).toAbsolutePath();
             file.transferTo(targetPath.toFile());
             log.info("File uploaded: {}", filePath);
             

@@ -127,7 +127,7 @@ jwt:
   expiration: 86400000 # 24 hours
 
 file:
-  upload-dir: C:/Users/Administrator/Desktop/been/project/interior/uploads
+  upload-dir: ${FILE_UPLOAD_DIR:./uploads}   # 기본은 backend/uploads (git 제외). 다른 위치는 환경변수로
   base-url: /uploads
 
 ---

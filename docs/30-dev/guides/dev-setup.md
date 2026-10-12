@@ -68,7 +68,7 @@ npm run dev
 
 - `npm run lint`는 ESLint 설정 파일이 없어 실패한다(`ESLint couldn't find a configuration file`). 5단계에서 도입.
 - OAuth(카카오·네이버·구글)·Gmail 비밀값은 `application.yml`에 없다. `backend/application-secret.example.yml`을 복사해 `backend/application-secret.yml`(git 제외)을 만들고 값을 채워야 소셜 로그인·메일 인증이 동작한다. 값은 저장소 소유자에게 받는다. 키 재발급은 3단계.
-- 업로드 경로 `file.upload-dir`가 특정 PC 절대경로(`C:/Users/Administrator/...`)다. 다른 PC에서는 `application.yml`의 값을 바꿔야 파일 업로드가 된다(3단계에서 환경변수화). 헤더·푸터 로고도 `/uploads/etc/`에서 읽으므로 그 폴더가 없으면 로고가 깨져 보인다.
+- 업로드 경로는 `FILE_UPLOAD_DIR` 환경변수, 기본값 `backend/uploads`(git 제외)다. 헤더·푸터 로고는 `/uploads/etc/su_design_logo.png`·`su_design_logo_footer.png`를 읽는데 이 파일이 저장소에 없어 새 PC에서는 로고가 깨져 보인다(6단계에서 로고를 `frontend/public/`으로 이전).
 - 테스트가 없다. `gradlew build`는 테스트 0개로 통과한다.
 - 빌드 시 "Some chunks are larger than 500 kB" 경고가 난다(antd·CKEditor). 6단계 번들 분리에서 다룬다.
 
