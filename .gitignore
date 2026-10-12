@@ -122,3 +122,6 @@ docs/drafts/
 
 # Playwright MCP 스크린샷·스냅샷 (검증 산출물, 커밋 금지)
 .playwright-mcp/
+
+# 블로그 이관 캐시 (scripts/import-naver-blog.py)
+.blog-cache/
