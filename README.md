@@ -1,229 +1,58 @@
-# binCMS
+# 수디자인 인테리어 홈페이지 (binCms)
 
-> React + Spring Boot 기반 현대적인 CMS (Content Management System)
+> 인테리어 업체 **수디자인(BIN INTERIOR)**의 홈페이지와 관리자 백오피스. 시공사례·셀프 팁·공지·자유게시판·견적문의를 제공하고, 대표 한 명이 관리자 화면으로 운영한다.
 
----
+## 무엇이 있나
 
-## 📋 프로젝트 개요
+| 사용자(방문자·회원) | 관리자(운영자) |
+|---|---|
+| 홈, 시공사례 갤러리 3종(현장시공·셀프시공·인테리어스토리) | 게시글·게시판·콘텐츠·팝업·인테리어 관리 |
+| 공지사항, FAQ, 자유게시판(글·댓글) | 견적문의 확인, 회원 관리(차단) |
+| 견적문의, 회원가입(이메일 인증·카카오·네이버·구글), 마이페이지 | 메뉴·권한·관리자 계정 관리 |
 
-다중 사이트 지원, 게시판, 콘텐츠 관리, 권한 관리 등을 제공하는 엔터프라이즈급 CMS 시스템
+전체 화면 목록: [`docs/10-product/sitemap.md`](docs/10-product/sitemap.md).
 
-### 주요 기능
+## 기술 스택
 
-- 🏢 다중 사이트 관리 (Multi-Site)
-- 📝 게시판 시스템 (Board)
-- 📄 콘텐츠 관리 (Content)
-- 👥 회원 관리 (Member)
-- 🔐 권한 관리 (Permission)
-- 🎨 템플릿 시스템 (Template)
+- **프론트**: React 18 · Vite 5 · TypeScript · React Router · TanStack Query · Zustand · Ant Design(관리자) · CKEditor 5
+- **백엔드**: Spring Boot 3.3 · Java 21(Gradle toolchain 자동 다운로드) · Spring Data JPA + QueryDSL · Spring Security(JWT) · Spring Mail
+- **DB**: MySQL 8
 
----
+결정 근거: [`docs/30-dev/adr/`](docs/30-dev/adr/).
 
-## 🚀 기술 스택
-
-### Backend
-- **Language**: Java 21
-- **Framework**: Spring Boot 3.3.0
-- **ORM**: Spring Data JPA + QueryDSL 5.1.0
-- **Security**: Spring Security 6.x
-- **Database**: H2 (개발), PostgreSQL (운영)
-- **Build Tool**: Gradle
-
-### Frontend
-- **Library**: React 18.3
-- **Language**: TypeScript 5.4
-- **Build Tool**: Vite 5.2
-- **State Management**: Zustand, TanStack Query
-- **UI Framework**: Ant Design 5.15
-- **Routing**: React Router 6.23
-
-### Architecture
-- **Pattern**: SPA (Single Page Application)
-- **API**: RESTful API
-- **Authentication**: JWT (JSON Web Token)
-
----
-
-## 📁 프로젝트 구조
+## 저장소 구조
 
 ```
-binCMS/
-├── backend/                 # Spring Boot API
-│   ├── src/main/java/com/bincms/
-│   │   ├── CmsApplication.java
-│   │   ├── config/         # 설정 (Security, CORS, JPA, QueryDSL)
-│   │   ├── common/         # 공통 DTO, Entity, Exception
-│   │   └── domain/         # 도메인별 패키지
-│   ├── src/main/resources/
-│   │   └── application.yml
-│   └── build.gradle
-│
-├── frontend/                # React SPA
-│   ├── src/
-│   │   ├── admin/          # 관리자 화면
-│   │   ├── user/           # 사용자 화면
-│   │   ├── shared/         # 공통 컴포넌트
-│   │   ├── api/            # API 클라이언트
-│   │   └── types/          # TypeScript 타입
-│   ├── package.json
-│   └── vite.config.ts
-│
-└── docs/                    # 문서
-    ├── adr/                # Architecture Decision Records
-    ├── agent/              # Agent 시스템
-    └── plans/              # 작업 계획
+binCms/
+├── CLAUDE.md          # Claude 작업 진입 안내서
+├── backend/           # Spring Boot (Gradle)          ← 2단계에서 apps/backend 로 이동
+├── frontend/          # React + Vite                  ← 2단계에서 apps/frontend 로 이동
+├── docs/
+│   ├── 00-common/     # 업체 정보·용어집
+│   ├── 10-product/    # 사이트맵·기획
+│   ├── 30-dev/        # ADR·DB 명명·가이드·런북
+│   └── superpowers/   # 재정비 설계서·구현 계획
+└── scripts/           # 문서 링크 검사 등
 ```
 
----
+## 로컬 실행
 
-## 🛠️ 개발 환경 설정
+[`docs/30-dev/guides/dev-setup.md`](docs/30-dev/guides/dev-setup.md) — 필수 도구, DB 준비(Docker 또는 네이티브), 백엔드 8080·프론트 3000 기동, 알려진 문제.
 
-### 필수 요구사항
-
-- Java 21 이상
-- Node.js 20 이상
-- Git
-
-### 1. 저장소 클론
+요약:
 
 ```bash
-git clone <repository-url>
-cd binCMS
+docker compose -f backend/docker-compose.yml up -d --wait   # MySQL 3307
+cd backend && DB_PORT=3307 ./gradlew.bat bootRun              # http://localhost:8080/api/v1/health
+cd frontend && npm install && npm run dev                     # http://localhost:3000
 ```
 
-### 2. 백엔드 실행
+로컬 관리자: `admin` / `1234`.
 
-```bash
-cd backend
+## 현재 상태
 
-# Windows
-gradlew.bat bootRun
+2026-02에 만든 코드를 2026-10부터 재정비 중. 단계와 진행은 [`CLAUDE.md`](CLAUDE.md) §7, 설계서는 [`docs/superpowers/specs/2026-10-12-project-restructure-design.md`](docs/superpowers/specs/2026-10-12-project-restructure-design.md).
 
-# Linux/Mac
-./gradlew bootRun
-```
+## 라이선스
 
-백엔드 서버: http://localhost:8080
-
-### 3. 프론트엔드 실행
-
-```bash
-cd frontend
-
-# 의존성 설치
-npm install
-
-# 개발 서버 실행
-npm run dev
-```
-
-프론트엔드 서버: http://localhost:3000
-
-### 4. 동작 확인
-
-브라우저에서 http://localhost:3000 접속 → Health Check 정보 확인
-
----
-
-## 🔧 빌드 및 배포
-
-### 백엔드 빌드
-
-```bash
-cd backend
-./gradlew build
-
-# JAR 파일 생성 위치
-# backend/build/libs/bincms-0.0.1-SNAPSHOT.jar
-```
-
-### 프론트엔드 빌드
-
-```bash
-cd frontend
-npm run build
-
-# 빌드 결과 위치
-# frontend/dist/
-```
-
----
-
-## 📊 주요 엔드포인트
-
-| 엔드포인트 | 메소드 | 설명 |
-|:---|:---:|:---|
-| `/api/v1/health` | GET | Health Check |
-| `/h2-console` | - | H2 Database Console (개발 환경) |
-
----
-
-## 📚 문서
-
-- [ADR (Architecture Decision Records)](docs/adr/README.md)
-- [Agent System](docs/agent/README.md)
-- [작업 계획](docs/plans/README.md)
-
-### 주요 ADR
-
-- [ADR-0001: 순수 Spring Boot 채택](docs/adr/0001-use-egov-framework-4.md)
-- [ADR-0004: React 프론트엔드 채택](docs/adr/0004-use-thymeleaf-view-template.md)
-- [ADR-0006: SPA 아키텍처 채택](docs/adr/0006-adopt-spa-architecture.md)
-
----
-
-## 🗄️ 데이터베이스
-
-### H2 Console (개발 환경)
-
-- URL: http://localhost:8080/h2-console
-- JDBC URL: `jdbc:h2:mem:testdb`
-- Username: `sa`
-- Password: (없음)
-
----
-
-## 🔐 보안
-
-### 기본 인증 정보 (개발 환경)
-
-- Username: `admin`
-- Password: `admin`
-
-**⚠️ 운영 환경에서는 반드시 변경하세요!**
-
----
-
-## 🧪 테스트
-
-### 백엔드 테스트
-
-```bash
-cd backend
-./gradlew test
-```
-
-### 프론트엔드 테스트
-
-```bash
-cd frontend
-npm run test
-```
-
----
-
-## 📝 라이센스
-
-이 프로젝트는 MIT 라이센스를 따릅니다.
-
----
-
-## 👥 기여
-
-기여는 언제나 환영합니다! Pull Request를 보내주세요.
-
----
-
-## 📞 문의
-
-프로젝트 관련 문의사항은 Issue를 통해 남겨주세요.
+비공개(업체 납품용).
