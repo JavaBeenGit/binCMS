@@ -41,41 +41,41 @@ export interface PostSearchParams {
 
 export const postApi = {
   createPost: async (data: PostCreateRequest): Promise<ApiResponse<PostResponse>> => {
-    const response = await client.post('/posts', data);
+    const response = await client.post('/admin/posts', data);
     return response.data;
   },
 
   getAllPosts: async (page: number = 0, size: number = 20): Promise<ApiResponse<PageResponse<PostResponse>>> => {
-    const response = await client.get('/posts', {
+    const response = await client.get('/admin/posts', {
       params: { page, size }
     });
     return response.data;
   },
 
   getPostsByBoard: async (boardId: number, page: number = 0, size: number = 20): Promise<ApiResponse<PageResponse<PostResponse>>> => {
-    const response = await client.get(`/posts/board/${boardId}`, {
+    const response = await client.get(`/admin/posts/board/${boardId}`, {
       params: { page, size }
     });
     return response.data;
   },
 
   searchPosts: async (params: PostSearchParams): Promise<ApiResponse<PageResponse<PostResponse>>> => {
-    const response = await client.get('/posts/search', { params });
+    const response = await client.get('/admin/posts/search', { params });
     return response.data;
   },
 
   getPostById: async (id: number): Promise<ApiResponse<PostResponse>> => {
-    const response = await client.get(`/posts/${id}`);
+    const response = await client.get(`/admin/posts/${id}`);
     return response.data;
   },
 
   updatePost: async (id: number, data: PostUpdateRequest): Promise<ApiResponse<PostResponse>> => {
-    const response = await client.put(`/posts/${id}`, data);
+    const response = await client.put(`/admin/posts/${id}`, data);
     return response.data;
   },
 
   deletePost: async (id: number): Promise<ApiResponse<void>> => {
-    const response = await client.delete(`/posts/${id}`);
+    const response = await client.delete(`/admin/posts/${id}`);
     return response.data;
   }
 };

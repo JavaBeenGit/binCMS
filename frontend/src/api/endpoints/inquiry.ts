@@ -29,13 +29,13 @@ export const inquiryApi = {
   ): Promise<ApiResponse<PageResponse<InquiryResponse>>> => {
     const params: Record<string, unknown> = { page, size };
     if (status) params.status = status;
-    const response = await client.get('/inquiries', { params });
+    const response = await client.get('/admin/inquiries', { params });
     return response.data;
   },
 
   /** 견적문의 상세 조회 */
   getById: async (id: number): Promise<ApiResponse<InquiryResponse>> => {
-    const response = await client.get(`/inquiries/${id}`);
+    const response = await client.get(`/admin/inquiries/${id}`);
     return response.data;
   },
 
@@ -44,7 +44,7 @@ export const inquiryApi = {
     id: number,
     status: string
   ): Promise<ApiResponse<InquiryResponse>> => {
-    const response = await client.patch(`/inquiries/${id}/status`, { status });
+    const response = await client.patch(`/admin/inquiries/${id}/status`, { status });
     return response.data;
   },
 
@@ -53,7 +53,7 @@ export const inquiryApi = {
     id: number,
     memo: string
   ): Promise<ApiResponse<InquiryResponse>> => {
-    const response = await client.patch(`/inquiries/${id}/memo`, { memo });
+    const response = await client.patch(`/admin/inquiries/${id}/memo`, { memo });
     return response.data;
   },
 };

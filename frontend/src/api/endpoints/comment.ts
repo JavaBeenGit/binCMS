@@ -67,13 +67,13 @@ export const publicCommentApi = {
 export const commentApi = {
   /** 게시글의 댓글 목록 조회 */
   getByPostId: async (postId: number): Promise<ApiResponse<CommentResponse[]>> => {
-    const response = await client.get(`/comments/post/${postId}`);
+    const response = await client.get(`/admin/comments/post/${postId}`);
     return response.data;
   },
 
   /** 관리자 댓글 삭제 */
   delete: async (id: number): Promise<ApiResponse<void>> => {
-    const response = await client.delete(`/comments/${id}`);
+    const response = await client.delete(`/admin/comments/${id}`);
     return response.data;
   },
 };

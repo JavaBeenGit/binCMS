@@ -32,7 +32,7 @@ export const fileApi = {
     if (refType) formData.append('refType', refType);
     if (refId) formData.append('refId', String(refId));
 
-    const response = await client.post('/files/upload', formData, {
+    const response = await client.post('/user/files/upload', formData, {
       headers: { 'Content-Type': 'multipart/form-data' },
     });
     return response.data;
@@ -42,7 +42,7 @@ export const fileApi = {
    * 파일 정보 조회
    */
   getById: async (id: number): Promise<ApiResponse<FileResponse>> => {
-    const response = await client.get(`/files/${id}`);
+    const response = await client.get(`/user/files/${id}`);
     return response.data;
   },
 
@@ -50,7 +50,7 @@ export const fileApi = {
    * 참조 기준 파일 목록
    */
   getByRef: async (refType: string, refId: number): Promise<ApiResponse<FileResponse[]>> => {
-    const response = await client.get('/files/ref', {
+    const response = await client.get('/user/files/ref', {
       params: { refType, refId },
     });
     return response.data;
@@ -60,7 +60,7 @@ export const fileApi = {
    * 파일 삭제
    */
   delete: async (id: number): Promise<ApiResponse<void>> => {
-    const response = await client.delete(`/files/${id}`);
+    const response = await client.delete(`/user/files/${id}`);
     return response.data;
   },
 };

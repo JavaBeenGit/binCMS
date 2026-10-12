@@ -44,39 +44,39 @@ export interface MenuResponse {
 
 export const menuApi = {
   createMenu: async (data: MenuCreateRequest): Promise<ApiResponse<MenuResponse>> => {
-    const response = await client.post('/menus', data);
+    const response = await client.post('/admin/menus', data);
     return response.data;
   },
 
   getMenusByType: async (menuType: MenuType, includeInactive: boolean = false): Promise<ApiResponse<MenuResponse[]>> => {
-    const response = await client.get(`/menus/type/${menuType}`, {
+    const response = await client.get(`/admin/menus/type/${menuType}`, {
       params: { includeInactive }
     });
     return response.data;
   },
 
   getAllMenus: async (): Promise<ApiResponse<MenuResponse[]>> => {
-    const response = await client.get('/menus');
+    const response = await client.get('/admin/menus');
     return response.data;
   },
 
   getMenuById: async (id: number): Promise<ApiResponse<MenuResponse>> => {
-    const response = await client.get(`/menus/${id}`);
+    const response = await client.get(`/admin/menus/${id}`);
     return response.data;
   },
 
   updateMenu: async (id: number, data: MenuUpdateRequest): Promise<ApiResponse<MenuResponse>> => {
-    const response = await client.put(`/menus/${id}`, data);
+    const response = await client.put(`/admin/menus/${id}`, data);
     return response.data;
   },
 
   deleteMenu: async (id: number): Promise<ApiResponse<void>> => {
-    const response = await client.delete(`/menus/${id}`);
+    const response = await client.delete(`/admin/menus/${id}`);
     return response.data;
   },
 
   activateMenu: async (id: number): Promise<ApiResponse<void>> => {
-    const response = await client.patch(`/menus/${id}/activate`);
+    const response = await client.patch(`/admin/menus/${id}/activate`);
     return response.data;
   }
 };

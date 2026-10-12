@@ -51,11 +51,11 @@ export interface ContentPageResponse {
 export const publicContentApi = {
   /** 컨텐츠 키로 단건 조회 */
   getByKey: (contentKey: string) =>
-    apiClient.get<ApiResponse<ContentResponse>>(`/contents/key/${contentKey}`),
+    apiClient.get<ApiResponse<ContentResponse>>(`/public/contents/key/${contentKey}`),
 
   /** 활성 컨텐츠 목록 조회 */
   getActiveList: (page = 0, size = 20) =>
-    apiClient.get<ApiResponse<ContentPageResponse>>('/contents', {
+    apiClient.get<ApiResponse<ContentPageResponse>>('/public/contents', {
       params: { page, size },
     }),
 };

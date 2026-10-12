@@ -32,7 +32,7 @@ export const createBoard = async (data: BoardCreateRequest) => {
     success: boolean;
     data: BoardResponse;
     message: string;
-  }>('/boards', data);
+  }>('/admin/boards', data);
   return response.data;
 };
 
@@ -43,7 +43,7 @@ export const getAllBoards = async () => {
   const response = await apiClient.get<{
     success: boolean;
     data: BoardResponse[];
-  }>('/boards');
+  }>('/admin/boards');
   return response.data;
 };
 
@@ -54,7 +54,7 @@ export const getActiveBoards = async () => {
   const response = await apiClient.get<{
     success: boolean;
     data: BoardResponse[];
-  }>('/boards/active');
+  }>('/admin/boards/active');
   return response.data;
 };
 
@@ -65,7 +65,7 @@ export const getBoardById = async (id: number) => {
   const response = await apiClient.get<{
     success: boolean;
     data: BoardResponse;
-  }>(`/boards/${id}`);
+  }>(`/admin/boards/${id}`);
   return response.data;
 };
 
@@ -77,7 +77,7 @@ export const updateBoard = async (id: number, data: BoardUpdateRequest) => {
     success: boolean;
     data: BoardResponse;
     message: string;
-  }>(`/boards/${id}`, data);
+  }>(`/admin/boards/${id}`, data);
   return response.data;
 };
 
@@ -88,7 +88,7 @@ export const deleteBoard = async (id: number) => {
   const response = await apiClient.delete<{
     success: boolean;
     message: string;
-  }>(`/boards/${id}`);
+  }>(`/admin/boards/${id}`);
   return response.data;
 };
 
@@ -99,7 +99,7 @@ export const activateBoard = async (id: number) => {
   const response = await apiClient.patch<{
     success: boolean;
     message: string;
-  }>(`/boards/${id}/activate`);
+  }>(`/admin/boards/${id}/activate`);
   return response.data;
 };
 

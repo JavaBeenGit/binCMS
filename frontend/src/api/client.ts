@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { message } from 'antd';
 import { useAdminAuthStore } from '../stores/adminAuthStore';
 import { useAuthStore } from '../stores/authStore';
 
@@ -34,6 +35,10 @@ apiClient.interceptors.response.use(
     return response;
   },
   (error) => {
+    if (error.response?.status === 403) {
+      // 로그인은 됐지만 역할이 부족 — 로그아웃시키지 않고 안내만
+      message.error('권한이 없습니다');
+    }
     if (error.response?.status === 401) {
       const isAdminPage = window.location.pathname.startsWith('/admin');
       if (isAdminPage) {
