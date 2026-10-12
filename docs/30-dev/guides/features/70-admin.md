@@ -12,15 +12,16 @@
 | 자주묻는질문 | `/admin/posts/faq` | `PostManagement/` | `MENU_POST` | 위와 같음 |
 | 견적문의 | `/admin/posts/qna` | `InquiryManagement/` | `MENU_POST` | [50-견적문의](50-견적문의.md) |
 | 팝업 관리 | `/admin/popups` | `PopupManagement/` | `MENU_POPUP` | `GET/POST/PUT/DELETE /admin/popups`, `PATCH .../activate|deactivate` |
+| 홈페이지 메뉴 | `/admin/site-menus` | `SiteMenuManagement/` | `MENU_SITE_MENU`(모든 관리자 역할) | `GET /admin/menus/type/USER?includeInactive=true`, `PATCH /admin/menus/{id}/activate|deactivate`, `PATCH /admin/menus/{id}/move {direction: up|down}` → 홈페이지 헤더(`GET /public/menus`)에 즉시 반영 |
 | 커뮤니티·회원 › 자유게시판 | `/admin/posts/free` | `PostManagement/` | `MENU_POST` | 게시글 API (회원 글 삭제) |
 | 커뮤니티·회원 › 회원 관리 | `/admin/users` | `UserManagement/` | `MENU_USER` | `GET /admin/users`, `PUT /{id}`, `PATCH /{id}/password|deactivate|activate` |
 | 시스템 관리 › 컨텐츠 관리 | `/admin/contents` | `ContentManagement/` | `MENU_CONTENT` | `GET/POST/PUT/DELETE /admin/contents`, `PATCH .../activate|deactivate` |
-| 시스템 관리 › 메뉴 관리 | `/admin/system/menus` | `MenuManagement/` | `MENU_SYSTEM_MENU` | `GET /admin/menus`, `GET /type/{ADMIN|USER}`, `POST/PUT/DELETE`, `PATCH /{id}/activate` |
+| 시스템 관리 › 메뉴 관리 | `/admin/system/menus` | `MenuManagement/` | `MENU_SYSTEM_MENU` | `GET /admin/menus`, `GET /type/{ADMIN|USER}`, `POST/PUT/DELETE`(DELETE는 비활성), `PATCH /{id}/activate|deactivate|move` |
 | 시스템 관리 › 게시판 설정 | `/admin/system/boards` | `BoardManagement.tsx` | `MENU_SYSTEM_BOARD` | `GET/POST/PUT/DELETE /admin/boards`, `PATCH /{id}/activate` |
 | 시스템 관리 › 권한 관리 | `/admin/system/roles` | `RoleManagement/` | `MENU_SYSTEM_ROLE` | `GET/POST/PUT/DELETE /admin/roles`, `GET /admin/roles/permissions` |
 | 시스템 관리 › 관리자 계정 | `/admin/system/admins` | `AdminMemberManagement/` | `MENU_SYSTEM_ADMIN` | `GET/POST /admin/members`, `PUT /{id}`, `PATCH /{id}/password|deactivate|activate` |
 
-- 역할별 노출: **모든 관리자 역할** → 대시보드~팝업 관리 6개. GENERAL_ADMIN → + 커뮤니티·회원 중 자유게시판. OPERATION_ADMIN → + 회원 관리. SYSTEM_ADMIN → + 시스템 관리 전체. 그룹 메뉴는 보이는 자식이 하나라도 있을 때만 보인다(`AdminLayout`).
+- 역할별 노출: **모든 관리자 역할** → 대시보드~팝업 관리·홈페이지 메뉴 7개. GENERAL_ADMIN → + 커뮤니티·회원 중 자유게시판. OPERATION_ADMIN → + 회원 관리. SYSTEM_ADMIN → + 시스템 관리 전체. 그룹 메뉴는 보이는 자식이 하나라도 있을 때만 보인다(`AdminLayout`).
 - 없는 `/admin/**` 경로는 대시보드로(`App.tsx` catch-all). 통계·IP·공통코드·내 정보·`/admin/signup`은 7단계에서 삭제.
 - 관리자 계정 생성은 시스템 관리 › 관리자 계정에서만. 비밀번호는 거기서 초기화(본인 변경 화면 없음).
 - 화면 제목은 사이드메뉴 이름과 같다(견적문의·권한 관리·관리자 계정·회원 관리). 브라우저 탭 제목은 "수디자인 관리자", 로그인 화면은 "관리자 로그인 | 수디자인".
@@ -39,13 +40,15 @@
 - **회원 관리**(`UserManagement/`): 회원(USER) 목록·검색·가입방식 필터, 수정, 비밀번호 초기화, 차단(비활성)/해제. 비활성 회원은 로그인 불가.
 - **컨텐츠 관리**(`ContentManagement/`): `contentKey`로 고정 페이지(`/user/page/:contentKey`)를 만든다. 사용자 화면에 메뉴 링크는 없음(직접 URL) — 개발자용이라 시스템 메뉴.
 - **관리자 계정**(`AdminMemberManagement/`): 관리자 3역할 계정 생성·수정·비밀번호 초기화·활성/비활성. 테이블은 가로 스크롤(7단계에서 "관리" 열 잘림 해결).
-- **메뉴 관리**(`MenuManagement/`): 관리자/사용자 메뉴 탭, 트리(깊이·정렬·URL·아이콘), 추가·수정·삭제·사용 여부. 아이콘은 `AdminLayout`의 `iconMap`에 있는 이름만 그려진다. **사용자 메뉴(USER) 탭은 DB에 있지만 사용자 헤더는 코드에 고정된 메뉴를 쓴다**(미연동) — 탭 상단에 안내 Alert 표시(2026-10-13). 연동은 목표(설계 중).
+- **홈페이지 메뉴**(`SiteMenuManagement/`): 운영자용. 사용자 메뉴 전체(꺼진 것 포함)를 표로 보여 주고 **홈페이지에 표시 스위치**(activate/deactivate)와 **순서 ▲▼**(move — 같은 부모의 형제와 교환, 끝이면 무시)만 있다. 추가·수정·삭제 없음. 바꾸면 `['site-menus']`를 무효화해 홈페이지 헤더가 바로 다시 읽는다(`SiteMenuTest`).
+- **메뉴 관리**(`MenuManagement/`, 시스템): 관리자/사용자 메뉴 탭, 트리(깊이·정렬·URL·아이콘), 추가·수정·사용 여부. 아이콘은 `AdminLayout`의 `iconMap`에 있는 이름만 그려진다. **사용자 메뉴 탭 = 홈페이지 상단 메뉴**(2026-10-13 연동). 사용자 메뉴에는 삭제 버튼이 없고 끄기만 있다(실수 방지, 사용자 결정); 관리자 메뉴의 삭제도 실제로는 비활성화다. 새 사용자 메뉴의 URL은 `App.tsx`에 라우트가 있어야 동작한다(없으면 홈으로).
 - **권한 관리**(`RoleManagement/`): 역할 4개와 권한 매핑(권한 수 배지), 역할 추가·수정·활성/비활성·삭제. SYSTEM_ADMIN·USER는 삭제 버튼 없음.
 - **게시판 설정**(`BoardManagement.tsx`): 게시판 코드·이름·설명·정렬·사용 여부. 코드(`notice`·`faq`·`free`)는 라우트와 결합돼 있어 바꾸면 사용자 화면이 깨진다.
 
 ## 테스트 체크포인트
 
-- `admin/1234` 로그인 → 사이드메뉴 8항목(대시보드·시공사례·공지사항·자주묻는질문·견적문의·팝업 관리·커뮤니티·회원·시스템 관리), 로고 "수디자인 관리자" (2026-10-12 실측). 트리·권한은 `AdminMenuTreeTest`.
+- `admin/1234` 로그인 → 사이드메뉴 9항목(대시보드·시공사례·공지사항·자주묻는질문·견적문의·팝업 관리·홈페이지 메뉴·커뮤니티·회원·시스템 관리), 로고 "수디자인 관리자". 트리·권한은 `AdminMenuTreeTest`.
+- 홈페이지 메뉴에서 자유게시판 스위치 켬 → 홈페이지 헤더에 자유게시판 등장, 끔 → 사라짐. 공지사항 ▼ → 헤더 순서 HOME·인테리어·공지사항…, ▲ → 원래대로 (2026-10-13 실측, `SiteMenuTest`).
 - 공지 등록 → 상세 → 수정 → 삭제가 목록에 반영(2026-10-12 실측). 시공사례 등록(대표 이미지 + 본문)이 사용자 갤러리에 반영([40](40-인테리어-갤러리.md)).
 - GENERAL_ADMIN 계정으로 로그인 → 시스템 관리 그룹이 안 보이고 `/admin/system/menus` 직접 접속은 `PermissionGuard`가 막는다. 회원 토큰으로 `/admin/**` 호출 → 403(`SecurityRulesTest`).
 - `/admin/signup`·`/admin/statistics` 직접 접속 → 대시보드로.
@@ -54,5 +57,4 @@
 
 - 방문자 통계는 없다(애널리틱스 미연동).
 - 관리자 화면에 댓글 관리가 없다(위 메모).
-- 사용자 메뉴(USER) 관리가 사용자 헤더에 반영되지 않는다.
 - 관리자 본인 비밀번호 변경 화면이 없다(관리자 계정 화면에서 초기화).

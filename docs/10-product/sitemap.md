@@ -10,7 +10,7 @@
 | `/user` | 홈(히어로·서비스 3종·견적 CTA) | 모두 | `user/pages/HomePage.tsx` |
 | `/user/notice` | 공지사항 목록 | 모두 | `PostListPage` (`boardCode=notice`) |
 | `/user/faq` | 자주묻는질문 | 모두 | `PostListPage` (`faq`) |
-| `/user/free` | 자유게시판(글·댓글) — **메뉴에서 숨김**(`FEATURES.freeBoard`), URL 직접 접속만 | 조회 모두 / 작성 로그인 | `FreeBoardPage`, `CommentSection` |
+| `/user/free` | 자유게시판(글·댓글) — **메뉴 꺼 둠**(V4 `use_yn=N`, 홈페이지 메뉴 화면에서 켤 수 있음), URL 직접 접속만 | 조회 모두 / 작성 로그인 | `FreeBoardPage`, `CommentSection` |
 | `/user/interior/onsite` | 현장시공 갤러리 | 모두 | `InteriorGalleryPage` (`ONSITE`) |
 | `/user/interior/self-tip` | 셀프시공 갤러리 | 모두 | `InteriorGalleryPage` (`SELF_TIP`) |
 | `/user/interior/story` | 인테리어스토리 갤러리 | 모두 | `InteriorGalleryPage` (`STORY`) |
@@ -35,6 +35,7 @@
 | `/admin/posts/qna` | 견적문의 관리 | `MENU_POST` | `InquiryManagement/` |
 | `/admin/interiors/{onsite,self-tip,story}` | 시공사례 관리 | `MENU_INTERIOR` | `InteriorManagement/` |
 | `/admin/popups` | 팝업 관리 | `MENU_POPUP` | `PopupManagement/` |
+| `/admin/site-menus` | 홈페이지 메뉴(켜기/끄기·순서) | `MENU_SITE_MENU` | `SiteMenuManagement/` |
 | `/admin/users` | 회원 관리(차단 포함) | `MENU_USER` | `UserManagement/` |
 | `/admin/contents` | 컨텐츠(고정 페이지) 관리 — 시스템 메뉴 | `MENU_CONTENT` | `ContentManagement/` |
 | `/admin/system/menus` | 메뉴 관리 | `MENU_SYSTEM_MENU` | `MenuManagement/` |
@@ -43,7 +44,7 @@
 | `/admin/system/admins` | 관리자 계정 | `MENU_SYSTEM_ADMIN` | `AdminMemberManagement/` |
 | 그 외 `/admin/**` | → `/admin` 리다이렉트 | | `App.tsx` catch-all |
 
-사이드메뉴 트리(V3, DB `tb_menus`): 대시보드 · 시공사례(현장시공/셀프시공 팁/인테리어스토리) · 공지사항 · 자주묻는질문 · 견적문의 · 팝업 관리 · [커뮤니티·회원: 자유게시판·회원 관리] · [시스템 관리: 컨텐츠·메뉴·게시판 설정·권한·관리자 계정 — SYSTEM_ADMIN만].
+사이드메뉴 트리(V3·V4, DB `tb_menus`): 대시보드 · 시공사례(현장시공/셀프시공 팁/인테리어스토리) · 공지사항 · 자주묻는질문 · 견적문의 · 팝업 관리 · 홈페이지 메뉴 · [커뮤니티·회원: 자유게시판·회원 관리] · [시스템 관리: 컨텐츠·메뉴·게시판 설정·권한·관리자 계정 — SYSTEM_ADMIN만]. 홈페이지 상단 메뉴는 DB 사용자 메뉴(`GET /api/v1/public/menus`).
 
 권한 코드 ↔ 라우트 매핑의 정본은 `apps/frontend/src/shared/constants/permissions.ts`(`menuPermissionMap`). 위 표의 권한 열이 그 파일과 다르면 파일이 맞다 — 표를 고친다.
 

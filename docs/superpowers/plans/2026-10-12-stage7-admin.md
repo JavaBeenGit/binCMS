@@ -124,4 +124,10 @@ admin/pages/<Feature>/<Feature>PasswordModal.tsx 비밀번호 초기화(회원·
 
 ## 실측 결과 (Task 5에서 기록)
 
+### 후속 (2026-10-13, 사용자 요청) — 회원가입 숨김 · 홈페이지 메뉴 연동
+
+- 결정: 회원가입 버튼 숨김(`FEATURES.signup`, 코드·라우트 유지) · 자유게시판은 임시로 끔 · 홈페이지 상단 메뉴를 DB 사용자 메뉴로 연동(the-empty-map 방식: 공개 API + 폴백). 물어본 것 3개 → 형이 직접 켜고 끄기(운영 메뉴 "홈페이지 메뉴", 모든 관리자 역할) · 사용자 메뉴는 삭제 없이 끄기만 · 푸터는 코드 고정.
+- 구현: V4(자유게시판 use_yn=N, 권한 `MENU_SITE_MENU`, 관리자 메뉴 "홈페이지 메뉴" sort 7), `GET /api/v1/public/menus`, `PATCH /admin/menus/{id}/deactivate|move`, `useSiteMenus`(5분 캐시, `FALLBACK_SITE_MENUS`), `SiteMenuManagement/`(스위치·▲▼), 시스템 메뉴 관리 사용자 탭은 삭제→끄기. `SiteMenuTest` 4건(29/29).
+- 주의: 로그인 토큰에 권한 목록이 들어 있어 V4 적용 뒤 기존 관리자 세션은 다시 로그인해야 "홈페이지 메뉴"가 보인다.
+
 - 2026-10-12 공지 CRUD 실측 중 발견: 대시보드 "게시글" 수가 삭제한 글(useYn=N 비활성)까지 셌다 → `countByUseYn("Y")` + `DashboardSummaryTest.postsCountExcludesDeactivated` (RED→GREEN).
