@@ -2,7 +2,7 @@ import React from 'react';
 import { Form, Input, Button, Card, message } from 'antd';
 import { UserOutlined, LockOutlined } from '@ant-design/icons';
 import { useMutation } from '@tanstack/react-query';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { login, type LoginRequest } from '@/shared/api/endpoints/auth';
 import { useAdminAuthStore } from '@/shared/stores/adminAuthStore';
 import './Login.css';
@@ -40,7 +40,7 @@ const Login: React.FC = () => {
 
   return (
     <div className="login-container">
-      <Card className="login-card" title="binCMS 로그인">
+      <Card className="login-card" title="수디자인 관리자">
         <Form
           name="login"
           onFinish={onFinish}
@@ -82,10 +82,6 @@ const Login: React.FC = () => {
               로그인
             </Button>
           </Form.Item>
-
-          <div className="login-footer">
-            계정이 없으신가요? <Link to="/admin/signup">회원가입</Link>
-          </div>
         </Form>
       </Card>
     </div>

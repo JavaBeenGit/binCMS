@@ -19,7 +19,6 @@ import PermissionGuard from '@/shared/components/PermissionGuard';
 // 관리자 화면과 CKEditor 를 쓰는 화면은 지연 로딩 — 사용자 첫 화면 번들에서 분리한다 (6단계).
 const FreeBoardPage = lazy(() => import('@/user/pages/FreeBoardPage'));
 const Login = lazy(() => import('@/admin/pages/auth/Login'));
-const Signup = lazy(() => import('@/admin/pages/auth/Signup'));
 const AdminLayout = lazy(() => import('@/admin/layouts/AdminLayout'));
 const Dashboard = lazy(() => import('@/admin/pages/Dashboard'));
 const BoardManagement = lazy(() => import('@/admin/pages/BoardManagement'));
@@ -53,13 +52,12 @@ function App() {
       <BrowserRouter>
         <Suspense fallback={<PageLoading />}>
           <Routes>
-            {/* Admin Login/Signup */}
+            {/* 관리자 로그인 (관리자 계정은 시스템 관리 > 관리자 계정에서만 만든다) */}
             <Route path="/admin/login" element={<Login />} />
-            <Route path="/admin/signup" element={<Signup />} />
 
             {/* 기존 /login 리디렉트 */}
             <Route path="/login" element={<Navigate to="/admin/login" replace />} />
-            <Route path="/signup" element={<Navigate to="/admin/signup" replace />} />
+            <Route path="/signup" element={<Navigate to="/user/signup" replace />} />
 
             {/* Admin Routes */}
             <Route
@@ -74,23 +72,18 @@ function App() {
             >
               {/* 대시보드 - 권한 체크 없이 기본 페이지 */}
               <Route index element={<Dashboard />} />
-              <Route path="profile" element={<div>내 정보 (개발 예정)</div>} />
 
               {/* 권한 체크가 필요한 라우트 */}
               <Route element={<PermissionGuard />}>
-                <Route path="posts" element={<PostManagement />} />
                 <Route path="posts/notice" element={<PostManagement boardCode="notice" />} />
                 <Route path="posts/faq" element={<PostManagement boardCode="faq" />} />
                 <Route path="posts/free" element={<PostManagement boardCode="free" />} />
                 <Route path="posts/qna" element={<InquiryManagement />} />
-                <Route path="statistics" element={<div>통계 관리 (개발 예정)</div>} />
                 <Route path="users" element={<UserManagement />} />
 
                 {/* 시스템 관리 */}
                 <Route path="system/menus" element={<MenuManagement />} />
                 <Route path="system/admins" element={<AdminMemberManagement />} />
-                <Route path="system/ips" element={<div>IP 관리 (개발 예정)</div>} />
-                <Route path="system/codes" element={<div>공통코드 관리 (개발 예정)</div>} />
                 <Route path="system/boards" element={<BoardManagement />} />
                 <Route path="system/roles" element={<RoleManagement />} />
 
