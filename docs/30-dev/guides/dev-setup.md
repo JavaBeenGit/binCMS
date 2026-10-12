@@ -70,6 +70,8 @@ npm run dev
 - OAuth(카카오·네이버·구글)·Gmail 비밀값은 `application.yml`에 없다. `backend/application-secret.example.yml`을 복사해 `backend/application-secret.yml`(git 제외)을 만들고 값을 채워야 소셜 로그인·메일 인증이 동작한다. 값은 저장소 소유자에게 받는다. 키 재발급은 3단계.
 - 업로드 경로는 `FILE_UPLOAD_DIR` 환경변수, 기본값 `backend/uploads`(git 제외)다. 헤더·푸터 로고는 `/uploads/etc/su_design_logo.png`·`su_design_logo_footer.png`를 읽는데 이 파일이 저장소에 없어 새 PC에서는 로고가 깨져 보인다(6단계에서 로고를 `frontend/public/`으로 이전).
 - 테스트가 없다. `gradlew build`는 테스트 0개로 통과한다.
+- 보안(3단계 대상, 2026-10-12 실측): `/api/v1/admin/**`가 비로그인으로 200을 반환한다. 비로그인 `POST /api/v1/user/posts/free`는 401이 아니라 **500**을 반환한다(인증 주체가 없을 때 NPE로 추정).
+- `ckeditor5`는 `47.4.0`에 고정돼 있다. `^` 범위로 올리면 47.7.x(LTS)에서 GPL 키가 거부돼(`license-key-lts-not-allowed`) 에디터가 비활성이 된다. `package-lock.json`을 커밋하므로 `npm ci`를 쓰면 안전하다.
 - 빌드 시 "Some chunks are larger than 500 kB" 경고가 난다(antd·CKEditor). 6단계 번들 분리에서 다룬다.
 
 ## 6. 종료
