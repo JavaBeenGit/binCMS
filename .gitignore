@@ -40,7 +40,6 @@ backend/bin/
 
 # Dependencies
 frontend/node_modules/
-frontend/package-lock.json
 frontend/yarn.lock
 frontend/pnpm-lock.yaml
 
