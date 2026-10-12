@@ -136,11 +136,11 @@ apps/frontend/src/
 
 ### 3단계 — 보안·설정 (`fix/보안-설정-정비`)
 
-- **권한 모델**: 역할은 `ADMIN`(관리자, 기존 세부 Permission 유지)과 `USER`(일반 회원) 두 축.
+- **권한 모델**: 역할은 관리자 축(현행 `SYSTEM_ADMIN`·`OPERATION_ADMIN`·`GENERAL_ADMIN` 3코드 유지, 기존 세부 Permission 유지)과 회원 축(`USER`) 두 축. 관리자 3코드를 하나로 합치지 않는다(ADR-0003).
   - `/api/v1/admin/**` → `ROLE_ADMIN` 필수. 세부 권한은 기존 `Permission` 기반 메서드 보안(`@PreAuthorize`)으로.
   - `/api/v1/user/**`, `/api/v1/auth/withdraw`, 마이페이지 수정 → 인증 필수.
   - `/api/v1/public/**`, `/api/v1/auth/{login,signup}`, 파일 조회, `/uploads/**` → `permitAll`.
-  - 현재 `permitAll`인 `/api/v1/{boards,posts,comments,contents,menus,files,inquiries}/**`는 관리자 전용 엔드포인트이므로 `/api/v1/admin/...`으로 **경로 통일**한다(사용자 결정 2026-10-12). 결과적으로 API 접두어는 `admin`(관리자)·`user`(로그인 회원)·`public`(비로그인)·`auth`(로그인·가입) 네 가지만 남는다. 프론트 호출부 동시 수정.
+  - 현재 `permitAll`인 `/api/v1/{boards,posts,comments,menus,files,inquiries}/**`는 관리자 전용 엔드포인트이므로 `/api/v1/admin/...`으로 **경로 통일**한다(사용자 결정 2026-10-12). 단 `/api/v1/contents/**`(GET)는 사용자 고정 페이지(`/user/page/:contentKey`)가 비로그인으로 쓰는 공개 API이므로 `/api/v1/public/contents/...`로 옮긴다(2026-10-12 리뷰에서 발견). 결과적으로 API 접두어는 `admin`(관리자)·`user`(로그인 회원)·`public`(비로그인)·`auth`(로그인·가입) 네 가지만 남는다. 프론트 호출부 동시 수정.
   - `h2-console` 규칙 제거(H2 미사용).
 - **비밀값**: 카카오·네이버·구글·Gmail·JWT 전부 **재발급** 후 환경변수(`${KAKAO_CLIENT_SECRET}` 등)로. `application.yml`에서 평문 제거. `.env.example` 제공. 로컬 실행은 `application-local.yml`(git 제외)로.
 - 업로드 경로 `file.upload-dir`를 환경변수 기본값 `./uploads`로.

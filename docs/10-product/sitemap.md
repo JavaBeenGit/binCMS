@@ -19,7 +19,7 @@
 | `/user/login` | 회원 로그인(이메일·카카오·네이버·구글) | 비로그인 | `UserLogin` |
 | `/user/signup`, `/user/signup/email` | 회원가입(이메일 인증) | 비로그인 | `UserSignup`, `EmailSignup` |
 | `/user/oauth/callback/{kakao,naver,google}` | 소셜 로그인 콜백 | — | `OAuthCallback` |
-| `/user/mypage` | 내 정보 수정·탈퇴 | 로그인 | `MyPage` |
+| `/user/mypage` | 내 정보 조회·탈퇴 (수정 기능 없음) | 로그인 | `MyPage` |
 
 홈 진입 시 활성 팝업 레이어(`PopupLayer`)가 뜬다.
 
@@ -30,7 +30,8 @@
 | `/admin/login`, `/admin/signup` | 관리자 로그인·가입 | 비로그인 | `pages/auth/Login`, `Signup` |
 | `/login`, `/signup` | → `/admin/...` 리다이렉트 | | |
 | `/admin` | 대시보드 | `MENU_DASHBOARD` (가드 밖, 로그인만) | `pages/admin/Dashboard` |
-| `/admin/posts`, `/admin/posts/{notice,faq,free}` | 게시글 관리 | `MENU_POST` | `PostManagement` |
+| `/admin/posts`, `/admin/posts/{notice,faq}` | 게시글 관리 | `MENU_POST` | `PostManagement` |
+| `/admin/posts/free` | 자유게시판 게시글 관리 | **매핑 없음 → 로그인만** (`menuPermissionMap` 누락, 매핑 없는 경로는 허용. 3단계에서 보강) | `PostManagement` |
 | `/admin/posts/qna` | 견적문의 관리 | `MENU_POST` | `InquiryManagement` |
 | `/admin/contents` | 콘텐츠(고정 페이지) 관리 | `MENU_CONTENT` | `ContentManagement` |
 | `/admin/popups` | 팝업 관리 | `MENU_POPUP` | `PopupManagement` |

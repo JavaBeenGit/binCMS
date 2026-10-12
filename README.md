@@ -39,11 +39,14 @@ binCms/
 
 [`docs/30-dev/guides/dev-setup.md`](docs/30-dev/guides/dev-setup.md) — 필수 도구, DB 준비(Docker 또는 네이티브), 백엔드 8080·프론트 3000 기동, 알려진 문제.
 
-요약:
+요약 (터미널 3개, 저장소 루트에서):
 
 ```bash
+# 터미널 1 — DB
 docker compose -f backend/docker-compose.yml up -d --wait   # MySQL 3307
+# 터미널 2 — 백엔드 (터미널을 점유함)
 cd backend && DB_PORT=3307 ./gradlew.bat bootRun              # http://localhost:8080/api/v1/health
+# 터미널 3 — 프론트
 cd frontend && npm install && npm run dev                     # http://localhost:3000
 ```
 

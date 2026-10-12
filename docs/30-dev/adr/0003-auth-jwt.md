@@ -15,7 +15,7 @@
 ## Decision
 
 - 인증 방식은 **JWT Bearer를 유지**한다(세션 전환은 프론트 전체 수정 대비 이득 없음).
-- 역할 모델은 현행 4역할을 유지한다. 관리자 3역할은 모두 `isAdmin()`이고, 시스템 메뉴는 `SYSTEM_ADMIN`만.
+- 역할 모델은 **두 축**이다: 관리자 축(`SYSTEM_ADMIN`·`OPERATION_ADMIN`·`GENERAL_ADMIN` 3코드, 모두 `isAdmin()`, 시스템 메뉴는 `SYSTEM_ADMIN`만)과 회원 축(`USER`). 설계서 §4 3단계의 "ADMIN과 USER 두 축"은 이 뜻이며, 관리자 3코드를 하나로 합치지 않는다. 세부 메뉴 권한은 기존 `Permission` 기반으로 유지.
 - **서버 권한 강제(3단계 목표)**: URL 접두어로 요구 권한이 결정된다.
 
   | 접두어 | 요구 |
@@ -24,7 +24,7 @@
   | `/api/v1/user/**` | 인증(아무 역할) |
   | `/api/v1/public/**`, `/api/v1/auth/login`, `/api/v1/auth/signup`, `/uploads/**`, `/api/v1/health` | 익명 허용 |
 
-  현재 `/api/v1/{boards,posts,comments,contents,menus,files,inquiries}/**`처럼 접두어 없는 관리자 엔드포인트는 3단계에서 `/api/v1/admin/...`으로 **경로 통일**한다(설계서 §4 3단계, 사용자 결정 2026-10-12).
+  현재 `/api/v1/{boards,posts,comments,menus,files,inquiries}/**`처럼 접두어 없는 관리자 엔드포인트는 3단계에서 `/api/v1/admin/...`으로 **경로 통일**한다(설계서 §4 3단계, 사용자 결정 2026-10-12). **예외**: `/api/v1/contents/**`(`ContentController`의 GET 목록·카테고리·`key/{contentKey}`)는 사용자 화면 `/user/page/:contentKey`(`ContentPage.tsx`, `publicContentApi`)가 비로그인으로 호출하는 공개 API이므로 `/api/v1/public/contents/...`로 옮긴다. 관리자용은 이미 `/api/v1/admin/contents`(`AdminContentController`)에 있다.
 
 ## Consequences
 
