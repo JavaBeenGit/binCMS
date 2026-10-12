@@ -13,7 +13,7 @@
 | 요청 성격 | 작업 공간 | 진입점 |
 |----------|-----------|--------|
 | 기획·문서·업체 정보 | `docs/` | [`docs/README.md`](docs/README.md) |
-| 앱 코드(백엔드·프론트) | `backend/`, `frontend/` (2단계에서 `apps/`로 이동) | [`docs/30-dev/README.md`](docs/30-dev/README.md) · 기동은 [`docs/30-dev/guides/dev-setup.md`](docs/30-dev/guides/dev-setup.md) |
+| 앱 코드(백엔드·프론트) | `apps/` | [`apps/CLAUDE.md`](apps/CLAUDE.md) · 결정 기록은 [`docs/30-dev/README.md`](docs/30-dev/README.md) · 기동은 [`docs/30-dev/guides/dev-setup.md`](docs/30-dev/guides/dev-setup.md) |
 | 재정비 작업 자체 | `docs/superpowers/` | 설계서 §4 단계표 → 해당 단계 `plans/` |
 
 규칙의 **정본은 한 곳**이다. 이 파일은 요약·링크만 하고 ADR·컨벤션 내용을 베끼지 않는다.
@@ -21,7 +21,7 @@
 ## 3. 절대 규칙
 
 - **문서는 현재 코드가 하는 것만 서술**한다. 바라는 상태는 "목표(N단계)"로 표시.
-- **비밀값 하드코딩·커밋 금지.** 로컬 비밀값은 `backend/application-secret.yml`(git 제외, 예시는 `application-secret.example.yml`)에, 운영은 환경변수에. GitHub 푸시 보호가 켜져 있어 평문 키가 든 커밋은 push가 거부된다. 키 재발급은 3단계.
+- **비밀값 하드코딩·커밋 금지.** 로컬 비밀값은 `apps/backend/application-secret.yml`(git 제외, 예시는 `application-secret.example.yml`)에, 운영은 환경변수에. GitHub 푸시 보호가 켜져 있어 평문 키가 든 커밋은 push가 거부된다. 키 재발급은 3단계.
 - **동작 변경과 구조 변경을 한 커밋에 섞지 않는다.**
 - 화면·API의 사용자 가시 동작을 바꾸면 해당 기능 가이드도 같은 브랜치에서 고친다(가이드는 5단계에서 생성 — 그 전까지는 `docs/10-product/sitemap.md`).
 - DB 테이블·컬럼 이름은 [`docs/30-dev/db-naming.md`](docs/30-dev/db-naming.md)를 따른다.
@@ -61,7 +61,7 @@ Type(소문자): `feat` `fix` `docs` `style` `design` `refactor` `test` `build` 
 ## 6. 기동·검증
 
 - 로컬 기동: [`docs/30-dev/guides/dev-setup.md`](docs/30-dev/guides/dev-setup.md). 백엔드 8080, 프론트 3000, MySQL 3307(Docker compose, 권장) 또는 3306(네이티브).
-- 회귀 기준: `backend/gradlew.bat build`(통합 테스트 포함, Docker 필요), `frontend`에서 `npm run build` 통과 + `curl localhost:8080/api/v1/health` 200. CI(`.github/workflows/ci.yml`)가 PR마다 같은 것을 돌린다.
+- 회귀 기준: `apps/backend/gradlew.bat build`(통합 테스트 포함, Docker 필요), `frontend`에서 `npm run build` 통과 + `curl localhost:8080/api/v1/health` 200. CI(`.github/workflows/ci.yml`)가 PR마다 같은 것을 돌린다.
 - API 접두어 규칙: `admin`(관리자 3역할)·`user`(로그인)·`public`·`auth` 4종만. 새 컨트롤러는 이 중 하나로 시작한다([ADR-0003](docs/30-dev/adr/0003-auth-jwt.md)).
 - 문서 링크: `node scripts/check-doc-links.mjs` 깨진 링크 0.
 
@@ -69,7 +69,7 @@ Type(소문자): `feat` `fix` `docs` `style` `design` `refactor` `test` `build` 
 
 - 2026-10-12: 재정비 설계서 승인. 0단계(기준선)·1단계(지침 뼈대)·3단계(보안·CI) 완료. 실행 순서는 설계서 §8-1 개정을 따른다.
 - 다음: 2단계 `apps/` 구조 정리 → 4단계 Flyway → 4-1단계 블로그 이관 → 5단계 기능 가이드·verify 스킬 → 6단계 사용자 화면(SEO·알림) → 7단계 관리자 축소·운영 매뉴얼 → 8단계 배포.
-- 사용자가 할 일: 카카오·네이버·구글·Gmail 키 재발급 후 `backend/application-secret.yml` 교체.
+- 사용자가 할 일: 카카오·네이버·구글·Gmail 키 재발급 후 `apps/backend/application-secret.yml` 교체.
 
 ## 8. 팀 컨벤션 / 피드백
 
