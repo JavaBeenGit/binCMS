@@ -8,12 +8,12 @@
 |---|---|---|---|
 | `/` | → `/user` 리다이렉트 | 모두 | `App.tsx` |
 | `/user` | 홈(히어로·서비스 3종·견적 CTA) | 모두 | `user/pages/HomePage.tsx` |
-| `/user/notice` | 공지사항 목록 | 모두 | `PostListPage` (`boardCode=notice`) |
-| `/user/faq` | 자주묻는질문 | 모두 | `PostListPage` (`faq`) |
+| `/user/notice`, `/user/notice/{id}` | 공지사항 목록·상세 페이지 | 모두 | `PostListPage` (`notice`), `PostDetailPage` |
+| `/user/faq` | 자주묻는질문(아코디언) | 모두 | `PostListPage` (`faq`, `variant=accordion`) |
 | `/user/free` | 자유게시판(글·댓글) — **메뉴 꺼 둠**(V4 `use_yn=N`, 홈페이지 메뉴 화면에서 켤 수 있음), URL 직접 접속만 | 조회 모두 / 작성 로그인 | `FreeBoardPage`, `CommentSection` |
-| `/user/interior/onsite` | 현장시공 갤러리 | 모두 | `InteriorGalleryPage` (`ONSITE`) |
-| `/user/interior/self-tip` | 셀프시공 갤러리 | 모두 | `InteriorGalleryPage` (`SELF_TIP`) |
-| `/user/interior/story` | 인테리어스토리 갤러리 | 모두 | `InteriorGalleryPage` (`STORY`) |
+| `/user/interior/onsite`, `/user/interior/onsite/{id}` | 현장시공 갤러리·상세 페이지 | 모두 | `InteriorGalleryPage`, `InteriorDetailPage` (`ONSITE`) |
+| `/user/interior/self-tip`, `…/{id}` | 셀프시공 갤러리·상세 | 모두 | `InteriorGalleryPage`, `InteriorDetailPage` (`SELF_TIP`) |
+| `/user/interior/story`, `…/{id}` | 인테리어스토리 갤러리·상세 | 모두 | `InteriorGalleryPage`, `InteriorDetailPage` (`STORY`) |
 | `/user/inquiry` | 견적문의 작성 | 모두 | `InquiryPage` |
 | `/user/page/:contentKey` | 관리자 편집 고정 페이지 | 모두 | `ContentPage` |
 | `/user/signup`, `/user/signup/email` | 회원가입(이메일 인증) — **버튼 숨김**(`FEATURES.signup`), URL 직접 접속만 | 비로그인 | `UserSignup`, `EmailSignup` |
