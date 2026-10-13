@@ -16,8 +16,8 @@
 | `/user/interior/story` | 인테리어스토리 갤러리 | 모두 | `InteriorGalleryPage` (`STORY`) |
 | `/user/inquiry` | 견적문의 작성 | 모두 | `InquiryPage` |
 | `/user/page/:contentKey` | 관리자 편집 고정 페이지 | 모두 | `ContentPage` |
-| `/user/login` | 회원 로그인(이메일·카카오·네이버·구글) | 비로그인 | `UserLogin` |
 | `/user/signup`, `/user/signup/email` | 회원가입(이메일 인증) — **버튼 숨김**(`FEATURES.signup`), URL 직접 접속만 | 비로그인 | `UserSignup`, `EmailSignup` |
+| `/user/login` | 회원 로그인 — **버튼 숨김**(`FEATURES.memberLogin`, 2026-10-13), URL 직접 접속만 | 비로그인 | `UserLogin` |
 | `/user/oauth/callback/{kakao,naver,google}` | 소셜 로그인 콜백 | — | `OAuthCallback` |
 | `/user/mypage` | 내 정보 조회·탈퇴 (수정 기능 없음) | 로그인 | `MyPage` |
 

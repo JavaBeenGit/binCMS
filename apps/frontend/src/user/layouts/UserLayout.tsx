@@ -106,15 +106,17 @@ const UserLayout: React.FC = () => {
                 </button>
               </Dropdown>
             ) : (
-              <div className="auth-links">
-                <Link to="/user/login" className="auth-link">로그인</Link>
-                {FEATURES.signup && (
-                  <>
-                    <span className="auth-divider">|</span>
-                    <Link to="/user/signup" className="auth-link">회원가입</Link>
-                  </>
-                )}
-              </div>
+              FEATURES.memberLogin && (
+                <div className="auth-links">
+                  <Link to="/user/login" className="auth-link">로그인</Link>
+                  {FEATURES.signup && (
+                    <>
+                      <span className="auth-divider">|</span>
+                      <Link to="/user/signup" className="auth-link">회원가입</Link>
+                    </>
+                  )}
+                </div>
+              )
             )}
           </div>
 
@@ -152,6 +154,7 @@ const UserLayout: React.FC = () => {
           ),
         )}
 
+        {(isLoggedIn || FEATURES.memberLogin) && (
         <div className="mobile-nav-auth">
           {isLoggedIn ? (
             <>
@@ -163,18 +166,21 @@ const UserLayout: React.FC = () => {
               </button>
             </>
           ) : (
-            <>
-              <Link to="/user/login" className="mobile-nav-auth-link">
-                <LoginOutlined /> 로그인
-              </Link>
-              {FEATURES.signup && (
-                <Link to="/user/signup" className="mobile-nav-auth-link signup">
-                  회원가입
+            FEATURES.memberLogin && (
+              <>
+                <Link to="/user/login" className="mobile-nav-auth-link">
+                  <LoginOutlined /> 로그인
                 </Link>
-              )}
-            </>
+                {FEATURES.signup && (
+                  <Link to="/user/signup" className="mobile-nav-auth-link signup">
+                    회원가입
+                  </Link>
+                )}
+              </>
+            )
           )}
         </div>
+        )}
       </nav>
 
       {/* ── 팝업 레이어 ── */}

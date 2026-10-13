@@ -5,4 +5,6 @@
 export const FEATURES = {
   /** 회원가입 버튼·링크 (헤더·모바일 메뉴·로그인 화면). 라우트 /user/signup 은 살아 있다. */
   signup: false,
+  /** 회원 로그인 버튼 (헤더·모바일 메뉴). 라우트 /user/login 은 살아 있고, 이미 로그인된 회원의 드롭다운은 그대로 보인다. 관리자 로그인(/admin/login)과 무관. */
+  memberLogin: false,
 } as const;
