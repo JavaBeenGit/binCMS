@@ -144,3 +144,36 @@
     font-size: 20px;
   }
 }
+
+/* ── FAQ 아코디언 (variant='accordion') ── */
+.faq-accordion {
+  background: #fff;
+}
+
+.faq-accordion .ant-collapse-item {
+  border-bottom: 1px solid #eee;
+}
+
+.faq-accordion .ant-collapse-header {
+  padding: 18px 16px !important;
+  font-size: 16px;
+}
+
+.faq-question {
+  font-weight: 600;
+  color: #222;
+  word-break: keep-all;
+}
+
+.faq-answer {
+  padding: 4px 8px 12px;
+  line-height: 1.8;
+  font-size: 15px;
+  color: #444;
+}
+
+.faq-answer img {
+  max-width: 100%;
+  height: auto;
+}
+

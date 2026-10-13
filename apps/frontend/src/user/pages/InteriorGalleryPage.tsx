@@ -1,12 +1,12 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { useNavigate, useParams } from 'react-router-dom';
-import { Spin, Empty, Pagination, Modal, message } from 'antd';
+import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
+import { Spin, Empty, Pagination } from 'antd';
 import { EyeOutlined, CalendarOutlined } from '@ant-design/icons';
 import { publicInteriorApi } from '@/shared/api/endpoints/public';
 import { InteriorResponse, InteriorCategory } from '@/shared/api/endpoints/interior';
+import { interiorListPath } from '@/shared/constants/interior';
 import { usePageMeta } from '@/shared/utils/usePageMeta';
-import 'ckeditor5/ckeditor5.css';
 import './InteriorGalleryPage.css';
 
 interface InteriorGalleryPageProps {
@@ -15,52 +15,26 @@ interface InteriorGalleryPageProps {
   subtitle?: string;
 }
 
-/** URL 조각 ↔ 카테고리 (sitemap.xml 과 같은 규칙) */
-const CATEGORY_SLUG: Record<InteriorCategory, string> = {
-  ONSITE: 'onsite',
-  SELF_TIP: 'self-tip',
-  STORY: 'story',
-};
+const PAGE_SIZE = 12;
 
 /**
- * 갤러리 목록 + 상세 모달. 상세는 /user/interior/{slug}/{id} 딥링크로 열린다(공유·검색엔진용).
+ * 갤러리 목록. 카드를 누르면 상세 페이지(/user/interior/{slug}/{id})로 간다.
+ * 보던 페이지는 ?page= 에 남겨 상세에서 돌아와도 유지된다.
  */
 const InteriorGalleryPage: React.FC<InteriorGalleryPageProps> = ({ category, title, subtitle }) => {
   const navigate = useNavigate();
-  const { id: idParam } = useParams<{ id?: string }>();
-  const selectedId = idParam && /^\d+$/.test(idParam) ? Number(idParam) : null;
-  const listPath = `/user/interior/${CATEGORY_SLUG[category]}`;
+  const location = useLocation();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const listPath = interiorListPath(category);
+  const pageParam = Number(searchParams.get('page') ?? '1');
+  const currentPage = Number.isInteger(pageParam) && pageParam > 0 ? pageParam : 1;
 
-  const [currentPage, setCurrentPage] = useState(1);
-  const pageSize = 12;
+  usePageMeta(title, subtitle);
 
   const { data, isLoading } = useQuery({
     queryKey: ['public-interiors', category, currentPage],
-    queryFn: async () => {
-      const res = await publicInteriorApi.getByCategory(category, currentPage - 1, pageSize);
-      return res.data;
-    },
+    queryFn: async () => (await publicInteriorApi.getByCategory(category, currentPage - 1, PAGE_SIZE)).data,
   });
-
-  // 상세 조회 (조회수 증가). id 가 URL 에 있을 때만.
-  const { data: detail, isError: detailError } = useQuery({
-    queryKey: ['public-interior-detail', selectedId],
-    queryFn: async () => {
-      const res = await publicInteriorApi.getById(selectedId!);
-      return res.data;
-    },
-    enabled: selectedId !== null,
-    retry: false,
-  });
-
-  useEffect(() => {
-    if (detailError) {
-      message.warning('찾을 수 없는 글입니다.');
-      navigate(listPath, { replace: true });
-    }
-  }, [detailError, navigate, listPath]);
-
-  usePageMeta(detail?.title ? `${detail.title} - ${title}` : title, subtitle);
 
   const items = data?.content || [];
   const totalElements = data?.totalElements || 0;
@@ -72,6 +46,9 @@ const InteriorGalleryPage: React.FC<InteriorGalleryPageProps> = ({ category, tit
     if (match) return match[1];
     return null;
   };
+
+  const openDetail = (id: number) =>
+    navigate(`${listPath}/${id}`, { state: { from: `${location.pathname}${location.search}` } });
 
   return (
     <div>
@@ -90,11 +67,7 @@ const InteriorGalleryPage: React.FC<InteriorGalleryPageProps> = ({ category, tit
               {items.map((item) => {
                 const thumb = getThumbnail(item);
                 return (
-                  <div
-                    key={item.id}
-                    className="gallery-card"
-                    onClick={() => navigate(`${listPath}/${item.id}`)}
-                  >
+                  <div key={item.id} className="gallery-card" onClick={() => openDetail(item.id)}>
                     <div className="gallery-card-img">
                       {thumb ? (
                         <img src={thumb} alt={item.title} loading="lazy" />
@@ -122,39 +95,14 @@ const InteriorGalleryPage: React.FC<InteriorGalleryPageProps> = ({ category, tit
               <Pagination
                 current={currentPage}
                 total={totalElements}
-                pageSize={pageSize}
-                onChange={(p) => setCurrentPage(p)}
+                pageSize={PAGE_SIZE}
+                onChange={(p) => setSearchParams(p === 1 ? {} : { page: String(p) })}
                 showSizeChanger={false}
               />
             </div>
           </>
         )}
       </div>
-
-      {/* 상세 모달 — 닫으면 목록 URL 로 */}
-      <Modal
-        open={selectedId !== null && !detailError}
-        onCancel={() => navigate(listPath)}
-        footer={null}
-        width={900}
-        title={detail?.title}
-        styles={{ body: { maxHeight: '70vh', overflowY: 'auto' } }}
-      >
-        {detail ? (
-          <div className="interior-detail">
-            <div className="interior-detail-meta">
-              <span><CalendarOutlined /> {new Date(detail.regDt).toLocaleDateString('ko-KR')}</span>
-              <span><EyeOutlined /> {detail.viewCount}</span>
-            </div>
-            <div
-              className="interior-detail-content ck-content"
-              dangerouslySetInnerHTML={{ __html: detail.content || '' }}
-            />
-          </div>
-        ) : (
-          <div className="loading-center"><Spin /></div>
-        )}
-      </Modal>
     </div>
   );
 };

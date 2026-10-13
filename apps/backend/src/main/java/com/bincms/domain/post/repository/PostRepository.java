@@ -31,6 +31,9 @@ public interface PostRepository extends JpaRepository<Post, Long> {
      */
     Page<Post> findByUseYnOrderByIdDesc(String useYn, Pageable pageable);
 
+    /** sitemap.xml: 게시판 코드별 사용 중인 글 (공지사항 상세 URL) */
+    List<Post> findByBoard_BoardCodeAndUseYnOrderByIdDesc(String boardCode, String useYn);
+
     /** 대시보드: 사용 중인 글 수 (삭제는 useYn='N' 비활성이라 count() 는 지운 글도 센다) */
     long countByUseYn(String useYn);
     

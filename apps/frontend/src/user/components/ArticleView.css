@@ -1,0 +1,108 @@
+/* 글 한 편 페이지 — 시공사례 상세·공지사항 상세 공통 */
+.article-page {
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 28px 16px 64px;
+}
+
+.article-crumb {
+  font-size: 13px;
+  margin-bottom: 14px;
+}
+
+.article-crumb a {
+  color: #2563eb;
+  text-decoration: none;
+}
+
+.article-crumb a:hover {
+  text-decoration: underline;
+}
+
+.article-loading {
+  display: flex;
+  justify-content: center;
+  padding: 80px 0;
+}
+
+.article-title {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 0 0 12px;
+  font-size: 26px;
+  font-weight: 700;
+  line-height: 1.35;
+  color: #222;
+  word-break: keep-all;
+}
+
+.article-meta {
+  display: flex;
+  gap: 16px;
+  color: #888;
+  font-size: 13px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #eee;
+  margin-bottom: 28px;
+}
+
+.article-content {
+  font-size: 16px;
+  line-height: 1.8;
+  color: #333;
+  min-height: 200px;
+  overflow-wrap: anywhere;
+}
+
+.article-content img {
+  max-width: 100%;
+  height: auto;
+}
+
+.article-content figure {
+  margin: 16px 0;
+}
+
+.article-actions {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 44px;
+  padding-top: 20px;
+  border-top: 1px solid #eee;
+}
+
+.article-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 18px;
+  border: 1px solid #ddd;
+  background: #fff;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  color: #333;
+  text-decoration: none;
+  transition: color 0.2s, border-color 0.2s;
+}
+
+.article-btn:hover {
+  color: #2563eb;
+  border-color: #2563eb;
+}
+
+@media (max-width: 768px) {
+  .article-page {
+    padding-top: 20px;
+  }
+  .article-title {
+    font-size: 21px;
+  }
+  .article-content {
+    font-size: 15px;
+  }
+}

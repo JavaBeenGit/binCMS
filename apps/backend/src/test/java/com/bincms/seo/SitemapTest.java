@@ -40,6 +40,31 @@ class SitemapTest extends AbstractIntegrationTest {
         assertThat(xml).doesNotContain("/admin");
     }
 
+    @Test
+    @DisplayName("sitemap.xml 에 공지사항 상세(/user/notice/{id})가 들어가고, 삭제(비활성)한 공지는 빠진다")
+    void sitemapListsNoticeDetails() throws Exception {
+        String admin = adminBearer();
+        long visible = createNotice(admin, "sitemap-notice-" + System.nanoTime());
+        long hidden = createNotice(admin, "sitemap-notice-hidden-" + System.nanoTime());
+        mockMvc.perform(delete("/api/v1/admin/posts/" + hidden).header("Authorization", admin))
+                .andExpect(status().is2xxSuccessful());
+
+        String xml = mockMvc.perform(get("/sitemap.xml")).andExpect(status().isOk())
+                .andReturn().getResponse().getContentAsString();
+        assertThat(xml).contains("<loc>http://localhost:3000/user/notice/" + visible + "</loc>");
+        assertThat(xml).doesNotContain("/user/notice/" + hidden + "</loc>");
+        assertThat(xml).doesNotContain("/user/free</loc>"); // 자유게시판은 꺼 둔 메뉴 — 사이트맵에서 제외
+    }
+
+    private long createNotice(String admin, String title) throws Exception {
+        String body = mockMvc.perform(post("/api/v1/admin/posts").header("Authorization", admin)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"boardId\":1,\"title\":\"" + title + "\",\"content\":\"<p>n</p>\"}"))
+                .andExpect(status().is2xxSuccessful())
+                .andReturn().getResponse().getContentAsString();
+        return objectMapper.readTree(body).path("data").path("id").asLong();
+    }
+
     private long create(String admin, String title) throws Exception {
         String body = mockMvc.perform(post("/api/v1/admin/interiors").header("Authorization", admin)
                         .contentType(MediaType.APPLICATION_JSON)

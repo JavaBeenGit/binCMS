@@ -6,6 +6,8 @@ import UserLayout from '@/user/layouts/UserLayout';
 import HomePage from '@/user/pages/HomePage';
 import PostListPage from '@/user/pages/PostListPage';
 import InteriorGalleryPage from '@/user/pages/InteriorGalleryPage';
+import InteriorDetailPage from '@/user/pages/InteriorDetailPage';
+import PostDetailPage from '@/user/pages/PostDetailPage';
 import InquiryPage from '@/user/pages/InquiryPage';
 import UserLogin from '@/user/pages/UserLogin';
 import UserSignup from '@/user/pages/UserSignup';
@@ -112,9 +114,10 @@ function App() {
             {/* User Routes */}
             <Route path="/user" element={<UserLayout />}>
               <Route index element={<HomePage />} />
-              <Route path="notice" element={<PostListPage boardCode="notice" title="공지사항" subtitle="수디자인의 소식을 전해드립니다" />} />
+              <Route path="notice" element={<PostListPage boardCode="notice" title="공지사항" subtitle="수디자인의 소식을 전해드립니다" detailPath="/user/notice" />} />
+              <Route path="notice/:id" element={<PostDetailPage title="공지사항" subtitle="수디자인의 소식을 전해드립니다" listPath="/user/notice" />} />
               <Route path="free" element={<FreeBoardPage boardCode="free" title="자유게시판" subtitle="자유롭게 소통하는 공간입니다" />} />
-              <Route path="faq" element={<PostListPage boardCode="faq" title="자주묻는질문" subtitle="궁금한 점을 확인해 보세요" />} />
+              <Route path="faq" element={<PostListPage boardCode="faq" title="자주묻는질문" subtitle="궁금한 점을 확인해 보세요" variant="accordion" />} />
               <Route path="inquiry" element={<InquiryPage />} />
               <Route path="login" element={<UserLogin />} />
               <Route path="signup" element={<UserSignup />} />
@@ -123,11 +126,11 @@ function App() {
               <Route path="oauth/callback/naver" element={<OAuthCallback provider="naver" />} />
               <Route path="oauth/callback/google" element={<OAuthCallback provider="google" />} />
               <Route path="mypage" element={<MyPage />} />
-              {/* 갤러리 목록 + 상세 딥링크(/user/interior/{slug}/{id}) */}
+              {/* 갤러리 목록 + 상세 페이지(/user/interior/{slug}/{id}) */}
               {Object.entries(galleryProps).map(([slug, props]) => (
                 <React.Fragment key={slug}>
                   <Route path={`interior/${slug}`} element={<InteriorGalleryPage {...props} />} />
-                  <Route path={`interior/${slug}/:id`} element={<InteriorGalleryPage {...props} />} />
+                  <Route path={`interior/${slug}/:id`} element={<InteriorDetailPage {...props} />} />
                 </React.Fragment>
               ))}
               <Route path="page/:contentKey" element={<ContentPage />} />

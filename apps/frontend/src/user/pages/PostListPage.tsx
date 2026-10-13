@@ -1,88 +1,61 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { Spin, Empty, Pagination, Tag } from 'antd';
-import { EyeOutlined, CalendarOutlined } from '@ant-design/icons';
+import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
+import { Spin, Empty, Pagination, Tag, Collapse } from 'antd';
 import { publicPostApi } from '@/shared/api/endpoints/public';
-import { PostResponse } from '@/shared/api/endpoints/post';
 import 'ckeditor5/ckeditor5.css';
 import './PostListPage.css';
 
 import { usePageMeta } from '@/shared/utils/usePageMeta';
+
 interface PostListPageProps {
   boardCode: string;
   title: string;
   subtitle?: string;
+  /** 'list': 제목 목록 → 상세 페이지(detailPath/{id}). 'accordion': 질문을 누르면 답이 펼쳐짐(FAQ) */
+  variant?: 'list' | 'accordion';
+  /** variant='list' 일 때 상세 페이지 경로 (예: /user/notice) */
+  detailPath?: string;
 }
 
-const PostListPage: React.FC<PostListPageProps> = ({ boardCode, title, subtitle }) => {
+const PAGE_SIZE = 10;
+
+/**
+ * 게시판 목록 — 공지사항(목록 → 상세 페이지), 자주묻는질문(아코디언). 보던 페이지는 ?page= 에 남긴다.
+ */
+const PostListPage: React.FC<PostListPageProps> = ({ boardCode, title, subtitle, variant = 'list', detailPath }) => {
   usePageMeta(title, subtitle);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [selectedPost, setSelectedPost] = useState<PostResponse | null>(null);
-  const pageSize = 10;
+  const navigate = useNavigate();
+  const location = useLocation();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const pageParam = Number(searchParams.get('page') ?? '1');
+  const currentPage = Number.isInteger(pageParam) && pageParam > 0 ? pageParam : 1;
 
   const { data, isLoading } = useQuery({
     queryKey: ['public-posts', boardCode, currentPage],
-    queryFn: async () => {
-      const res = await publicPostApi.getByBoardCode(boardCode, currentPage - 1, pageSize);
-      return res.data;
-    },
-  });
-
-  // 상세 조회
-  const { data: detailData, isLoading: detailLoading } = useQuery({
-    queryKey: ['public-post-detail', selectedPost?.id],
-    queryFn: async () => {
-      const res = await publicPostApi.getById(selectedPost!.id);
-      return res.data;
-    },
-    enabled: !!selectedPost,
+    queryFn: async () => (await publicPostApi.getByBoardCode(boardCode, currentPage - 1, PAGE_SIZE)).data,
   });
 
   const posts = data?.content || [];
   const totalElements = data?.totalElements || 0;
 
-  // 상세 보기
-  if (selectedPost) {
-    const post = detailData || selectedPost;
-    return (
-      <div>
-        <div className="page-banner">
-          <h1>{title}</h1>
-          {subtitle && <p>{subtitle}</p>}
-        </div>
-        <div className="page-container">
-          <div className="post-detail">
-            <button className="back-btn" onClick={() => setSelectedPost(null)}>
-              ← 목록으로
-            </button>
-            <div className="post-detail-header">
-              <h2 className="post-detail-title">
-                {post.noticeYn === 'Y' && <Tag color="red">공지</Tag>}
-                {post.title}
-              </h2>
-              <div className="post-detail-meta">
-                <span><CalendarOutlined /> {new Date(post.regDt).toLocaleDateString('ko-KR')}</span>
-                <span><EyeOutlined /> {post.viewCount}</span>
-              </div>
-            </div>
-            <div className="post-detail-divider" />
-            {detailLoading ? (
-              <div style={{ textAlign: 'center', padding: 40 }}>
-                <Spin size="large" />
-              </div>
-            ) : (
-              <div
-                className="post-detail-content ck-content"
-                dangerouslySetInnerHTML={{ __html: post.content || '' }}
-              />
-            )}
-          </div>
-        </div>
-      </div>
-    );
-  }
+  const openDetail = (id: number) => {
+    if (!detailPath) return;
+    navigate(`${detailPath}/${id}`, { state: { from: `${location.pathname}${location.search}` } });
+  };
 
-  // 목록 보기
+  const pagination = (
+    <div className="post-pagination">
+      <Pagination
+        current={currentPage}
+        total={totalElements}
+        pageSize={PAGE_SIZE}
+        onChange={(p) => setSearchParams(p === 1 ? {} : { page: String(p) })}
+        showSizeChanger={false}
+      />
+    </div>
+  );
+
   return (
     <div>
       <div className="page-banner">
@@ -96,6 +69,20 @@ const PostListPage: React.FC<PostListPageProps> = ({ boardCode, title, subtitle 
           </div>
         ) : posts.length === 0 ? (
           <Empty description="등록된 게시글이 없습니다." />
+        ) : variant === 'accordion' ? (
+          <>
+            <Collapse
+              accordion
+              className="faq-accordion"
+              expandIconPosition="end"
+              items={posts.map((post) => ({
+                key: String(post.id),
+                label: <span className="faq-question">Q. {post.title}</span>,
+                children: <div className="faq-answer ck-content" dangerouslySetInnerHTML={{ __html: post.content || '' }} />,
+              }))}
+            />
+            {pagination}
+          </>
         ) : (
           <>
             <div className="post-list">
@@ -109,12 +96,12 @@ const PostListPage: React.FC<PostListPageProps> = ({ boardCode, title, subtitle 
                 <div
                   key={post.id}
                   className={`post-list-item ${post.noticeYn === 'Y' ? 'notice' : ''}`}
-                  onClick={() => setSelectedPost(post)}
+                  onClick={() => openDetail(post.id)}
                 >
                   <span className="col-no">
                     {post.noticeYn === 'Y'
                       ? <Tag color="red" style={{ margin: 0 }}>공지</Tag>
-                      : totalElements - ((currentPage - 1) * pageSize + index)}
+                      : totalElements - ((currentPage - 1) * PAGE_SIZE + index)}
                   </span>
                   <span className="col-title">{post.title}</span>
                   <span className="col-date">
@@ -124,15 +111,7 @@ const PostListPage: React.FC<PostListPageProps> = ({ boardCode, title, subtitle 
                 </div>
               ))}
             </div>
-            <div className="post-pagination">
-              <Pagination
-                current={currentPage}
-                total={totalElements}
-                pageSize={pageSize}
-                onChange={(p) => setCurrentPage(p)}
-                showSizeChanger={false}
-              />
-            </div>
+            {pagination}
           </>
         )}
       </div>

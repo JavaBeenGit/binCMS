@@ -1,6 +1,7 @@
 import React from 'react';
 import { Button, Image, Modal, Space, Tag } from 'antd';
 import type { InteriorResponse } from '@/shared/api/endpoints/interior';
+import { interiorListPath } from '@/shared/constants/interior';
 
 interface InteriorDetailModalProps {
   open: boolean;
@@ -15,6 +16,14 @@ const InteriorDetailModal: React.FC<InteriorDetailModalProps> = ({ open, item, o
     open={open}
     onCancel={onClose}
     footer={[
+      <Button
+        key="site"
+        href={item ? `${interiorListPath(item.category)}/${item.id}` : undefined}
+        target="_blank"
+        disabled={!item || item.useYn !== 'Y'}
+      >
+        홈페이지에서 보기
+      </Button>,
       <Button key="edit" type="primary" onClick={() => item && onEdit(item)}>
         수정
       </Button>,
